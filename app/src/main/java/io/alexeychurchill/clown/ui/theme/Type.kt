@@ -1,34 +1,29 @@
 package io.alexeychurchill.clown.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import io.alexeychurchill.clown.ui.fonts.urbanistFontFamily
 
-// Set of Material typography styles to start with
+private val Default = Typography()
+
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
+
+    displayLarge = Default.displayLarge.copy(fontFamily = urbanistFontFamily),
+    displayMedium = Default.displayMedium.copy(fontFamily = urbanistFontFamily),
+    displaySmall = Default.displaySmall.copy(fontFamily = urbanistFontFamily),
+
+    headlineLarge = Default.headlineLarge.copy(fontFamily = urbanistFontFamily),
+    headlineMedium = Default.headlineMedium.copy(fontFamily = urbanistFontFamily),
+    headlineSmall = Default.headlineSmall.copy(fontFamily = urbanistFontFamily),
+
+    titleLarge = Default.titleLarge.copy(fontFamily = urbanistFontFamily),
+    titleMedium = Default.titleMedium.copy(fontFamily = urbanistFontFamily),
+    titleSmall = Default.titleSmall.copy(fontFamily = urbanistFontFamily),
+
+    bodyLarge = Default.bodyLarge.copy(fontFamily = urbanistFontFamily),
+    bodyMedium = Default.bodyMedium.copy(fontFamily = urbanistFontFamily),
+    bodySmall = Default.bodySmall.copy(fontFamily = urbanistFontFamily),
+
+    labelLarge = Default.labelLarge.copy(fontFamily = urbanistFontFamily),
+    labelMedium = Default.labelMedium.copy(fontFamily = urbanistFontFamily),
+    labelSmall = Default.labelSmall.copy(fontFamily = urbanistFontFamily),
 )
