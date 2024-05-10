@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Clown</string>
 
-    <string name="home_generate_tip">Tap to generate random text!</string>
-    <string name="home_parse_caption">Parse text</string>
-    <string name="home_generation_result_title">Generated</string>
-    <string name="home_parse_proceed">Parse</string>
+    <string name="library_title">Library</string>
 </resources>
