@@ -8,8 +8,5 @@ sealed interface LibraryViewAction : ViewAction {
 
     data class OnFolderPicked(val treeUri: String?) : LibraryViewAction
 
-    /**
-     * TODO: Pass directory ID/filepath
-     */
-    data object OpenFolder : LibraryViewAction
+    data class OpenFolder(val treeUri: String) : LibraryViewAction
 }
