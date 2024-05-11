@@ -1,4 +1,4 @@
-package io.alexeychurchill.clown.core.ui.viewstate
+package io.alexeychurchill.clown.core.viewstate
 
 typealias ViewActionHandler = (ViewAction) -> Unit
 

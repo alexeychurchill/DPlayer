@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.alexeychurchill.clown.library.data.database.DirectoryDao
 import io.alexeychurchill.clown.library.data.database.LibraryDatabase
 import javax.inject.Singleton
 
@@ -25,5 +26,10 @@ class DatabaseModule {
                 LibraryDatabase.NAME
             )
             .build()
+
+        @Provides
+        fun provideDirectoryDao(libraryDatabase: LibraryDatabase): DirectoryDao {
+            return libraryDatabase.directoryDao()
+        }
     }
 }

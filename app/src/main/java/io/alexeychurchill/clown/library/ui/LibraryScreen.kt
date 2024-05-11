@@ -3,6 +3,8 @@
 package io.alexeychurchill.clown.library.ui
 
 import android.content.res.Configuration
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -27,24 +30,36 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.clown.R
-import io.alexeychurchill.clown.core.ui.viewstate.Noop
-import io.alexeychurchill.clown.core.ui.viewstate.ViewActionHandler
+import io.alexeychurchill.clown.core.viewstate.Noop
+import io.alexeychurchill.clown.core.viewstate.ViewActionHandler
 import io.alexeychurchill.clown.library.presentation.LibraryViewModel
 import io.alexeychurchill.clown.library.viewstate.DirectoryStatusViewState
 import io.alexeychurchill.clown.library.viewstate.DirectoryViewState
 import io.alexeychurchill.clown.library.viewstate.LibraryViewAction
+import io.alexeychurchill.clown.library.viewstate.LibraryViewAction.OnFolderPicked
 import io.alexeychurchill.clown.library.viewstate.LibraryViewState
 import io.alexeychurchill.clown.ui.theme.ClownTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LibraryScreen(
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = hiltViewModel()
 ) {
+    val treePicker = rememberLauncherForActivityResult(OpenDocumentTree()) { uri ->
+        viewModel.onEvent(OnFolderPicked(uri?.toString()))
+    }
+    LaunchedEffect(key1 = viewModel) {
+        viewModel.openDirectoryFlow.collectLatest {
+            treePicker.launch(input = null)
+        }
+    }
+
     val state by viewModel.libraryViewState.collectAsState()
     LibraryScreenLayout(
         modifier = modifier.fillMaxSize(),
-        state = state
+        state = state,
+        onEvent = viewModel::onEvent
     )
 }
 

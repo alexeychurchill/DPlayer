@@ -1,21 +1,16 @@
 package io.alexeychurchill.clown.di
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.alexeychurchill.clown.library.data.database.DirectoryDao
-import io.alexeychurchill.clown.library.data.database.LibraryDatabase
+import io.alexeychurchill.clown.library.data.DirectoryRepositoryImpl
+import io.alexeychurchill.clown.library.domain.DirectoryRepository
 
 @InstallIn(SingletonComponent::class)
 @Module
 abstract class LibraryModule {
 
-    companion object {
-
-        @Provides
-        fun provideDirectoryDao(libraryDatabase: LibraryDatabase): DirectoryDao {
-            return libraryDatabase.directoryDao()
-        }
-    }
+    @Binds
+    abstract fun bindDirectoryRepository(impl: DirectoryRepositoryImpl): DirectoryRepository
 }

@@ -1,6 +1,6 @@
 package io.alexeychurchill.clown.library.viewstate
 
-import io.alexeychurchill.clown.core.ui.viewstate.ViewAction
+import io.alexeychurchill.clown.core.viewstate.ViewAction
 
 data class DirectoryViewState(
     val title: String,

@@ -12,6 +12,9 @@ abstract class DirectoryDao {
     @Query("SELECT * FROM user_directories ORDER BY created_at DESC")
     abstract fun allDirectoriesByAddedDate(): Flow<List<RoomDirectory>>
 
+    @Query("SELECT * FROM user_directories WHERE path=:path LIMIT 1")
+    abstract suspend fun getDirectoryByPath(path: String): RoomDirectory?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertDirectory(directory: RoomDirectory)
 }

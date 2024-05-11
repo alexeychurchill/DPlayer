@@ -18,6 +18,10 @@ class DirectoryRepositoryImpl @Inject constructor(
             .allDirectoriesByAddedDate()
             .map { it.map(mapper::mapToDomain) }
 
+    override suspend fun getDirectory(path: String): Directory? {
+        return directoryDao.getDirectoryByPath(path)?.let(mapper::mapToDomain)
+    }
+
     override suspend fun addDirectory(directory: Directory) {
         directoryDao.insertDirectory(mapper.mapToRoom(directory))
     }
