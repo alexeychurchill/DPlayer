@@ -19,9 +19,11 @@ class AddDirectoryUseCase @Inject constructor(
         val now = dateTimeProvider.current()
         val newDirectory = Directory(
             path = path,
+            name = FileName.Unknown,
             aliasTitle = null,
             addedAt = now,
-            updatedAt = now
+            updatedAt = now,
+            status = DirectoryStatus.Unknown
         )
         directoryRepository.addDirectory(newDirectory)
     }

@@ -7,6 +7,8 @@ import java.time.LocalDateTime
  */
 data class Directory(
     val path: String,
+    val name: FileName,
+    val status: DirectoryStatus,
     val aliasTitle: String?,
     val addedAt: LocalDateTime,
     val updatedAt: LocalDateTime,

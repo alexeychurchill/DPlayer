@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.alexeychurchill.clown.library.viewstate.DirectoryStatusViewState
@@ -46,11 +47,19 @@ fun DirectoryListItem(
             )
         },
         headlineContent = {
-            Text(text = title)
+            Text(
+                text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         },
         supportingContent = {
             if (path != null) {
-                Text(text = path)
+                Text(
+                    text = path,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         },
         trailingContent = {

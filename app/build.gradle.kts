@@ -87,4 +87,7 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+
+    // Document Framework API
+    implementation("androidx.documentfile:documentfile:1.0.1")
 }

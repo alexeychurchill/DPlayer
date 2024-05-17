@@ -13,11 +13,13 @@ import io.alexeychurchill.clown.library.viewstate.LibraryViewAction.AddFolder
 import io.alexeychurchill.clown.library.viewstate.LibraryViewAction.OnFolderPicked
 import io.alexeychurchill.clown.library.viewstate.LibraryViewState
 import io.alexeychurchill.clown.library.viewstate.LibraryViewStateMapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,6 +37,7 @@ class LibraryViewModel @Inject constructor(
     val libraryViewState: StateFlow<LibraryViewState> = directoryRepository
         .allDirectories
         .mapLatest(libraryViewStateMapper::mapToViewState)
+        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
