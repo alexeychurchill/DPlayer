@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package io.alexeychurchill.clown.library.ui
 
@@ -129,10 +129,11 @@ private fun LoadedLibraryLayout(
     LazyColumn(modifier = modifier) {
         items(state.items) { item ->
             DirectoryListItem(
-                modifier = Modifier.fillMaxWidth(),
                 title = item.title,
-                path = item.path,
+                modifier = Modifier.fillMaxWidth(),
                 status = item.status,
+                directoryCount = item.dirCount,
+                fileCount = item.fileCount,
                 onClick = { onEvent(item.onPickAction) }
             )
         }
@@ -172,33 +173,38 @@ private class LibraryPreview : PreviewParameterProvider<LibraryViewState> {
                 items = listOf(
                     DirectoryViewState(
                         title = "Music A",
-                        path = null,
                         status = DirectoryStatusViewState.NONE,
-                        onPickAction = Noop
+                        onPickAction = Noop,
+                        dirCount = 1,
+                        fileCount = 2
                     ),
                     DirectoryViewState(
                         title = "Music B",
-                        path = "/some/path",
                         status = DirectoryStatusViewState.AVAILABLE,
-                        onPickAction = Noop
+                        onPickAction = Noop,
+                        dirCount = 1,
+                        fileCount = 2
                     ),
                     DirectoryViewState(
                         title = "Music C",
-                        path = "/some/path",
                         status = DirectoryStatusViewState.WARNING,
-                        onPickAction = Noop
+                        onPickAction = Noop,
+                        dirCount = 1,
+                        fileCount = 2
                     ),
                     DirectoryViewState(
                         title = "Music D",
-                        path = null,
                         status = DirectoryStatusViewState.AVAILABLE,
-                        onPickAction = Noop
+                        onPickAction = Noop,
+                        dirCount = 1,
+                        fileCount = 2
                     ),
                     DirectoryViewState(
                         title = "Music E",
-                        path = null,
                         status = DirectoryStatusViewState.WARNING,
-                        onPickAction = Noop
+                        onPickAction = Noop,
+                        dirCount = 1,
+                        fileCount = 2
                     ),
                 )
             )

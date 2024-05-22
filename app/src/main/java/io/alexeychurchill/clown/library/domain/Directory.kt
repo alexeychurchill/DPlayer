@@ -12,4 +12,6 @@ data class Directory(
     val aliasTitle: String?,
     val addedAt: LocalDateTime,
     val updatedAt: LocalDateTime,
+    val fileCount: Int?,
+    val dirCount: Int?,
 )

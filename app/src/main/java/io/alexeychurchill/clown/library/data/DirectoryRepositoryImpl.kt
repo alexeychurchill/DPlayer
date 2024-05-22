@@ -4,7 +4,6 @@ package io.alexeychurchill.clown.library.data
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.alexeychurchill.clown.library.data.database.DirectoryDao
@@ -52,13 +51,15 @@ class DirectoryRepositoryImpl @Inject constructor(
     }
 
     private fun createDirectory(roomDirectory: RoomDirectory): Directory {
-        val threadName = Thread.currentThread().name
         val pathUri = Uri.parse(roomDirectory.path)
         val dirFile = DocumentFile.fromTreeUri(context, pathUri)
-        Log.d(this::class.java.name, "[$threadName]: dirName=${dirFile?.name} -> $pathUri")
+        val dirCount = dirFile?.dirCount() ?: 0
+        val musicFileCount = dirFile?.fileCount {
+            FilesExtensions.MusicFiles.contains(it.fileExtension())
+        } ?: 0
         val status = when {
-            dirFile == null -> DirectoryStatus.Unavailable
-            hasDirectories(dirFile) || hasMusicFiles(dirFile) -> DirectoryStatus.Available
+            dirFile == null || !dirFile.exists() -> DirectoryStatus.Unavailable
+            dirCount > 0 || musicFileCount > 0 -> DirectoryStatus.Available
             dirFile.listFiles().isEmpty() -> DirectoryStatus.Empty
             else -> DirectoryStatus.Unknown
         }
@@ -68,27 +69,35 @@ class DirectoryRepositoryImpl @Inject constructor(
             status = status,
             aliasTitle = roomDirectory.aliasTitle,
             addedAt = roomDirectory.addedAt,
-            updatedAt = roomDirectory.updatedAt
+            updatedAt = roomDirectory.updatedAt,
+            fileCount = musicFileCount,
+            dirCount = dirCount,
         )
     }
 
-    private fun hasMusicFiles(dir: DocumentFile): Boolean {
-        val filesExtensions = dir.takeIf { it.exists() && it.isDirectory }
+    private fun DocumentFile.fileCount(
+        predicate: (file: DocumentFile) -> Boolean = { true }
+    ): Int {
+        return takeIf { it.exists() && it.isDirectory }
             ?.listFiles()
             ?.filter(DocumentFile::isFile)
-            ?.mapNotNull(DocumentFile::getName)
-            ?.mapNotNull(::fileExtensionOf)
-            ?.toSet()
-            ?: return false
-        return FilesExtensions.MusicFiles.toSet().intersect(filesExtensions).isNotEmpty()
+            ?.count(predicate)
+            ?: 0
     }
 
-    private fun hasDirectories(file: DocumentFile): Boolean =
-        file.listFiles().any { it.exists() && it.isDirectory }
+    private fun DocumentFile.dirCount(
+        predicate: (file: DocumentFile) -> Boolean = { true }
+    ): Int {
+        return takeIf { it.exists() && it.isDirectory }
+            ?.listFiles()
+            ?.filter(DocumentFile::isDirectory)
+            ?.count(predicate) ?: 0
+    }
 
-    private fun fileExtensionOf(fileName: String): String? = fileName
-        .split(FilesExtensions.Separator)
-        .takeIf { it.size > 1 }
+    private fun DocumentFile.fileExtension(): String = name
+        ?.split(FilesExtensions.Separator)
+        ?.takeIf { it.size > 1 }
         ?.last()
         ?.lowercase()
+        ?: ""
 }

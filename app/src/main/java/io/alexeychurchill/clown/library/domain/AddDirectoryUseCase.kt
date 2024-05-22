@@ -23,7 +23,9 @@ class AddDirectoryUseCase @Inject constructor(
             aliasTitle = null,
             addedAt = now,
             updatedAt = now,
-            status = DirectoryStatus.Unknown
+            status = DirectoryStatus.Unknown,
+            fileCount = null,
+            dirCount = null,
         )
         directoryRepository.addDirectory(newDirectory)
     }

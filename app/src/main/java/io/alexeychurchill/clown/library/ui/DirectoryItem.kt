@@ -4,14 +4,19 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.AudioFile
 import androidx.compose.material.icons.twotone.ChevronRight
 import androidx.compose.material.icons.twotone.Folder
+import androidx.compose.material.icons.twotone.MusicNote
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -19,6 +24,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,7 +37,8 @@ import io.alexeychurchill.clown.ui.theme.ClownTheme
 fun DirectoryListItem(
     title: String,
     modifier: Modifier = Modifier,
-    path: String? = null,
+    fileCount: Int? = null,
+    directoryCount: Int? = null,
     status: DirectoryStatusViewState = DirectoryStatusViewState.NONE,
     onClick: (() -> Unit)? = null,
 ) {
@@ -54,18 +61,62 @@ fun DirectoryListItem(
             )
         },
         supportingContent = {
-            if (path != null) {
-                Text(
-                    text = path,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            DirectoryContentsInfo(
+                modifier = Modifier.padding(start = 8.dp),
+                fileCount = fileCount,
+                directoryCount = directoryCount
+            )
         },
         trailingContent = {
             StatusIcon(status = status)
         }
     )
+}
+
+@Composable
+private fun DirectoryContentsInfo(
+    modifier: Modifier = Modifier,
+    fileCount: Int? = null,
+    directoryCount: Int? = null
+) {
+    if (fileCount == null && directoryCount == null) {
+        return
+    }
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (fileCount != null) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                imageVector = Icons.TwoTone.MusicNote,
+                contentDescription = null
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 2.dp),
+                text = fileCount.toString(),
+            )
+        }
+
+        if (fileCount != null && directoryCount != null) {
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        if (directoryCount != null) {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                imageVector = Icons.TwoTone.Folder,
+                contentDescription = null,
+            )
+
+            Text(
+                modifier = Modifier.padding(start = 2.dp),
+                text = directoryCount.toString(),
+            )
+        }
+    }
 }
 
 @Preview(widthDp = 360, showBackground = true)
@@ -144,9 +195,8 @@ private fun StatusIcon(status: DirectoryStatusViewState) {
 private fun DirectoryListItemPreview() {
     ClownTheme {
         DirectoryListItem(
-            modifier = Modifier.fillMaxWidth(),
             title = "Sample Dir",
-            path = "/sdcard/mnt/test",
+            modifier = Modifier.fillMaxWidth(),
             status = DirectoryStatusViewState.AVAILABLE
         )
     }

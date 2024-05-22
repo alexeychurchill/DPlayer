@@ -1,6 +1,7 @@
 package io.alexeychurchill.clown.library.viewstate
 
 import io.alexeychurchill.clown.library.domain.Directory
+import io.alexeychurchill.clown.library.domain.DirectoryStatus
 import io.alexeychurchill.clown.library.domain.FileName
 import javax.inject.Inject
 
@@ -19,9 +20,14 @@ class LibraryViewStateMapper @Inject constructor() {
     private fun mapDirectoryToViewState(directory: Directory): DirectoryViewState {
         return DirectoryViewState(
             title = mapDirectoryName(directory),
-            path = directory.path,
-            status = DirectoryStatusViewState.NONE,
-            onPickAction = LibraryViewAction.OpenFolder(directory.path)
+            status = when (directory.status) {
+                DirectoryStatus.Available -> DirectoryStatusViewState.AVAILABLE
+                DirectoryStatus.Unavailable -> DirectoryStatusViewState.WARNING
+                else -> DirectoryStatusViewState.NONE
+            },
+            onPickAction = LibraryViewAction.OpenFolder(directory.path),
+            dirCount = directory.dirCount,
+            fileCount = directory.fileCount,
         )
     }
 
