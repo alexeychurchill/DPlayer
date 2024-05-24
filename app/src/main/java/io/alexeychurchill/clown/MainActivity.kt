@@ -8,19 +8,31 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
+import io.alexeychurchill.clown.library.data.filesystem.SafDirectoryPermissionsDispatcher
 import io.alexeychurchill.clown.library.ui.LibraryScreen
 import io.alexeychurchill.clown.ui.theme.ClownTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var safDirectoryPermissionsDispatcher: SafDirectoryPermissionsDispatcher
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupEdgeToEdge()
+        lifecycle.addObserver(safDirectoryPermissionsDispatcher)
         setContent {
             ClownTheme {
                 LibraryScreen()
             }
         }
+    }
+
+    override fun onDestroy() {
+        lifecycle.removeObserver(safDirectoryPermissionsDispatcher)
+        super.onDestroy()
     }
 
     private fun setupEdgeToEdge() {

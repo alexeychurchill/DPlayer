@@ -10,6 +10,7 @@ import io.alexeychurchill.clown.library.data.database.DirectoryDao
 import io.alexeychurchill.clown.library.data.database.RoomDirectory
 import io.alexeychurchill.clown.library.data.database.RoomDirectoryMapper
 import io.alexeychurchill.clown.library.domain.Directory
+import io.alexeychurchill.clown.library.domain.DirectoryPermissionsDispatcher
 import io.alexeychurchill.clown.library.domain.DirectoryRepository
 import io.alexeychurchill.clown.library.domain.DirectoryStatus
 import io.alexeychurchill.clown.library.domain.FileName
@@ -27,6 +28,7 @@ class DirectoryRepositoryImpl @Inject constructor(
     private val context: Context,
     private val directoryDao: DirectoryDao,
     private val mapper: RoomDirectoryMapper,
+    private val permissionsDispatcher: DirectoryPermissionsDispatcher,
 ) : DirectoryRepository {
 
     override val allDirectories: Flow<List<Directory>>
@@ -39,6 +41,7 @@ class DirectoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addDirectory(directory: Directory) {
+        permissionsDispatcher.takePermissions(directory.path)
         directoryDao.insertDirectory(mapper.mapToRoom(directory))
     }
 
