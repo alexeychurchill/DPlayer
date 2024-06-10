@@ -1,10 +1,10 @@
-package io.alexeychurchill.clown.library.domain
+package io.alexeychurchill.clown.core.domain.filesystem
 
 sealed interface FileName {
 
     companion object {
         fun of(name: String?): FileName =
-            name?.let(::Name) ?: Unknown
+            name?.let(FileName::Name) ?: Unknown
     }
 
     data object Unknown : FileName

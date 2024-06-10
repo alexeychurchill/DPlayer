@@ -1,8 +1,7 @@
 package io.alexeychurchill.clown.library.viewstate
 
-import io.alexeychurchill.clown.library.domain.Directory
-import io.alexeychurchill.clown.library.domain.DirectoryStatus
-import io.alexeychurchill.clown.library.domain.FileName
+import io.alexeychurchill.clown.core.domain.filesystem.FileName
+import io.alexeychurchill.clown.library.domain.LibraryEntry
 import javax.inject.Inject
 
 class LibraryViewStateMapper @Inject constructor() {
@@ -11,26 +10,30 @@ class LibraryViewStateMapper @Inject constructor() {
         const val DEFAULT_NAME = "-"
     }
 
-    fun mapToViewState(items: List<Directory>): LibraryViewState {
+    fun mapToViewState(items: List<LibraryEntry>): LibraryViewState {
         return LibraryViewState.Loaded(
             items = items.map(::mapDirectoryToViewState)
         )
     }
 
-    private fun mapDirectoryToViewState(directory: Directory): DirectoryViewState {
+    private fun mapDirectoryToViewState(entry: LibraryEntry): DirectoryViewState {
+        val dir = entry.directory
         return DirectoryViewState(
-            title = mapDirectoryName(directory),
-            status = when (directory.status) {
-                DirectoryStatus.Available -> DirectoryStatusViewState.AVAILABLE
-                DirectoryStatus.Unavailable -> DirectoryStatusViewState.WARNING
+            title = mapDirectoryName(entry),
+            status = when {
+                dir == null -> DirectoryStatusViewState.NONE
+                dir.exists && ((dir.dirCount ?: 0) + (dir.fileCount ?: 0)) > 0 -> {
+                    DirectoryStatusViewState.AVAILABLE
+                }
+                !dir.exists -> DirectoryStatusViewState.WARNING
                 else -> DirectoryStatusViewState.NONE
             },
-            onPickAction = LibraryViewAction.OpenFolder(directory.path),
-            dirCount = directory.dirCount,
-            fileCount = directory.fileCount,
+            onPickAction = LibraryViewAction.OpenLibraryEntry(entry),
+            dirCount = entry.directory?.dirCount,
+            fileCount = entry.directory?.fileCount,
         )
     }
 
-    private fun mapDirectoryName(directory: Directory) =
-        directory.aliasTitle ?: (directory.name as? FileName.Name)?.value ?: DEFAULT_NAME
+    private fun mapDirectoryName(entry: LibraryEntry) =
+        entry.aliasTitle ?: (entry.directory?.name as? FileName.Name)?.value ?: DEFAULT_NAME
 }

@@ -13,7 +13,7 @@ import io.alexeychurchill.clown.core.data.database.LocalDateTimeTypeConverter
 @Database(
     version = 1,
     entities = [
-        RoomDirectory::class,
+        RoomLibraryEntry::class,
     ]
 )
 abstract class LibraryDatabase : RoomDatabase() {

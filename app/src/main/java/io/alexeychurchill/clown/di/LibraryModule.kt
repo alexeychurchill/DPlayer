@@ -4,13 +4,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.alexeychurchill.clown.library.data.DirectoryRepositoryImpl
-import io.alexeychurchill.clown.library.domain.DirectoryRepository
+import io.alexeychurchill.clown.library.data.LibraryRepositoryImpl
+import io.alexeychurchill.clown.library.domain.LibraryRepository
 
 @InstallIn(SingletonComponent::class)
 @Module
 abstract class LibraryModule {
 
     @Binds
-    abstract fun bindDirectoryRepository(impl: DirectoryRepositoryImpl): DirectoryRepository
+    abstract fun bindDirectoryRepository(impl: LibraryRepositoryImpl): LibraryRepository
 }

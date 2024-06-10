@@ -1,4 +1,4 @@
-package io.alexeychurchill.clown.library.domain
+package io.alexeychurchill.clown.core.data.filesystem
 
 object FilesExtensions {
 

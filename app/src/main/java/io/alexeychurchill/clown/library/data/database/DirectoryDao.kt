@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 abstract class DirectoryDao {
 
     @Query("SELECT * FROM user_directories ORDER BY created_at DESC")
-    abstract fun allDirectoriesByAddedDate(): Flow<List<RoomDirectory>>
+    abstract fun allDirectoriesByAddedDate(): Flow<List<RoomLibraryEntry>>
 
     @Query("SELECT * FROM user_directories WHERE path=:path LIMIT 1")
-    abstract suspend fun getDirectoryByPath(path: String): RoomDirectory?
+    abstract suspend fun getDirectoryByPath(path: String): RoomLibraryEntry?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertDirectory(directory: RoomDirectory)
+    abstract suspend fun insertDirectory(directory: RoomLibraryEntry)
 }

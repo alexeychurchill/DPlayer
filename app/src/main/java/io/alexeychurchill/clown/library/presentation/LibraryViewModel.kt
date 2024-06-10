@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.clown.core.viewstate.ViewAction
 import io.alexeychurchill.clown.library.domain.AddDirectoryUseCase
-import io.alexeychurchill.clown.library.domain.DirectoryRepository
+import io.alexeychurchill.clown.library.domain.LibraryRepository
 import io.alexeychurchill.clown.library.viewstate.LibraryViewAction
 import io.alexeychurchill.clown.library.viewstate.LibraryViewAction.AddFolder
 import io.alexeychurchill.clown.library.viewstate.LibraryViewAction.OnFolderPicked
@@ -27,14 +27,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    directoryRepository: DirectoryRepository,
+    libraryRepository: LibraryRepository,
     private val addFolderUseCase: AddDirectoryUseCase,
     private val libraryViewStateMapper: LibraryViewStateMapper
 ) : ViewModel() {
 
     private val mutableOpenDirectoryPickerFlow = MutableSharedFlow<Unit>()
 
-    val libraryViewState: StateFlow<LibraryViewState> = directoryRepository
+    val libraryViewState: StateFlow<LibraryViewState> = libraryRepository
         .allDirectories
         .mapLatest(libraryViewStateMapper::mapToViewState)
         .flowOn(Dispatchers.IO)

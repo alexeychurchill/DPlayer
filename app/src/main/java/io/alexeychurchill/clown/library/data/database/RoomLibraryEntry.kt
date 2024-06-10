@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.time.LocalDateTime
 
 @Entity(tableName = "user_directories")
-data class RoomDirectory(
+data class RoomLibraryEntry(
 
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "path")
@@ -16,7 +16,7 @@ data class RoomDirectory(
     val aliasTitle: String?,
 
     @ColumnInfo(name = "created_at")
-    val addedAt: LocalDateTime,
+    val createdAt: LocalDateTime,
 
     @ColumnInfo(name = "updated_at")
     val updatedAt: LocalDateTime

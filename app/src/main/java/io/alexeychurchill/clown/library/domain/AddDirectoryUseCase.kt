@@ -1,33 +1,37 @@
 package io.alexeychurchill.clown.library.domain
 
+import io.alexeychurchill.clown.core.domain.filesystem.FileName
+import io.alexeychurchill.clown.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.clown.core.domain.time.DateTimeProvider
 import javax.inject.Inject
 
 class AddDirectoryUseCase @Inject constructor(
     private val dateTimeProvider: DateTimeProvider,
-    private val directoryRepository: DirectoryRepository,
+    private val libraryRepository: LibraryRepository,
 ) {
 
     suspend operator fun invoke(path: String?) {
         if (path == null) {
             return
         }
-        val directory = directoryRepository.getDirectory(path)
-        if (directory != null) {
+        if (libraryRepository.getDirectory(path) != null) {
             throw DirectoryAlreadyAddedException()
         }
         val now = dateTimeProvider.current()
-        val newDirectory = Directory(
+        val directory = FileSystemEntry.Directory( // TODO: Get from the FS
             path = path,
             name = FileName.Unknown,
-            aliasTitle = null,
-            addedAt = now,
-            updatedAt = now,
-            status = DirectoryStatus.Unknown,
+            exists = true,
             fileCount = null,
             dirCount = null,
         )
-        directoryRepository.addDirectory(newDirectory)
+        val entry = LibraryEntry(
+            directory = directory,
+            aliasTitle = null,
+            createdAt = now,
+            updatedAt = now,
+        )
+        libraryRepository.addDirectory(entry)
     }
 }
 
