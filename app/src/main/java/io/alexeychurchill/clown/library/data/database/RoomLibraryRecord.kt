@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.time.LocalDateTime
 
 @Entity(tableName = "user_directories")
-data class RoomLibraryEntry(
+data class RoomLibraryRecord(
 
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "path")

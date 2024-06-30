@@ -4,9 +4,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface LibraryRepository {
 
-    val allDirectories: Flow<List<LibraryEntry>>
+    val allEntries: Flow<List<LibraryEntry>>
 
-    suspend fun getDirectory(path: String): LibraryEntry?
+    suspend fun getLibraryEntry(path: String): LibraryEntry?
 
-    suspend fun addDirectory(entry: LibraryEntry)
+    suspend fun addLibraryRecord(record: LibraryRecord)
 }

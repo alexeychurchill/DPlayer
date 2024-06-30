@@ -8,10 +8,11 @@ import io.alexeychurchill.clown.core.domain.filesystem.FileName
 import io.alexeychurchill.clown.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.clown.core.utils.fileExtension
 import io.alexeychurchill.clown.library.data.database.DirectoryDao
-import io.alexeychurchill.clown.library.data.database.RoomLibraryEntry
-import io.alexeychurchill.clown.library.data.database.RoomLibraryEntryMapper
+import io.alexeychurchill.clown.library.data.database.RoomLibraryRecord
+import io.alexeychurchill.clown.library.data.database.RoomLibraryRecordMapper
 import io.alexeychurchill.clown.library.domain.DirectoryPermissionsDispatcher
 import io.alexeychurchill.clown.library.domain.LibraryEntry
+import io.alexeychurchill.clown.library.domain.LibraryRecord
 import io.alexeychurchill.clown.library.domain.LibraryRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -23,37 +24,35 @@ import javax.inject.Inject
 
 class LibraryRepositoryImpl @Inject constructor(
     private val directoryDao: DirectoryDao,
-    private val mapper: RoomLibraryEntryMapper,
+    private val libraryRecordMapper: RoomLibraryRecordMapper,
     private val permissionsDispatcher: DirectoryPermissionsDispatcher,
     private val filesystemStore: FilesystemStore,
 ) : LibraryRepository {
 
-    override val allDirectories: Flow<List<LibraryEntry>>
+    override val allEntries: Flow<List<LibraryEntry>>
         get() = directoryDao
             .allDirectoriesByAddedDate()
             .mapLatest { roomDirs -> createDirectories(roomDirs) }
 
-    override suspend fun getDirectory(path: String): LibraryEntry? {
+    override suspend fun getLibraryEntry(path: String): LibraryEntry? {
         val roomDir = directoryDao.getDirectoryByPath(path) ?: return null
         return fetchLibraryEntry(roomDir)
     }
 
-    override suspend fun addDirectory(entry: LibraryEntry) {
-        entry.directory?.path?.let { uri ->
-            permissionsDispatcher.takePermissions(uri)
-        }
-        directoryDao.insertDirectory(mapper.mapToRoom(entry))
+    override suspend fun addLibraryRecord(record: LibraryRecord) {
+        permissionsDispatcher.takePermissions(record.dirPath)
+        directoryDao.insertDirectory(libraryRecordMapper.mapToRoom(record))
     }
 
     private suspend fun createDirectories(
-        roomDirs: List<RoomLibraryEntry>
+        roomDirs: List<RoomLibraryRecord>
     ): List<LibraryEntry> = coroutineScope {
         roomDirs
             .map { roomDir -> async { fetchLibraryEntry(roomDir) } }
             .awaitAll()
     }
 
-    private fun fetchLibraryEntry(roomDir: RoomLibraryEntry): LibraryEntry {
+    private fun fetchLibraryEntry(roomDir: RoomLibraryRecord): LibraryEntry {
         val childEntries = filesystemStore.list(roomDir.path)
         val musicFileCount = childEntries.count { entry ->
             val ext = ((entry as? FileSystemEntry.File)?.name as? FileName.Name)

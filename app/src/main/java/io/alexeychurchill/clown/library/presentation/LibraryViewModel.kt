@@ -35,7 +35,7 @@ class LibraryViewModel @Inject constructor(
     private val mutableOpenDirectoryPickerFlow = MutableSharedFlow<Unit>()
 
     val libraryViewState: StateFlow<LibraryViewState> = libraryRepository
-        .allDirectories
+        .allEntries
         .mapLatest(libraryViewStateMapper::mapToViewState)
         .flowOn(Dispatchers.IO)
         .stateIn(
