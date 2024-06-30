@@ -2,7 +2,11 @@
 
 package io.alexeychurchill.clown.library.data
 
+import io.alexeychurchill.clown.core.data.filesystem.FilesExtensions
 import io.alexeychurchill.clown.core.data.filesystem.FilesystemStore
+import io.alexeychurchill.clown.core.domain.filesystem.FileName
+import io.alexeychurchill.clown.core.domain.filesystem.FileSystemEntry
+import io.alexeychurchill.clown.core.utils.fileExtension
 import io.alexeychurchill.clown.library.data.database.DirectoryDao
 import io.alexeychurchill.clown.library.data.database.RoomLibraryEntry
 import io.alexeychurchill.clown.library.data.database.RoomLibraryEntryMapper
@@ -30,14 +34,8 @@ class LibraryRepositoryImpl @Inject constructor(
             .mapLatest { roomDirs -> createDirectories(roomDirs) }
 
     override suspend fun getDirectory(path: String): LibraryEntry? {
-        return directoryDao.getDirectoryByPath(path)?.let { roomDir ->
-            LibraryEntry(
-                directory = filesystemStore.directoryBy(roomDir.path),
-                aliasTitle = roomDir.aliasTitle,
-                createdAt = roomDir.createdAt,
-                updatedAt = roomDir.updatedAt,
-            )
-        }
+        val roomDir = directoryDao.getDirectoryByPath(path) ?: return null
+        return fetchLibraryEntry(roomDir)
     }
 
     override suspend fun addDirectory(entry: LibraryEntry) {
@@ -51,16 +49,26 @@ class LibraryRepositoryImpl @Inject constructor(
         roomDirs: List<RoomLibraryEntry>
     ): List<LibraryEntry> = coroutineScope {
         roomDirs
-            .map { roomDir ->
-                async {
-                    LibraryEntry(
-                        directory = filesystemStore.directoryBy(roomDir.path),
-                        aliasTitle = roomDir.aliasTitle,
-                        createdAt = roomDir.createdAt,
-                        updatedAt = roomDir.updatedAt,
-                    )
-                }
-            }
+            .map { roomDir -> async { fetchLibraryEntry(roomDir) } }
             .awaitAll()
+    }
+
+    private fun fetchLibraryEntry(roomDir: RoomLibraryEntry): LibraryEntry {
+        val childEntries = filesystemStore.list(roomDir.path)
+        val musicFileCount = childEntries.count { entry ->
+            val ext = ((entry as? FileSystemEntry.File)?.name as? FileName.Name)
+                ?.value
+                ?.fileExtension ?: ""
+            FilesExtensions.MusicFiles.contains(ext)
+        }
+        val directoryCount = childEntries.count { entry -> entry is FileSystemEntry.Directory }
+        return LibraryEntry(
+            directory = filesystemStore.directoryBy(roomDir.path),
+            aliasTitle = roomDir.aliasTitle,
+            createdAt = roomDir.createdAt,
+            updatedAt = roomDir.updatedAt,
+            musicFileCount = musicFileCount,
+            directoryCount = directoryCount,
+        )
     }
 }

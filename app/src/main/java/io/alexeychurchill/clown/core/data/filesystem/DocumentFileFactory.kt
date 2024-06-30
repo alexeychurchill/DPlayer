@@ -11,4 +11,6 @@ annotation class ForFile
 @Qualifier
 annotation class ForTree
 
-typealias DocumentFileFactory = (path: String) -> DocumentFile?
+fun interface DocumentFileFactory {
+    operator fun invoke(path: String): DocumentFile?
+}

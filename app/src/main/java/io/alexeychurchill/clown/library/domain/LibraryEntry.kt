@@ -8,4 +8,6 @@ data class LibraryEntry(
     val aliasTitle: String?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
+    val directoryCount: Int,
+    val musicFileCount: Int,
 )

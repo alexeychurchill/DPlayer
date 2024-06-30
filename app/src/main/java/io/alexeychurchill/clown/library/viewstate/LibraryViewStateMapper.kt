@@ -21,16 +21,25 @@ class LibraryViewStateMapper @Inject constructor() {
         return DirectoryViewState(
             title = mapDirectoryName(entry),
             status = when {
-                dir == null -> DirectoryStatusViewState.NONE
-                dir.exists && ((dir.dirCount ?: 0) + (dir.fileCount ?: 0)) > 0 -> {
+                dir == null -> {
+                    DirectoryStatusViewState.NONE
+                }
+
+                dir.exists && (entry.directoryCount + entry.musicFileCount) > 0 -> {
                     DirectoryStatusViewState.AVAILABLE
                 }
-                !dir.exists -> DirectoryStatusViewState.WARNING
-                else -> DirectoryStatusViewState.NONE
+
+                !dir.exists -> {
+                    DirectoryStatusViewState.WARNING
+                }
+
+                else -> {
+                    DirectoryStatusViewState.NONE
+                }
             },
             onPickAction = LibraryViewAction.OpenLibraryEntry(entry),
-            dirCount = entry.directory?.dirCount,
-            fileCount = entry.directory?.fileCount,
+            dirCount = entry.directoryCount,
+            fileCount = entry.musicFileCount,
         )
     }
 

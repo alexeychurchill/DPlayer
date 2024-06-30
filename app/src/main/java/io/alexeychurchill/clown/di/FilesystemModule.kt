@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -21,22 +22,16 @@ abstract class FilesystemModule {
     companion object {
 
         @ForTree
+        @Provides
         fun provideTreeDocumentFileFactory(
             @ApplicationContext context: Context
-        ): DocumentFileFactory {
-            return { path ->
-                DocumentFile.fromTreeUri(context, Uri.parse(path))
-            }
-        }
+        ) = DocumentFileFactory { path -> DocumentFile.fromTreeUri(context, Uri.parse(path)) }
 
         @ForFile
+        @Provides
         fun provideFileDocumentFileFactory(
             @ApplicationContext context: Context
-        ): DocumentFileFactory {
-            return { path ->
-                DocumentFile.fromSingleUri(context, Uri.parse(path))
-            }
-        }
+        ) = DocumentFileFactory { path -> DocumentFile.fromSingleUri(context, Uri.parse(path)) }
     }
 
     @Binds

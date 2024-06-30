@@ -17,8 +17,6 @@ class FilesystemStore @Inject constructor(
             path = path,
             name = FileName.of(dirFile.name),
             exists = dirFile.exists(),
-            fileCount = dirFile.musicFileCount,
-            dirCount = dirFile.directoryCount,
         )
     }
 

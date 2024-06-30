@@ -22,14 +22,15 @@ class AddDirectoryUseCase @Inject constructor(
             path = path,
             name = FileName.Unknown,
             exists = true,
-            fileCount = null,
-            dirCount = null,
         )
+        // TODO: Get rid of LibraryEntry usage
         val entry = LibraryEntry(
             directory = directory,
             aliasTitle = null,
             createdAt = now,
             updatedAt = now,
+            directoryCount = 0,
+            musicFileCount = 0,
         )
         libraryRepository.addDirectory(entry)
     }
