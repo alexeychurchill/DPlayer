@@ -5,14 +5,11 @@ package io.alexeychurchill.clown.library.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.alexeychurchill.clown.core.viewstate.ViewAction
 import io.alexeychurchill.clown.library.domain.AddDirectoryUseCase
+import io.alexeychurchill.clown.library.domain.LibraryEntry
 import io.alexeychurchill.clown.library.domain.LibraryRepository
-import io.alexeychurchill.clown.library.viewstate.LibraryViewAction
-import io.alexeychurchill.clown.library.viewstate.LibraryViewAction.AddFolder
-import io.alexeychurchill.clown.library.viewstate.LibraryViewAction.OnFolderPicked
+import io.alexeychurchill.clown.library.viewstate.DirectoryLibraryListItemStateMapper
 import io.alexeychurchill.clown.library.viewstate.LibraryViewState
-import io.alexeychurchill.clown.library.viewstate.LibraryViewStateMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -29,14 +26,17 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     libraryRepository: LibraryRepository,
     private val addFolderUseCase: AddDirectoryUseCase,
-    private val libraryViewStateMapper: LibraryViewStateMapper
+    private val directoryItemStateMapper: DirectoryLibraryListItemStateMapper,
 ) : ViewModel() {
 
     private val mutableOpenDirectoryPickerFlow = MutableSharedFlow<Unit>()
 
     val libraryViewState: StateFlow<LibraryViewState> = libraryRepository
         .allEntries
-        .mapLatest(libraryViewStateMapper::mapToViewState)
+        .mapLatest {
+            val dirEntries = it.filterIsInstance<LibraryEntry.Directory>()
+            LibraryViewState.Loaded(dirEntries.map(directoryItemStateMapper::mapToListItemState))
+        }
         .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
@@ -47,16 +47,15 @@ class LibraryViewModel @Inject constructor(
     val openDirectoryFlow: Flow<Unit>
         get() = mutableOpenDirectoryPickerFlow
 
-    fun onEvent(event: ViewAction) {
-        if (event !is LibraryViewAction) return
-        viewModelScope.launch { handleEvents(event) }
+    fun onAddTap() {
+        viewModelScope.launch {
+            mutableOpenDirectoryPickerFlow.emit(Unit)
+        }
     }
 
-    private suspend fun handleEvents(event: LibraryViewAction) {
-        when (event) {
-            AddFolder -> mutableOpenDirectoryPickerFlow.emit(Unit)
-            is OnFolderPicked -> addFolderUseCase(event.treeUri)
-            else -> {}
+    fun onAddUri(uri: String?) {
+        viewModelScope.launch {
+            addFolderUseCase(uri)
         }
     }
 }

@@ -1,48 +1,46 @@
 package io.alexeychurchill.clown.library.viewstate
 
 import io.alexeychurchill.clown.core.domain.filesystem.FileName
+import io.alexeychurchill.clown.core.viewstate.ViewAction
+import io.alexeychurchill.clown.library.domain.DirectorySource
 import io.alexeychurchill.clown.library.domain.LibraryEntry
 import javax.inject.Inject
 
-class LibraryViewStateMapper @Inject constructor() {
+class FileLibraryListItemStateMapper @Inject constructor() {
 
-    private companion object {
-        const val DEFAULT_NAME = "-"
-    }
-
-    fun mapToViewState(items: List<LibraryEntry>): LibraryViewState {
-        return LibraryViewState.Loaded(
-            items = items.map(::mapDirectoryToViewState)
+    fun mapToListItemState(file: LibraryEntry.File): LibraryListItemState.Entry {
+        return LibraryListItemState.Entry(
+            title = (file.fileEntry.name as? FileName.Name)?.value ?: FileName.DefaultUnknownValue,
+            type = LibraryListItemState.Entry.Type.MusicFile,
+            onTap = ViewAction.todo(),
         )
     }
+}
 
-    private fun mapDirectoryToViewState(entry: LibraryEntry): DirectoryViewState {
-        val dir = entry.directory
-        return DirectoryViewState(
-            title = mapDirectoryName(entry),
+class DirectoryLibraryListItemStateMapper @Inject constructor() {
+
+    fun mapToListItemState(directory: LibraryEntry.Directory): LibraryListItemState.Entry {
+        val directoryTitle = (directory.source as? DirectorySource.FromUserLibrary)?.aliasTitle
+            ?: (directory.directoryEntry?.name as? FileName.Name)?.value
+            ?: FileName.DefaultUnknownValue
+
+        val exists = directory.directoryEntry?.exists == true
+        val hasChildren = (directory.subDirectoryCount + directory.musicFileCount) > 0
+        return LibraryListItemState.Entry(
+            title = directoryTitle,
+            type = LibraryListItemState.Entry.Type.Directory,
             status = when {
-                dir == null -> {
-                    DirectoryStatusViewState.NONE
-                }
+                !exists -> LibraryListItemState.Entry.Status.Faulty
 
-                dir.exists && (entry.directoryCount + entry.musicFileCount) > 0 -> {
-                    DirectoryStatusViewState.AVAILABLE
-                }
+                exists && hasChildren -> LibraryListItemState.Entry.Status.Openable
 
-                !dir.exists -> {
-                    DirectoryStatusViewState.WARNING
-                }
-
-                else -> {
-                    DirectoryStatusViewState.NONE
-                }
+                else -> LibraryListItemState.Entry.Status.None
             },
-            onPickAction = LibraryViewAction.OpenLibraryEntry(entry),
-            dirCount = entry.directoryCount,
-            fileCount = entry.musicFileCount,
+            metaItems = buildList {
+                add(LibraryListItemMeta.DirectoryCount(directory.subDirectoryCount))
+                add(LibraryListItemMeta.MusicFileCount(directory.musicFileCount))
+            },
+            onTap = ViewAction.todo(),
         )
     }
-
-    private fun mapDirectoryName(entry: LibraryEntry) =
-        entry.aliasTitle ?: (entry.directory?.name as? FileName.Name)?.value ?: DEFAULT_NAME
 }

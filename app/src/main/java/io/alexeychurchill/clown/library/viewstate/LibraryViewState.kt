@@ -4,5 +4,5 @@ sealed interface LibraryViewState {
 
     data object Loading : LibraryViewState
 
-    data class Loaded(val items: List<DirectoryViewState>) : LibraryViewState
+    data class Loaded(val items: List<LibraryListItemState>) : LibraryViewState
 }

@@ -11,6 +11,7 @@ import io.alexeychurchill.clown.library.data.database.DirectoryDao
 import io.alexeychurchill.clown.library.data.database.RoomLibraryRecord
 import io.alexeychurchill.clown.library.data.database.RoomLibraryRecordMapper
 import io.alexeychurchill.clown.library.domain.DirectoryPermissionsDispatcher
+import io.alexeychurchill.clown.library.domain.DirectorySource
 import io.alexeychurchill.clown.library.domain.LibraryEntry
 import io.alexeychurchill.clown.library.domain.LibraryRecord
 import io.alexeychurchill.clown.library.domain.LibraryRepository
@@ -61,13 +62,15 @@ class LibraryRepositoryImpl @Inject constructor(
             FilesExtensions.MusicFiles.contains(ext)
         }
         val directoryCount = childEntries.count { entry -> entry is FileSystemEntry.Directory }
-        return LibraryEntry(
-            directory = filesystemStore.directoryBy(roomDir.path),
-            aliasTitle = roomDir.aliasTitle,
-            createdAt = roomDir.createdAt,
-            updatedAt = roomDir.updatedAt,
+        return LibraryEntry.Directory(
+            directoryEntry = filesystemStore.directoryBy(roomDir.path),
             musicFileCount = musicFileCount,
-            directoryCount = directoryCount,
+            subDirectoryCount = directoryCount,
+            source = DirectorySource.FromUserLibrary(
+                aliasTitle = roomDir.aliasTitle,
+                createdAt = roomDir.createdAt,
+                updatedAt = roomDir.updatedAt,
+            ),
         )
     }
 }

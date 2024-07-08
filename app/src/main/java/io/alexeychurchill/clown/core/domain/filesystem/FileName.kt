@@ -3,8 +3,10 @@ package io.alexeychurchill.clown.core.domain.filesystem
 sealed interface FileName {
 
     companion object {
-        fun of(name: String?): FileName =
-            name?.let(FileName::Name) ?: Unknown
+
+        const val DefaultUnknownValue = "-"
+
+        fun of(name: String?): FileName = name?.let(FileName::Name) ?: Unknown
     }
 
     data object Unknown : FileName

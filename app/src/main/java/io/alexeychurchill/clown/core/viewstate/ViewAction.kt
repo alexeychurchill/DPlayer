@@ -2,13 +2,21 @@ package io.alexeychurchill.clown.core.viewstate
 
 typealias ViewActionHandler = (ViewAction) -> Unit
 
-/**
- * An **action**, which can be passed from the **view** to the
- * **presentation logic**
- */
-interface ViewAction
+class ViewAction(
+    private val key: Any? = null,
+    private val block: suspend () -> Unit,
+) {
 
-/**
- * Kind of default [ViewAction]. For stubs
- */
-data object Noop : ViewAction
+    companion object {
+
+        fun noop(): ViewAction = ViewAction(block = { })
+
+        fun todo(): ViewAction = ViewAction(block = { TODO() })
+    }
+
+    override fun equals(other: Any?): Boolean = other is ViewAction && other.key == key
+
+    override fun hashCode(): Int = key?.hashCode() ?: 0
+
+    suspend operator fun invoke(): Unit = block()
+}
