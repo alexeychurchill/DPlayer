@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.clown.library.domain.AddDirectoryUseCase
-import io.alexeychurchill.clown.library.domain.LibraryEntry
+import io.alexeychurchill.clown.library.domain.MediaEntry
 import io.alexeychurchill.clown.library.domain.LibraryRepository
 import io.alexeychurchill.clown.library.viewstate.DirectoryLibraryListItemStateMapper
 import io.alexeychurchill.clown.library.viewstate.LibraryViewState
@@ -34,7 +34,7 @@ class LibraryViewModel @Inject constructor(
     val libraryViewState: StateFlow<LibraryViewState> = libraryRepository
         .allEntries
         .mapLatest {
-            val dirEntries = it.filterIsInstance<LibraryEntry.Directory>()
+            val dirEntries = it.filterIsInstance<MediaEntry.Directory>()
             LibraryViewState.Loaded(dirEntries.map(directoryItemStateMapper::mapToListItemState))
         }
         .flowOn(Dispatchers.IO)

@@ -12,7 +12,7 @@ import io.alexeychurchill.clown.library.data.database.RoomLibraryRecord
 import io.alexeychurchill.clown.library.data.database.RoomLibraryRecordMapper
 import io.alexeychurchill.clown.library.domain.DirectoryPermissionsDispatcher
 import io.alexeychurchill.clown.library.domain.DirectorySource
-import io.alexeychurchill.clown.library.domain.LibraryEntry
+import io.alexeychurchill.clown.library.domain.MediaEntry
 import io.alexeychurchill.clown.library.domain.LibraryRecord
 import io.alexeychurchill.clown.library.domain.LibraryRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,12 +30,12 @@ class LibraryRepositoryImpl @Inject constructor(
     private val filesystemStore: FilesystemStore,
 ) : LibraryRepository {
 
-    override val allEntries: Flow<List<LibraryEntry>>
+    override val allEntries: Flow<List<MediaEntry>>
         get() = directoryDao
             .allDirectoriesByAddedDate()
             .mapLatest { roomDirs -> createDirectories(roomDirs) }
 
-    override suspend fun getLibraryEntry(path: String): LibraryEntry? {
+    override suspend fun getLibraryEntry(path: String): MediaEntry? {
         val roomDir = directoryDao.getDirectoryByPath(path) ?: return null
         return fetchLibraryEntry(roomDir)
     }
@@ -47,13 +47,13 @@ class LibraryRepositoryImpl @Inject constructor(
 
     private suspend fun createDirectories(
         roomDirs: List<RoomLibraryRecord>
-    ): List<LibraryEntry> = coroutineScope {
+    ): List<MediaEntry> = coroutineScope {
         roomDirs
             .map { roomDir -> async { fetchLibraryEntry(roomDir) } }
             .awaitAll()
     }
 
-    private fun fetchLibraryEntry(roomDir: RoomLibraryRecord): LibraryEntry {
+    private fun fetchLibraryEntry(roomDir: RoomLibraryRecord): MediaEntry {
         val childEntries = filesystemStore.list(roomDir.path)
         val musicFileCount = childEntries.count { entry ->
             val ext = ((entry as? FileSystemEntry.File)?.name as? FileName.Name)
@@ -62,7 +62,7 @@ class LibraryRepositoryImpl @Inject constructor(
             FilesExtensions.MusicFiles.contains(ext)
         }
         val directoryCount = childEntries.count { entry -> entry is FileSystemEntry.Directory }
-        return LibraryEntry.Directory(
+        return MediaEntry.Directory(
             directoryEntry = filesystemStore.directoryBy(roomDir.path),
             musicFileCount = musicFileCount,
             subDirectoryCount = directoryCount,

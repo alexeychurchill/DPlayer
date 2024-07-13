@@ -3,12 +3,12 @@ package io.alexeychurchill.clown.library.viewstate
 import io.alexeychurchill.clown.core.domain.filesystem.FileName
 import io.alexeychurchill.clown.core.viewstate.ViewAction
 import io.alexeychurchill.clown.library.domain.DirectorySource
-import io.alexeychurchill.clown.library.domain.LibraryEntry
+import io.alexeychurchill.clown.library.domain.MediaEntry
 import javax.inject.Inject
 
 class FileLibraryListItemStateMapper @Inject constructor() {
 
-    fun mapToListItemState(file: LibraryEntry.File): LibraryListItemState.Entry {
+    fun mapToListItemState(file: MediaEntry.File): LibraryListItemState.Entry {
         return LibraryListItemState.Entry(
             title = (file.fileEntry.name as? FileName.Name)?.value ?: FileName.DefaultUnknownValue,
             type = LibraryListItemState.Entry.Type.MusicFile,
@@ -19,7 +19,7 @@ class FileLibraryListItemStateMapper @Inject constructor() {
 
 class DirectoryLibraryListItemStateMapper @Inject constructor() {
 
-    fun mapToListItemState(directory: LibraryEntry.Directory): LibraryListItemState.Entry {
+    fun mapToListItemState(directory: MediaEntry.Directory): LibraryListItemState.Entry {
         val directoryTitle = (directory.source as? DirectorySource.FromUserLibrary)?.aliasTitle
             ?: (directory.directoryEntry?.name as? FileName.Name)?.value
             ?: FileName.DefaultUnknownValue

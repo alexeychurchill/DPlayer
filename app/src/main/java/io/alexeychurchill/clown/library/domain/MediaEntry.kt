@@ -3,23 +3,18 @@ package io.alexeychurchill.clown.library.domain
 import io.alexeychurchill.clown.core.domain.filesystem.FileSystemEntry
 import java.time.LocalDateTime
 
-sealed class LibraryEntry(open val fileSystemEntry: FileSystemEntry?) {
+sealed interface MediaEntry {
 
     data class Directory(
         val directoryEntry: FileSystemEntry.Directory?,
         val subDirectoryCount: Int,
         val musicFileCount: Int,
         val source: DirectorySource,
-    ) : LibraryEntry(directoryEntry) {
-
-        companion object {
-            const val DefaultName = "-"
-        }
-    }
+    ) : MediaEntry
 
     data class File(
         val fileEntry: FileSystemEntry.File,
-    ) : LibraryEntry(fileEntry)
+    ) : MediaEntry
 }
 
 sealed interface DirectorySource {
