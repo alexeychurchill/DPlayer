@@ -6,10 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.clown.library.domain.AddDirectoryUseCase
-import io.alexeychurchill.clown.library.domain.MediaEntry
 import io.alexeychurchill.clown.library.domain.LibraryRepository
-import io.alexeychurchill.clown.library.viewstate.DirectoryLibraryListItemStateMapper
-import io.alexeychurchill.clown.library.viewstate.LibraryViewState
+import io.alexeychurchill.clown.library.domain.MediaEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -23,10 +21,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LibraryViewModel @Inject constructor(
+class RootLibraryViewModel @Inject constructor(
     libraryRepository: LibraryRepository,
     private val addFolderUseCase: AddDirectoryUseCase,
-    private val directoryItemStateMapper: DirectoryLibraryListItemStateMapper,
+    private val mediaEntryMapper: MediaEntryViewStateMapper,
 ) : ViewModel() {
 
     private val mutableOpenDirectoryPickerFlow = MutableSharedFlow<Unit>()
@@ -34,8 +32,13 @@ class LibraryViewModel @Inject constructor(
     val libraryViewState: StateFlow<LibraryViewState> = libraryRepository
         .allEntries
         .mapLatest {
-            val dirEntries = it.filterIsInstance<MediaEntry.Directory>()
-            LibraryViewState.Loaded(dirEntries.map(directoryItemStateMapper::mapToListItemState))
+            val directoryEntries = it.filterIsInstance<MediaEntry.Directory>()
+            val items = directoryEntries.map(mediaEntryMapper::mapToViewState)
+            LibraryViewState.Loaded(
+                sections = listOf(
+                    LibrarySectionViewState.MediaEntries(items = items),
+                ),
+            )
         }
         .flowOn(Dispatchers.IO)
         .stateIn(
@@ -57,5 +60,9 @@ class LibraryViewModel @Inject constructor(
         viewModelScope.launch {
             addFolderUseCase(uri)
         }
+    }
+
+    fun onItemTap(item: LibrarySectionViewState) {
+        // TODO: Handle item -> navigate
     }
 }

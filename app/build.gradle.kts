@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
+    id("de.mannodermaus.android-junit5") version "1.10.2.0"
 }
 
 android {
@@ -78,7 +79,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    implementation("androidx.compose.material:material-icons-extended:1.6.8")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     // Jetpack Navigation
     val navVersion = "2.7.7"
@@ -95,4 +96,15 @@ dependencies {
 
     // Document Framework API
     implementation("androidx.documentfile:documentfile:1.0.1")
+
+    // Unit Testing
+    val junitVersion = "5.10.3"
+    testImplementation(platform("org.junit:junit-bom:$junitVersion"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
+    val mockkVersion = "1.13.12"
+    testImplementation("io.mockk:mockk:$mockkVersion")
+    val assertjVersion = "3.25.1"
+    testImplementation("org.assertj:assertj-core:$assertjVersion")
 }
