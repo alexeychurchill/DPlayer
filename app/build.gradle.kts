@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
-    id("de.mannodermaus.android-junit5") version "1.10.2.0"
+    id("de.mannodermaus.android-junit5")
 }
 
 android {

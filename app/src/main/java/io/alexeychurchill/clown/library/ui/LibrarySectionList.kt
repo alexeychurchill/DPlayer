@@ -5,19 +5,22 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.alexeychurchill.clown.library.presentation.LibraryAction
 import io.alexeychurchill.clown.library.presentation.LibrarySectionViewState
 import io.alexeychurchill.clown.library.presentation.MediaEntryItemViewState
+import io.alexeychurchill.clown.library.presentation.OnLibraryAction
 
 @Composable
 fun LibrarySectionList(
     sections: List<LibrarySectionViewState>,
     modifier: Modifier = Modifier,
+    onAction: OnLibraryAction = {},
 ) {
     LazyColumn(modifier = modifier) {
         for (section in sections) {
             when (section) {
                 is LibrarySectionViewState.MediaEntries -> {
-                    mediaEntriesSection(section.items)
+                    mediaEntriesSection(section.items, onAction)
                 }
 
                 else -> { /** NO OP **/ }
@@ -28,11 +31,19 @@ fun LibrarySectionList(
 
 private fun LazyListScope.mediaEntriesSection(
     items: List<MediaEntryItemViewState>,
+    onAction: OnLibraryAction,
 ) {
     items(
         items = items,
+        /* key = { it.path ?: "" /** TODO: Remove this after refactoring MediaEntry **/ }, */
         contentType = MediaEntryItemViewState::type,
     ) { mediaEntry ->
-        MediaEntryListItem(entry = mediaEntry)
+        MediaEntryListItem(
+            entry = mediaEntry,
+            onTap = {
+                val action = LibraryAction.OpenMediaEntry(mediaEntry.type, mediaEntry.path)
+                onAction(action)
+            },
+        )
     }
 }

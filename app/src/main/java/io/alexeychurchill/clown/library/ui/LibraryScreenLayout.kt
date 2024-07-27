@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.alexeychurchill.clown.library.presentation.LibraryViewState
+import io.alexeychurchill.clown.library.presentation.OnLibraryAction
 import io.alexeychurchill.clown.ui.theme.ClownTheme
 
 @Composable
@@ -26,6 +27,7 @@ fun LibraryScreenLayout(
     state: LibraryViewState,
     modifier: Modifier = Modifier,
     actions: @Composable (RowScope.() -> Unit) = {},
+    onLibraryAction: OnLibraryAction = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -44,6 +46,7 @@ fun LibraryScreenLayout(
             is LibraryViewState.Loaded -> LoadedLibraryLayout(
                 state = state,
                 modifier = Modifier.padding(screenPaddings),
+                onAction = onLibraryAction,
             )
         }
     }
@@ -77,10 +80,12 @@ private fun LoadingLibraryLayout(modifier: Modifier = Modifier) {
 private fun LoadedLibraryLayout(
     state: LibraryViewState.Loaded,
     modifier: Modifier = Modifier,
+    onAction: OnLibraryAction = {},
 ) {
     LibrarySectionList(
         sections = state.sections,
         modifier = modifier,
+        onAction = onAction,
     )
 }
 
@@ -115,7 +120,7 @@ private class LibraryPreview : PreviewParameterProvider<LibraryViewState> {
         get() {
             return sequence {
                 yield(LibraryViewState.Loading)
-                /* yield(LibraryViewState.Loaded(listItemProvider.values.toList())) */ // TODO
+                yield(LibraryViewState.Loaded(sections = emptyList()))
             }
         }
 }

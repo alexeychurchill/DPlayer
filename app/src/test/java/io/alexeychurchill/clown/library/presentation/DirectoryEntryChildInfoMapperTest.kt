@@ -1,4 +1,4 @@
-package io.alexeychurhill.clown.library.presentation
+package io.alexeychurchill.clown.library.presentation
 
 import io.alexeychurchill.clown.core.domain.filesystem.FileName
 import io.alexeychurchill.clown.core.domain.filesystem.FileSystemEntry
