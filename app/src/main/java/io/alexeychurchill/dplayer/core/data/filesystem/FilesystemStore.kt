@@ -2,7 +2,7 @@ package io.alexeychurchill.dplayer.core.data.filesystem
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
-import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions
+import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions.Separator
 import javax.inject.Inject
 
 class FilesystemStore @Inject constructor(
@@ -25,7 +25,7 @@ class FilesystemStore @Inject constructor(
         val file = fileFactory(path) ?: return null
         return FileSystemEntry.File(
             path = path,
-            name = FileName.of(file.name),
+            name = FileName.of(file.name?.withNoExtension),
             extension = file.name?.fileExtension,
         )
     }
@@ -46,8 +46,14 @@ class FilesystemStore @Inject constructor(
     }
 }
 
+private val String.withNoExtension: String
+    get() = takeIf { it.contains(Separator) && it.last() != Separator }
+        ?.dropLastWhile { it != Separator }
+        ?.dropLast(n = 1)
+        ?: this
+
 private val String.fileExtension: String?
-    get() = split(FilesExtensions.Separator)
+    get() = split(Separator)
         .takeIf { it.size > 1 }
         ?.last()
         ?.lowercase()
