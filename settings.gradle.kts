@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Clown"
+rootProject.name = "DPlayer"
 include(":app")

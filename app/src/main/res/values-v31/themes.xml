@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Clown" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
+    <style name="Theme.DPlayer" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
 
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
