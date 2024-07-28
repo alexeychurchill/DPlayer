@@ -46,6 +46,7 @@ fun MediaEntryListItem(
         supportingContent = {
             entry.directoryChildInfo?.let { info ->
                 DirectoryChildCount(
+                    modifier = Modifier.padding(top = 4.dp),
                     subDirectoryCount = info.subDirectoryCount,
                     fileCount = info.fileCount,
                 )
