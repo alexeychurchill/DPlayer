@@ -89,10 +89,11 @@ private fun MediaEntryLibraryScreen(
     ),
     onLibraryAction: OnLibraryAction = {},
 ) {
+    val title by viewModel.titleState.collectAsState()
     val state by viewModel.libraryState.collectAsState()
     LibraryScreenLayout(
         modifier = modifier.fillMaxSize(),
-        title = "...",
+        title = title ?: "",
         state = state,
         onLibraryAction = onLibraryAction,
     )
