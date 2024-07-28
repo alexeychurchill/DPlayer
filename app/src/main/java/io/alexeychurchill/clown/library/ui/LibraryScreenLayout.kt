@@ -3,7 +3,7 @@
 package io.alexeychurchill.clown.library.ui
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,9 +41,9 @@ fun LibraryScreenLayout(
             )
         }
     ) { screenPaddings ->
-        AnimatedContent(
+        Crossfade(
             targetState = state,
-            label = "content",
+            label = "content crossfade",
         ) { currentState ->
             when (currentState) {
                 LibraryViewState.Loading -> LoadingLibraryLayout(
@@ -70,9 +70,9 @@ private fun LibraryTopBar(
     TopAppBar(
         modifier = modifier,
         title = {
-            AnimatedContent(
+            Crossfade(
                 targetState = title,
-                label = "top bar title",
+                label = "screen title crossfade",
             ) { titleValue ->
                 Text(text = titleValue)
             }
