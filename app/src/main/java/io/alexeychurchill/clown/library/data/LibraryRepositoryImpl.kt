@@ -2,19 +2,14 @@
 
 package io.alexeychurchill.clown.library.data
 
-import io.alexeychurchill.clown.core.data.filesystem.FilesExtensions
-import io.alexeychurchill.clown.core.data.filesystem.FilesystemStore
-import io.alexeychurchill.clown.core.domain.filesystem.FileName
-import io.alexeychurchill.clown.core.domain.filesystem.FileSystemEntry
-import io.alexeychurchill.clown.core.utils.fileExtension
 import io.alexeychurchill.clown.library.data.database.DirectoryDao
 import io.alexeychurchill.clown.library.data.database.RoomLibraryRecord
 import io.alexeychurchill.clown.library.data.database.RoomLibraryRecordMapper
 import io.alexeychurchill.clown.library.domain.DirectoryPermissionsDispatcher
 import io.alexeychurchill.clown.library.domain.DirectorySource
-import io.alexeychurchill.clown.library.domain.MediaEntry
 import io.alexeychurchill.clown.library.domain.LibraryRecord
 import io.alexeychurchill.clown.library.domain.LibraryRepository
+import io.alexeychurchill.clown.library.domain.MediaEntry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -27,7 +22,7 @@ class LibraryRepositoryImpl @Inject constructor(
     private val directoryDao: DirectoryDao,
     private val libraryRecordMapper: RoomLibraryRecordMapper,
     private val permissionsDispatcher: DirectoryPermissionsDispatcher,
-    private val filesystemStore: FilesystemStore,
+    private val mediaEntryStore: MediaEntryStore,
 ) : LibraryRepository {
 
     override val allEntries: Flow<List<MediaEntry>>
@@ -53,24 +48,15 @@ class LibraryRepositoryImpl @Inject constructor(
             .awaitAll()
     }
 
-    private fun fetchLibraryEntry(roomDir: RoomLibraryRecord): MediaEntry {
-        val childEntries = filesystemStore.list(roomDir.path)
-        val musicFileCount = childEntries.count { entry ->
-            val ext = ((entry as? FileSystemEntry.File)?.name as? FileName.Name)
-                ?.value
-                ?.fileExtension ?: ""
-            FilesExtensions.MusicFiles.contains(ext)
-        }
-        val directoryCount = childEntries.count { entry -> entry is FileSystemEntry.Directory }
-        return MediaEntry.Directory(
-            directoryEntry = filesystemStore.directoryBy(roomDir.path),
-            musicFileCount = musicFileCount,
-            subDirectoryCount = directoryCount,
-            source = DirectorySource.FromUserLibrary(
-                aliasTitle = roomDir.aliasTitle,
-                createdAt = roomDir.createdAt,
-                updatedAt = roomDir.updatedAt,
-            ),
+    private fun fetchLibraryEntry(roomRecord: RoomLibraryRecord): MediaEntry {
+        return mediaEntryStore.directoryMediaEntry(roomRecord.path, sourceFrom(roomRecord))
+    }
+
+    private fun sourceFrom(roomRecord: RoomLibraryRecord): DirectorySource.FromUserLibrary {
+        return DirectorySource.FromUserLibrary(
+            aliasTitle = roomRecord.aliasTitle,
+            createdAt = roomRecord.createdAt,
+            updatedAt = roomRecord.updatedAt,
         )
     }
 }

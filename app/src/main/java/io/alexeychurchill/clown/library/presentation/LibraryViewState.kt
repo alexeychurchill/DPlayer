@@ -17,6 +17,7 @@ sealed interface LibrarySectionViewState {
 }
 
 data class MediaEntryItemViewState(
+    val path: String?,
     val title: String,
     val type: Type,
     val status: Status = Status.None,

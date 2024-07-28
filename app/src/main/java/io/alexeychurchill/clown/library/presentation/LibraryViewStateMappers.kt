@@ -9,6 +9,7 @@ import javax.inject.Inject
 
 
 class MediaEntryViewStateMapper @Inject constructor(
+    private val pathMapper: MediaEntryPathMapper,
     private val titleMapper: MediaEntryTitleMapper,
     private val typeMapper: MediaEntryTypeMapper,
     private val statusMapper: MediaEntryStatusMapper,
@@ -17,11 +18,20 @@ class MediaEntryViewStateMapper @Inject constructor(
 
     fun mapToViewState(entry: MediaEntry): MediaEntryItemViewState {
         return MediaEntryItemViewState(
+            path = pathMapper.mapToPath(entry),
             title = titleMapper.mapToTitle(entry),
             type = typeMapper.mapToType(entry),
             status = statusMapper.mapToStatus(entry),
             directoryChildInfo = childInfoMapper.mapToChildInfo(entry),
         )
+    }
+}
+
+class MediaEntryPathMapper @Inject constructor() {
+
+    fun mapToPath(entry: MediaEntry): String? = when (entry) {
+        is MediaEntry.Directory -> entry.directoryEntry?.path
+        is MediaEntry.File -> entry.fileEntry.path
     }
 }
 
