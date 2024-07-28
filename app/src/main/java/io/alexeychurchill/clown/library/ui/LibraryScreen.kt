@@ -3,6 +3,10 @@ package io.alexeychurchill.clown.library.ui
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
@@ -15,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -55,7 +60,15 @@ fun LibraryScreen(
             RootLibraryScreen(onLibraryAction = viewModel::onAction)
         }
 
-        composable(route = LibraryDirection.Directory.NavPattern) { backStackEntry ->
+        composable(
+            route = LibraryDirection.Directory.NavPattern,
+            enterTransition = {
+                slideIn(initialOffset = { size -> IntOffset(x = size.width, y = 0) }) + fadeIn()
+            },
+            exitTransition = {
+                slideOut(targetOffset = { size -> IntOffset(x = size.width, y = 0) }) + fadeOut()
+            },
+        ) { backStackEntry ->
             val directoryPathId = backStackEntry.arguments
                 ?.getString(LibraryDirection.Directory.ArgPathId)
 

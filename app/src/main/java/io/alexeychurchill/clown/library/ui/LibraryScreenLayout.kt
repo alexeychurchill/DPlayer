@@ -3,6 +3,7 @@
 package io.alexeychurchill.clown.library.ui
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,16 +41,21 @@ fun LibraryScreenLayout(
             )
         }
     ) { screenPaddings ->
-        when (state) {
-            LibraryViewState.Loading -> LoadingLibraryLayout(
-                modifier = Modifier.padding(screenPaddings)
-            )
+        AnimatedContent(
+            targetState = state,
+            label = "content",
+        ) { currentState ->
+            when (currentState) {
+                LibraryViewState.Loading -> LoadingLibraryLayout(
+                    modifier = Modifier.padding(screenPaddings)
+                )
 
-            is LibraryViewState.Loaded -> LoadedLibraryLayout(
-                state = state,
-                modifier = Modifier.padding(screenPaddings),
-                onAction = onLibraryAction,
-            )
+                is LibraryViewState.Loaded -> LoadedLibraryLayout(
+                    state = currentState,
+                    modifier = Modifier.padding(screenPaddings),
+                    onAction = onLibraryAction,
+                )
+            }
         }
     }
 }
@@ -64,7 +70,12 @@ private fun LibraryTopBar(
     TopAppBar(
         modifier = modifier,
         title = {
-            Text(text = title)
+            AnimatedContent(
+                targetState = title,
+                label = "top bar title",
+            ) { titleValue ->
+                Text(text = titleValue)
+            }
         },
         navigationIcon = navigationIcon,
         actions = actions,
