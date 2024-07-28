@@ -1,18 +1,11 @@
 package io.alexeychurchill.dplayer.core.domain.filesystem
 
 
-val String.fileExtension: String?
-    get() = split(FilesExtensions.Separator)
-        .takeIf { it.size > 1 }
-        ?.last()
-        ?.lowercase()
-
 fun List<FileSystemEntry>.fileCount(
-    extensionPredicate: ((extension: String) -> Boolean)? = null,
+    extensionPredicate: ((extension: String?) -> Boolean)? = null,
 ): Int {
     return filterIsInstance<FileSystemEntry.File>().count { file ->
-        val fileExt = (file.name as? FileName.Name)?.value?.fileExtension ?: ""
-        extensionPredicate?.invoke(fileExt) ?: true
+        extensionPredicate?.invoke(file.extension) ?: true
     }
 }
 

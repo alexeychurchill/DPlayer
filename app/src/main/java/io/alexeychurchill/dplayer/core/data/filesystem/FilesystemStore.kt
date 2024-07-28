@@ -2,7 +2,7 @@ package io.alexeychurchill.dplayer.core.data.filesystem
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
-import io.alexeychurchill.dplayer.core.domain.filesystem.fileExtension
+import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions
 import javax.inject.Inject
 
 class FilesystemStore @Inject constructor(
@@ -45,3 +45,9 @@ class FilesystemStore @Inject constructor(
             }
     }
 }
+
+private val String.fileExtension: String?
+    get() = split(FilesExtensions.Separator)
+        .takeIf { it.size > 1 }
+        ?.last()
+        ?.lowercase()

@@ -1,8 +1,6 @@
 package io.alexeychurchill.dplayer.library.data
 
-import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions
-import io.alexeychurchill.dplayer.core.domain.filesystem.fileExtension
 import io.alexeychurchill.dplayer.library.domain.DirectorySource.FromFileSystem
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
@@ -28,9 +26,7 @@ class FileSystemRepositoryImpl @Inject constructor(
                 return@filter true
             }
 
-            val extension = (mediaEntry.fileEntry.name as? FileName.Name)?.value?.fileExtension
-                ?: ""
-
+            val extension = mediaEntry.fileEntry.extension ?: ""
             extension in FilesExtensions.MusicFiles
         }
     }

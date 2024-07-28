@@ -23,7 +23,9 @@ class MediaEntryStore @Inject constructor(
         val childEntries = filesystemStore.list(path)
         return MediaEntry.Directory(
             directoryEntry = filesystemStore.directoryBy(path),
-            musicFileCount = childEntries.fileCount { ext -> ext in FilesExtensions.MusicFiles },
+            musicFileCount = childEntries.fileCount { ext ->
+                (ext ?: "") in FilesExtensions.MusicFiles
+            },
             subDirectoryCount = childEntries.directoryCount(),
             source = source,
         )
