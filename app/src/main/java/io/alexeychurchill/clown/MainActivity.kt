@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
 import io.alexeychurchill.clown.library.data.filesystem.SafDirectoryPermissionsDispatcher
 import io.alexeychurchill.clown.library.ui.LibraryScreen
@@ -20,13 +21,13 @@ class MainActivity : ComponentActivity() {
     lateinit var safDirectoryPermissionsDispatcher: SafDirectoryPermissionsDispatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         setupEdgeToEdge()
         lifecycle.addObserver(safDirectoryPermissionsDispatcher)
         setContent {
             ClownTheme {
                 LibraryScreen()
-//                LibraryScreen()
             }
         }
     }

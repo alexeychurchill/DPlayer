@@ -3,6 +3,9 @@ package io.alexeychurchill.clown.library.ui
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
@@ -36,6 +39,8 @@ import io.alexeychurchill.clown.library.presentation.OnLibraryAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
+private const val TransitionAlpha = 0.35f
+
 @Composable
 fun LibraryScreen(
     navController: NavHostController = rememberNavController(),
@@ -56,18 +61,20 @@ fun LibraryScreen(
     )
 
     NavHost(navController, startDestination = LibraryDirection.start) {
-        composable(route = LibraryDirection.Root.navPath) {
+        composable(
+            route = LibraryDirection.Root.navPath,
+            popEnterTransition = { transitionEnterFromStart() },
+            exitTransition = { transitionExitToStart() },
+        ) {
             RootLibraryScreen(onLibraryAction = viewModel::onAction)
         }
 
         composable(
             route = LibraryDirection.Directory.NavPattern,
-            enterTransition = {
-                slideIn(initialOffset = { size -> IntOffset(x = size.width, y = 0) }) + fadeIn()
-            },
-            exitTransition = {
-                slideOut(targetOffset = { size -> IntOffset(x = size.width, y = 0) }) + fadeOut()
-            },
+            enterTransition = { transitionEnterFromEnd() },
+            popEnterTransition = { transitionEnterFromStart() },
+            exitTransition = { transitionExitToStart() },
+            popExitTransition = { transitionExitToEnd() },
         ) { backStackEntry ->
             val directoryPathId = backStackEntry.arguments
                 ?.getString(LibraryDirection.Directory.ArgPathId)
@@ -78,6 +85,46 @@ fun LibraryScreen(
             )
         }
     }
+}
+
+private fun transitionEnterFromStart(): EnterTransition {
+    return slideIn(
+        animationSpec = tween(),
+        initialOffset = { size -> IntOffset(x = -size.width, y = 0) },
+    ) + fadeIn(
+        animationSpec = tween(),
+        initialAlpha = TransitionAlpha,
+    )
+}
+
+private fun transitionEnterFromEnd(): EnterTransition {
+    return slideIn(
+        animationSpec = tween(),
+        initialOffset = { size -> IntOffset(x = size.width, y = 0) },
+    ) + fadeIn(
+        animationSpec = tween(),
+        initialAlpha = TransitionAlpha,
+    )
+}
+
+private fun transitionExitToStart(): ExitTransition {
+    return slideOut(
+        animationSpec = tween(),
+        targetOffset = { size -> IntOffset(x = -size.width, y = 0) },
+    ) + fadeOut(
+        animationSpec = tween(),
+        targetAlpha = TransitionAlpha,
+    )
+}
+
+private fun transitionExitToEnd(): ExitTransition {
+    return slideOut(
+        animationSpec = tween(),
+        targetOffset = { size -> IntOffset(x = size.width, y = 0) },
+    ) + fadeOut(
+        animationSpec = tween(),
+        targetAlpha = TransitionAlpha,
+    )
 }
 
 @Composable
