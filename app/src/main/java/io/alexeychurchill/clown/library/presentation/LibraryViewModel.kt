@@ -21,11 +21,16 @@ class LibraryViewModel @Inject constructor(
 
     private val mutableDirectionFlow = MutableSharedFlow<LibraryDirection>()
 
+    private val mutableBackDirectionFlow = MutableSharedFlow<Unit>()
+
     val openDirectoryFlow: Flow<Unit>
         get() = mutableOpenDirectoryFlow
 
     val directionFlow: Flow<LibraryDirection>
         get() = mutableDirectionFlow
+
+    val backDirectionFlow: Flow<Unit>
+        get() = mutableBackDirectionFlow
 
     fun onAction(action: LibraryAction) {
         viewModelScope.launch {
@@ -41,6 +46,7 @@ class LibraryViewModel @Inject constructor(
 
                 LibraryAction.OpenTreePicker -> mutableOpenDirectoryFlow.emit(Unit)
                 is LibraryAction.TreePicked -> addFolderUseCase(action.uriPath)
+                LibraryAction.GoBack -> mutableBackDirectionFlow.emit(Unit)
             }
         }
     }

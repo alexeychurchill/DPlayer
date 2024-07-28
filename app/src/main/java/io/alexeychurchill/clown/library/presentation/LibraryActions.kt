@@ -12,4 +12,6 @@ sealed interface LibraryAction {
         val type: MediaEntryItemViewState.Type,
         val path: String?,
     ) : LibraryAction
+
+    data object GoBack : LibraryAction
 }

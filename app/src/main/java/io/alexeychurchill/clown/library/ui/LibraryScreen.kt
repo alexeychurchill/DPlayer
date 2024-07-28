@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,11 +39,15 @@ fun LibraryScreen(
         viewModel.onAction(LibraryAction.TreePicked(uriPath))
     }
 
-    LaunchedEffect(key1 = viewModel) {
-        viewModel.directionFlow.collectLatest { direction ->
-            navController.navigate(direction.navPath)
-        }
-    }
+    DirectionsEffect(
+        directionFlow = viewModel.directionFlow,
+        navController = navController,
+    )
+
+    BackDirectionEffect(
+        backDirectionFlow = viewModel.backDirectionFlow,
+        navController = navController,
+    )
 
     NavHost(navController, startDestination = LibraryDirection.start) {
         composable(route = LibraryDirection.Root.navPath) {
@@ -95,6 +101,14 @@ private fun MediaEntryLibraryScreen(
         modifier = modifier.fillMaxSize(),
         title = title ?: "",
         state = state,
+        navigationIcon = {
+            IconButton(onClick = { onLibraryAction(LibraryAction.GoBack) }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.TwoTone.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
         onLibraryAction = onLibraryAction,
     )
 }
@@ -129,3 +143,26 @@ private fun AddButton(
     }
 }
 
+@Composable
+private fun DirectionsEffect(
+    directionFlow: Flow<LibraryDirection>,
+    navController: NavController,
+) {
+    LaunchedEffect(key1 = directionFlow) {
+        directionFlow.collectLatest { direction ->
+            navController.navigate(direction.navPath)
+        }
+    }
+}
+
+@Composable
+private fun BackDirectionEffect(
+    backDirectionFlow: Flow<Unit>,
+    navController: NavController,
+) {
+    LaunchedEffect(key1 = backDirectionFlow) {
+        backDirectionFlow.collectLatest {
+            navController.popBackStack()
+        }
+    }
+}

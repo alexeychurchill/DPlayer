@@ -26,6 +26,7 @@ fun LibraryScreenLayout(
     title: String,
     state: LibraryViewState,
     modifier: Modifier = Modifier,
+    navigationIcon: @Composable (() -> Unit) = {},
     actions: @Composable (RowScope.() -> Unit) = {},
     onLibraryAction: OnLibraryAction = {},
 ) {
@@ -34,6 +35,7 @@ fun LibraryScreenLayout(
         topBar = {
             LibraryTopBar(
                 title = title,
+                navigationIcon = navigationIcon,
                 actions = actions,
             )
         }
@@ -56,6 +58,7 @@ fun LibraryScreenLayout(
 private fun LibraryTopBar(
     title: String,
     modifier: Modifier = Modifier,
+    navigationIcon: @Composable (() -> Unit) = {},
     actions: @Composable (RowScope.() -> Unit) = {},
 ) {
     TopAppBar(
@@ -63,6 +66,7 @@ private fun LibraryTopBar(
         title = {
             Text(text = title)
         },
+        navigationIcon = navigationIcon,
         actions = actions,
     )
 }
