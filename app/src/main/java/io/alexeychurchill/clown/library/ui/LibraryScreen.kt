@@ -1,5 +1,6 @@
 package io.alexeychurchill.clown.library.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.compose.foundation.layout.fillMaxSize
@@ -95,6 +96,8 @@ private fun MediaEntryLibraryScreen(
     ),
     onLibraryAction: OnLibraryAction = {},
 ) {
+    BackHandler { onLibraryAction(LibraryAction.GoBack) }
+
     val title by viewModel.titleState.collectAsState()
     val state by viewModel.libraryState.collectAsState()
     LibraryScreenLayout(
