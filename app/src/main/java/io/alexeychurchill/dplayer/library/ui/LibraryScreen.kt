@@ -32,9 +32,9 @@ import androidx.navigation.compose.rememberNavController
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 import io.alexeychurchill.dplayer.library.presentation.LibraryDirection
-import io.alexeychurchill.dplayer.library.presentation.LibraryItemsViewModel
+import io.alexeychurchill.dplayer.library.presentation.LibraryContentViewModel
 import io.alexeychurchill.dplayer.library.presentation.LibraryViewModel
-import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemsViewModel
+import io.alexeychurchill.dplayer.library.presentation.MediaEntryContentViewModel
 import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -130,7 +130,7 @@ private fun transitionExitToEnd(): ExitTransition {
 @Composable
 private fun RootLibraryScreen(
     modifier: Modifier = Modifier,
-    viewModel: LibraryItemsViewModel = hiltViewModel(),
+    viewModel: LibraryContentViewModel = hiltViewModel(),
     onLibraryAction: OnLibraryAction = {},
 ) {
     val state by viewModel.libraryViewState.collectAsState()
@@ -151,8 +151,8 @@ private fun RootLibraryScreen(
 private fun MediaEntryLibraryScreen(
     pathId: String?,
     modifier: Modifier = Modifier,
-    viewModel: MediaEntryItemsViewModel = hiltViewModel(
-        creationCallback = { factory: MediaEntryItemsViewModel.Factory -> factory.create(pathId) }
+    viewModel: MediaEntryContentViewModel = hiltViewModel(
+        creationCallback = { factory: MediaEntryContentViewModel.Factory -> factory.create(pathId) }
     ),
     onLibraryAction: OnLibraryAction = {},
 ) {

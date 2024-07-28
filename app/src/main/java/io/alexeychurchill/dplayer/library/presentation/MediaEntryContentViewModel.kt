@@ -18,13 +18,13 @@ import kotlinx.coroutines.flow.stateIn
 
 private const val AssistedPathId = "pathId"
 
-@HiltViewModel(assistedFactory = MediaEntryItemsViewModel.Factory::class)
-class MediaEntryItemsViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = MediaEntryContentViewModel.Factory::class)
+class MediaEntryContentViewModel @AssistedInject constructor(
     @Assisted(AssistedPathId) private val pathId: String?,
     private val libraryRepository: LibraryRepository,
     private val fileSystemRepository: FileSystemRepository,
-    private val mediaEntryMapper: MediaEntryViewStateMapper,
     private val titleMapper: MediaEntryTitleMapper,
+    private val contentBuilder: AggregateSectionsBuilder,
     private val pathCodec: PathCodec,
 ) : ViewModel() {
 
@@ -53,11 +53,10 @@ class MediaEntryItemsViewModel @AssistedInject constructor(
 
             emit(LibraryViewState.Loading)
             val path = pathCodec.decode(pathId)
-            val items = fileSystemRepository
-                .getEntriesFor(path)
-                .map(mediaEntryMapper::mapToViewState)
+            val mediaEntries = fileSystemRepository.getEntriesFor(path)
+            val content = contentBuilder.build(mediaEntries)
 
-            emit(LibraryViewState.Loaded(listOf(LibrarySectionViewState.MediaEntries(items))))
+            emit(LibraryViewState.Loaded(content))
         }
             .flowOn(Dispatchers.IO)
             .stateIn(
@@ -69,6 +68,6 @@ class MediaEntryItemsViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(@Assisted(AssistedPathId) pathId: String?): MediaEntryItemsViewModel
+        fun create(@Assisted(AssistedPathId) pathId: String?): MediaEntryContentViewModel
     }
 }

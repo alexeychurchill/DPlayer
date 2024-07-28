@@ -1,5 +1,8 @@
 package io.alexeychurchill.dplayer.library.data
 
+import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
+import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions
+import io.alexeychurchill.dplayer.core.domain.filesystem.fileExtension
 import io.alexeychurchill.dplayer.library.domain.DirectorySource.FromFileSystem
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
@@ -14,6 +17,21 @@ class FileSystemRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getEntriesFor(path: String): List<MediaEntry> {
-        return mediaEntryStore.listMediaEntries(path)
+        // TODO: Separate file-music file filtering
+        // Actually, it's better to remove MediaEntryStore and construct
+        // media entries in the Repositories, using FileSystemStore and another
+        // resources only.
+        //
+        // The MediaEntryStore is kind of temporary thing.
+        return mediaEntryStore.listMediaEntries(path).filter { mediaEntry ->
+            if (mediaEntry !is MediaEntry.File) {
+                return@filter true
+            }
+
+            val extension = (mediaEntry.fileEntry.name as? FileName.Name)?.value?.fileExtension
+                ?: ""
+
+            extension in FilesExtensions.MusicFiles
+        }
     }
 }

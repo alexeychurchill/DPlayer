@@ -8,11 +8,30 @@ sealed interface LibraryViewState {
     data class Loaded(val sections: List<LibrarySectionViewState>) : LibraryViewState
 }
 
+/**
+ * Represents any section, such as media entries group, headers, messages etc.
+ * in the media library
+ */
 sealed interface LibrarySectionViewState {
 
-    // TODO: Add sections headers
-    /* sealed interface Header : LibrarySectionViewState */
+    /**
+     * Common parent for headers
+     */
+    sealed interface Header : LibrarySectionViewState {
 
+        data object ForDirectories : Header
+
+        data object ForFiles : Header
+    }
+
+    /**
+     * Message for indicating that music files are absent in a media entry
+     */
+    data object FilesAbsent : LibrarySectionViewState
+
+    /**
+     * [MediaEntryItemViewState] (representation of the MediaEntry) collection
+     */
     data class MediaEntries(val items: List<MediaEntryItemViewState>) : LibrarySectionViewState
 }
 
