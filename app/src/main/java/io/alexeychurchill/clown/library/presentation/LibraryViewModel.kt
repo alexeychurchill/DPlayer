@@ -1,19 +1,20 @@
 package io.alexeychurchill.clown.library.presentation
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.clown.library.domain.AddDirectoryUseCase
+import io.alexeychurchill.clown.library.domain.PathCodec
+import io.alexeychurchill.clown.library.presentation.LibraryDirection.Directory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import java.util.Base64
 import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
     private val addFolderUseCase: AddDirectoryUseCase,
+    private val pathCodec: PathCodec,
 ) : ViewModel() {
 
     private val mutableOpenDirectoryFlow = MutableSharedFlow<Unit>()
@@ -32,8 +33,8 @@ class LibraryViewModel @Inject constructor(
                 is LibraryAction.OpenMediaEntry -> {
                     if (action.type == MediaEntryItemViewState.Type.Directory) {
                         action.path?.let { path ->
-                            // TODO: Remove Uri.encode(String) from the view model!
-                            mutableDirectionFlow.emit(LibraryDirection.Directory(Uri.encode(path)))
+                            val direction = Directory(pathId = pathCodec.encode(path))
+                            mutableDirectionFlow.emit(direction)
                         }
                     }
                 }

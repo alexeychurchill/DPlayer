@@ -1,6 +1,5 @@
 package io.alexeychurchill.clown.library.ui
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -52,11 +49,11 @@ fun LibraryScreen(
         }
 
         composable(route = LibraryDirection.Directory.NavPattern) { backStackEntry ->
-            val directoryPath = backStackEntry.arguments
-                ?.getString(LibraryDirection.Directory.ArgPath)
+            val directoryPathId = backStackEntry.arguments
+                ?.getString(LibraryDirection.Directory.ArgPathId)
 
             MediaEntryLibraryScreen(
-                path = directoryPath,
+                pathId = directoryPathId,
                 onLibraryAction = viewModel::onAction,
             )
         }
@@ -85,10 +82,10 @@ private fun RootLibraryScreen(
 
 @Composable
 private fun MediaEntryLibraryScreen(
-    path: String?,
+    pathId: String?,
     modifier: Modifier = Modifier,
     viewModel: MediaEntryItemsViewModel = hiltViewModel(
-        creationCallback = { factory: MediaEntryItemsViewModel.Factory -> factory.create(path) }
+        creationCallback = { factory: MediaEntryItemsViewModel.Factory -> factory.create(pathId) }
     ),
     onLibraryAction: OnLibraryAction = {},
 ) {
