@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "io.alexeychurchill.clown"
+    namespace = "io.alexeychurchill.dplayer"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "io.alexeychurchill.clown"
+        applicationId = "io.alexeychurchill.dplayer"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
