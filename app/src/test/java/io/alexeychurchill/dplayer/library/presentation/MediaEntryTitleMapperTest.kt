@@ -105,7 +105,9 @@ class MediaEntryTitleMapperTest {
     fun `file has known name`() {
         val name = "Known name"
         val mediaEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Name(name))
+            fileEntry = FileSystemEntry.File(
+                path = "", name = FileName.Name(name), extension = null
+            )
         )
 
         val actualTitle = mapper.mapToTitle(mediaEntry)
@@ -116,7 +118,7 @@ class MediaEntryTitleMapperTest {
     @Test
     fun `file has unknown name`() {
         val mediaEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown)
+            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null)
         )
 
         val actualTitle = mapper.mapToTitle(mediaEntry)

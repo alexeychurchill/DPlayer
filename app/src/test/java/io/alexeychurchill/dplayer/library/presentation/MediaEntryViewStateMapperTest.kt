@@ -14,6 +14,7 @@ class MediaEntryViewStateMapperTest {
     private val typeMapperMock: MediaEntryTypeMapper = mockk(relaxed = true)
     private val statusMapperMock: MediaEntryStatusMapper = mockk(relaxed = true)
     private val childInfoMapperMock: DirectoryEntryChildInfoMapper = mockk(relaxed = true)
+    private val fileExtensionMapperMock: EntryFileExtensionMapper = mockk(relaxed = true)
 
     private val mapper = MediaEntryViewStateMapper(
         pathMapper = pathMapperMock,
@@ -21,12 +22,13 @@ class MediaEntryViewStateMapperTest {
         typeMapper = typeMapperMock,
         statusMapper = statusMapperMock,
         childInfoMapper = childInfoMapperMock,
+        fileExtensionMapper = fileExtensionMapperMock,
     )
 
     @Test
     fun `media entry mappers calls dispatched correctly`() {
         val entry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown),
+            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null),
         )
 
         mapper.mapToViewState(entry)
@@ -37,6 +39,7 @@ class MediaEntryViewStateMapperTest {
             typeMapperMock.mapToType(entry)
             statusMapperMock.mapToStatus(entry)
             childInfoMapperMock.mapToChildInfo(entry)
+            fileExtensionMapperMock.mapToExtension(entry)
         }
     }
 }

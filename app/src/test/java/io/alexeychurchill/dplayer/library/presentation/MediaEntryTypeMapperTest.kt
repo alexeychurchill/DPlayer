@@ -26,7 +26,9 @@ class MediaEntryTypeMapperTest {
             ) to Type.Directory,
 
             MediaEntry.File(
-                fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown),
+                fileEntry = FileSystemEntry.File(
+                    path = "", name = FileName.Unknown, extension = null
+                ),
             ) to Type.MusicFile,
         )
 

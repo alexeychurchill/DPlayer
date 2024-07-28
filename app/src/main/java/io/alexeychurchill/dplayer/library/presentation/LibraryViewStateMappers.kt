@@ -14,6 +14,7 @@ class MediaEntryViewStateMapper @Inject constructor(
     private val typeMapper: MediaEntryTypeMapper,
     private val statusMapper: MediaEntryStatusMapper,
     private val childInfoMapper: DirectoryEntryChildInfoMapper,
+    private val fileExtensionMapper: EntryFileExtensionMapper,
 ) {
 
     fun mapToViewState(entry: MediaEntry): MediaEntryItemViewState {
@@ -23,6 +24,7 @@ class MediaEntryViewStateMapper @Inject constructor(
             type = typeMapper.mapToType(entry),
             status = statusMapper.mapToStatus(entry),
             directoryChildInfo = childInfoMapper.mapToChildInfo(entry),
+            fileExtension = fileExtensionMapper.mapToExtension(entry),
         )
     }
 }
@@ -85,5 +87,12 @@ class DirectoryEntryChildInfoMapper @Inject constructor() {
             subDirectoryCount = entry.subDirectoryCount,
             fileCount = entry.musicFileCount,
         )
+    }
+}
+
+class EntryFileExtensionMapper @Inject constructor() {
+
+    fun mapToExtension(entry: MediaEntry): String? {
+        return (entry as? MediaEntry.File)?.fileEntry?.extension
     }
 }

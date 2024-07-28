@@ -16,7 +16,9 @@ class MediaEntryPathMapperTest {
     fun `path for file media entry`() {
         val path = "/path"
         val mediaEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = path, name = FileName.Unknown),
+            fileEntry = FileSystemEntry.File(
+                path = path, name = FileName.Unknown, extension = null
+            ),
         )
 
         val actual = mapper.mapToPath(mediaEntry)

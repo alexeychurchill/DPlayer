@@ -2,6 +2,7 @@ package io.alexeychurchill.dplayer.core.data.filesystem
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
+import io.alexeychurchill.dplayer.core.domain.filesystem.fileExtension
 import javax.inject.Inject
 
 class FilesystemStore @Inject constructor(
@@ -24,7 +25,8 @@ class FilesystemStore @Inject constructor(
         val file = fileFactory(path) ?: return null
         return FileSystemEntry.File(
             path = path,
-            name = FileName.of(file.name)
+            name = FileName.of(file.name),
+            extension = file.name?.fileExtension,
         )
     }
 

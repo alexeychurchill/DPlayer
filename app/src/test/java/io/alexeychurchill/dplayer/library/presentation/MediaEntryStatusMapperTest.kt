@@ -14,7 +14,7 @@ class MediaEntryStatusMapperTest {
     @Test
     fun `status for file`() {
         val mediaEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown),
+            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null),
         )
 
         val actual = mapper.mapToStatus(mediaEntry)

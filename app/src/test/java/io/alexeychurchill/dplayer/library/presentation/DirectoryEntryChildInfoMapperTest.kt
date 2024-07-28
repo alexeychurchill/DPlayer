@@ -29,7 +29,7 @@ class DirectoryEntryChildInfoMapperTest {
     @Test
     fun `null is returned for file media entry`() {
         val directoryEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown),
+            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null),
         )
 
         val actual = mapper.mapToChildInfo(directoryEntry)

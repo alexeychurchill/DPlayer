@@ -8,11 +8,21 @@ class FileSystemEntryExtTest {
     private companion object {
 
         val FilesTestData = listOf(
-            FileSystemEntry.File(path = "", name = FileName.Name(value = "abc.mp3")),
-            FileSystemEntry.File(path = "", name = FileName.Name(value = "cde.aiff")),
-            FileSystemEntry.File(path = "", name = FileName.Name(value = "def.mp3")),
-            FileSystemEntry.File(path = "", name = FileName.Name(value = "efg.wav")),
-            FileSystemEntry.File(path = "", name = FileName.Name(value = "fgs.mp3")),
+            FileSystemEntry.File(
+                path = "", name = FileName.Name(value = "abc.mp3"), extension = null
+            ),
+            FileSystemEntry.File(
+                path = "", name = FileName.Name(value = "cde.aiff"), extension = null
+            ),
+            FileSystemEntry.File(
+                path = "", name = FileName.Name(value = "def.mp3"), extension = null
+            ),
+            FileSystemEntry.File(
+                path = "", name = FileName.Name(value = "efg.wav"), extension = null
+            ),
+            FileSystemEntry.File(
+                path = "", name = FileName.Name(value = "fgs.mp3"), extension = null
+            ),
         )
 
         val DirectoriesTestData = listOf(

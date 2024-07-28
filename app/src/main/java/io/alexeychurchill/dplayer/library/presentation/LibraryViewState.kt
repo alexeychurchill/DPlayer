@@ -41,6 +41,7 @@ data class MediaEntryItemViewState(
     val type: Type,
     val status: Status = Status.None,
     val directoryChildInfo: DirectoryChildInfoViewState? = null,
+    val fileExtension: String? = null,
 ) {
 
     enum class Type {

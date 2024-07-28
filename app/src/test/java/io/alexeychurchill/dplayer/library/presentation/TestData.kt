@@ -25,6 +25,7 @@ object TestMediaEntries {
             fileEntry = FileSystemEntry.File(
                 path = "path/fileEntry$index",
                 name = FileName.of(name = "FileName$index"),
+                extension = null,
             )
         )
     }
