@@ -11,7 +11,7 @@ import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
 import io.alexeychurchill.dplayer.library.data.filesystem.SafDirectoryPermissionsDispatcher
 import io.alexeychurchill.dplayer.library.ui.LibraryScreen
-import io.alexeychurchill.dplayer.ui.theme.ClownTheme
+import io.alexeychurchill.dplayer.ui.theme.DPlayerTheme
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setupEdgeToEdge()
         lifecycle.addObserver(safDirectoryPermissionsDispatcher)
         setContent {
-            ClownTheme {
+            DPlayerTheme {
                 LibraryScreen()
             }
         }

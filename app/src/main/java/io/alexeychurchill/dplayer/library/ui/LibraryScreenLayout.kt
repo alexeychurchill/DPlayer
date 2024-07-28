@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import io.alexeychurchill.dplayer.library.presentation.LibraryViewState
 import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
-import io.alexeychurchill.dplayer.ui.theme.ClownTheme
+import io.alexeychurchill.dplayer.ui.theme.DPlayerTheme
 
 @Composable
 fun LibraryScreenLayout(
@@ -156,7 +156,7 @@ private fun LibraryScreenPreview(
     @PreviewParameter(LibraryPreview::class)
     state: LibraryViewState
 ) {
-    ClownTheme {
+    DPlayerTheme {
         LibraryScreenLayout(
             title = "Lib Layout",
             state = state,
