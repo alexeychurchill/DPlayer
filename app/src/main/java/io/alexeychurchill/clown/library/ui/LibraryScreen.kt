@@ -162,7 +162,7 @@ private fun MediaEntryLibraryScreen(
     val state by viewModel.libraryState.collectAsState()
     LibraryScreenLayout(
         modifier = modifier.fillMaxSize(),
-        title = title ?: "",
+        title = title,
         state = state,
         navigationIcon = {
             IconButton(onClick = { onLibraryAction(LibraryAction.GoBack) }) {
