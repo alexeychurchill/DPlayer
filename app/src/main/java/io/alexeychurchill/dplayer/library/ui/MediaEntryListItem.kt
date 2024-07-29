@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState
@@ -51,15 +55,12 @@ fun MediaEntryListItem(
                     fileCount = info.fileCount,
                 )
             }
-            entry.fileExtension?.let { extension ->
-                FileExtension(
-                    modifier = Modifier.padding(top = 4.dp),
-                    extension = extension,
-                )
-            }
         },
         leadingContent = {
-            EntryTypeIcon(itemType = entry.type)
+            EntryCover(
+                itemType = entry.type,
+                fileExtension = entry.fileExtension,
+            )
         },
         trailingContent = {
             StatusIcon(status = entry.status)
@@ -68,21 +69,45 @@ fun MediaEntryListItem(
 }
 
 @Composable
-private fun EntryTypeIcon(
+private fun EntryCover(
     itemType: MediaEntryItemViewState.Type,
     modifier: Modifier = Modifier,
+    fileExtension: String? = null,
 ) {
     val iconVector = when (itemType) {
         MediaEntryItemViewState.Type.Directory -> Icons.TwoTone.Folder
         MediaEntryItemViewState.Type.MusicFile -> Icons.TwoTone.MusicNote
         MediaEntryItemViewState.Type.None -> null
     }
-    iconVector?.let {
-        Icon(
-            modifier = modifier.size(24.dp),
-            imageVector = iconVector,
-            contentDescription = null,
-        )
+
+    Box(
+        modifier = modifier
+            .size(56.dp)
+            .clip(shape = RoundedCornerShape(8.dp))
+            .clipToBounds()
+            .background(color = MaterialTheme.colorScheme.primaryContainer),
+    ) {
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            if (iconVector != null) {
+                Icon(
+                    modifier = modifier
+                        .size(24.dp),
+                    imageVector = iconVector,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+
+            if (fileExtension != null) {
+                FileExtensionLabel(extension = fileExtension)
+            }
+        }
     }
 }
 
@@ -147,22 +172,36 @@ private fun DirectoryChildCount(
 }
 
 @Composable
-fun FileExtension(
+private fun FileExtensionLabel(
+    extension: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        modifier = modifier,
+        text = extension.uppercase(),
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        style = MaterialTheme.typography.labelSmall.copy(
+            fontWeight = FontWeight.ExtraBold,
+            platformStyle = PlatformTextStyle(includeFontPadding = false),
+        ),
+    )
+}
+
+@Composable
+private fun FileExtensionBadge(
     extension: String,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .background(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
+                color = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(4.dp),
             ),
     ) {
-        Text(
+        FileExtensionLabel(
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
-            text = extension.uppercase(),
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+            extension = extension,
         )
     }
 }

@@ -49,10 +49,10 @@ fun ShadeLibraryItem(modifier: Modifier = Modifier) {
         leadingContent = {
             Box(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(56.dp)
                     .background(
                         color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = RoundedCornerShape(4.dp),
+                        shape = RoundedCornerShape(8.dp),
                     ),
             )
         },
