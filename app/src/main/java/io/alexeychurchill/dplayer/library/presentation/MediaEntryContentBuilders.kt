@@ -1,5 +1,6 @@
 package io.alexeychurchill.dplayer.library.presentation
 
+import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState.FilesAbsent
 import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState.Header
@@ -26,7 +27,7 @@ class DirectorySectionBuilder @Inject constructor(
 ) {
 
     fun build(items: List<MediaEntry>): List<LibrarySectionViewState> {
-        val dirEntries = items.filterIsInstance<MediaEntry.Directory>()
+        val dirEntries = items.filter { it.fsEntry is FileSystemEntry.Directory }
         return buildList {
             if (dirEntries.isNotEmpty()) {
                 add(Header.ForDirectories)
@@ -41,7 +42,7 @@ class FileSectionBuilder @Inject constructor(
 ) {
 
     fun build(items: List<MediaEntry>): List<LibrarySectionViewState> {
-        val fileEntries = items.filterIsInstance<MediaEntry.File>()
+        val fileEntries = items.filter { it.fsEntry is FileSystemEntry.File }
         return buildList {
             add(Header.ForFiles)
             if (fileEntries.isNotEmpty()) {

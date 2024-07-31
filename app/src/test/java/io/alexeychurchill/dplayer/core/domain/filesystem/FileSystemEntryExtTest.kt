@@ -9,19 +9,19 @@ class FileSystemEntryExtTest {
 
         val FilesTestData = listOf(
             FileSystemEntry.File(
-                path = "", name = FileName.Name(value = "abc.mp3"), extension = null
+                path = "", name = FileName.Name(value = "abc"), extension = "mp3"
             ),
             FileSystemEntry.File(
-                path = "", name = FileName.Name(value = "cde.aiff"), extension = null
+                path = "", name = FileName.Name(value = "cde"), extension = "aiff"
             ),
             FileSystemEntry.File(
-                path = "", name = FileName.Name(value = "def.mp3"), extension = null
+                path = "", name = FileName.Name(value = "def"), extension = "mp3"
             ),
             FileSystemEntry.File(
-                path = "", name = FileName.Name(value = "efg.wav"), extension = null
+                path = "", name = FileName.Name(value = "efg"), extension = "wav"
             ),
             FileSystemEntry.File(
-                path = "", name = FileName.Name(value = "fgs.mp3"), extension = null
+                path = "", name = FileName.Name(value = "fgs"), extension = "mp3"
             ),
         )
 

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 
 class MediaEntryViewStateMapperTest {
 
-    private val pathMapperMock: MediaEntryPathMapper = mockk(relaxed = true)
     private val titleMapperMock: MediaEntryTitleMapper = mockk(relaxed = true)
     private val typeMapperMock: MediaEntryTypeMapper = mockk(relaxed = true)
     private val statusMapperMock: MediaEntryStatusMapper = mockk(relaxed = true)
@@ -17,7 +16,6 @@ class MediaEntryViewStateMapperTest {
     private val fileExtensionMapperMock: EntryFileExtensionMapper = mockk(relaxed = true)
 
     private val mapper = MediaEntryViewStateMapper(
-        pathMapper = pathMapperMock,
         titleMapper = titleMapperMock,
         typeMapper = typeMapperMock,
         statusMapper = statusMapperMock,
@@ -27,14 +25,13 @@ class MediaEntryViewStateMapperTest {
 
     @Test
     fun `media entry mappers calls dispatched correctly`() {
-        val entry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null),
+        val entry = MediaEntry(
+            fsEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null),
         )
 
         mapper.mapToViewState(entry)
 
         verify {
-            pathMapperMock.mapToPath(entry)
             titleMapperMock.mapToTitle(entry)
             typeMapperMock.mapToType(entry)
             statusMapperMock.mapToStatus(entry)

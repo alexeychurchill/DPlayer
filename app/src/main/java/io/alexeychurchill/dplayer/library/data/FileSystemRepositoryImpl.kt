@@ -1,7 +1,8 @@
 package io.alexeychurchill.dplayer.library.data
 
+import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions
-import io.alexeychurchill.dplayer.library.domain.DirectorySource.FromFileSystem
+import io.alexeychurchill.dplayer.library.domain.EntrySource.FileSystem
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import javax.inject.Inject
@@ -11,7 +12,7 @@ class FileSystemRepositoryImpl @Inject constructor(
 ) : FileSystemRepository {
 
     override suspend fun getEntryBy(path: String): MediaEntry {
-        return mediaEntryStore.directoryMediaEntry(path, source = FromFileSystem)
+        return mediaEntryStore.directoryMediaEntry(path, source = FileSystem)
     }
 
     override suspend fun getEntriesFor(path: String): List<MediaEntry> {
@@ -22,11 +23,11 @@ class FileSystemRepositoryImpl @Inject constructor(
         //
         // The MediaEntryStore is kind of temporary thing.
         return mediaEntryStore.listMediaEntries(path).filter { mediaEntry ->
-            if (mediaEntry !is MediaEntry.File) {
+            if (mediaEntry.fsEntry !is FileSystemEntry.File) {
                 return@filter true
             }
 
-            val extension = mediaEntry.fileEntry.extension ?: ""
+            val extension = mediaEntry.fsEntry.extension ?: ""
             extension in FilesExtensions.MusicFiles
         }
     }
