@@ -26,6 +26,10 @@ class MediaMetadataResolver @Inject constructor(
         _cache.getOrPut(mediaUri) { retrieveMetadata(mediaUri) }
     }
 
+    fun getCoverArtBytes(mediaUri: String): ByteArray? {
+        return getMetadataBlocking(mediaUri).artworkData
+    }
+
     @Suppress("UnsafeOptInUsageError")
     private suspend fun retrieveMetadata(mediaUri: String): MediaMetadata {
         val mediaItem = MediaItem.Builder()
@@ -35,6 +39,31 @@ class MediaMetadataResolver @Inject constructor(
         val trackGroupArray = MetadataRetriever
             .retrieveMetadata(context, mediaItem)
             .await()
+
+        val trackGroups = List(trackGroupArray.length) { index -> trackGroupArray[index] }
+        val audioTrackGroups = trackGroups.filter { trackGroup ->
+            trackGroup.type == TRACK_TYPE_AUDIO
+        }
+
+        val formatGroups = audioTrackGroups.flatMap { trackGroup ->
+            List(trackGroup.length) { index -> trackGroup.getFormat(index) }
+        }
+
+        val metadata = formatGroups.mapNotNull(Format::metadata)
+        return MediaMetadata.Builder()
+            .populateFromMetadata(metadata)
+            .build()
+    }
+
+    @Suppress("UnsafeOptInUsageError")
+    private fun getMetadataBlocking(mediaUri: String): MediaMetadata {
+        val mediaItem = MediaItem.Builder()
+            .setUri(mediaUri)
+            .build()
+
+        val trackGroupArray = MetadataRetriever
+            .retrieveMetadata(context, mediaItem)
+            .get()
 
         val trackGroups = List(trackGroupArray.length) { index -> trackGroupArray[index] }
         val audioTrackGroups = trackGroups.filter { trackGroup ->
