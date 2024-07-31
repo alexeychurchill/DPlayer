@@ -58,6 +58,10 @@ kapt {
 
 dependencies {
 
+    // Kotlin
+    val coroutinesGuavaVersion = "1.8.1"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:$coroutinesGuavaVersion")
+
     // API Desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
@@ -100,6 +104,10 @@ dependencies {
 
     // Document Framework API
     implementation("androidx.documentfile:documentfile:1.0.1")
+
+    // Media3
+    val media3Version = "1.4.0"
+    implementation("androidx.media3:media3-exoplayer:$media3Version")
 
     // Unit Testing
     val junitVersion = "5.10.3"
