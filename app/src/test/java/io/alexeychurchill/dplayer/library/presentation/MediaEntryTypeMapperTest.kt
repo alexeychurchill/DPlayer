@@ -2,7 +2,7 @@ package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
-import io.alexeychurchill.dplayer.library.domain.DirectorySource
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Type
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +22,7 @@ class MediaEntryTypeMapperTest {
                 directoryEntry = null,
                 subDirectoryCount = 0,
                 musicFileCount = 0,
-                source = DirectorySource.FromFileSystem,
+                source = EntrySource.FileSystem,
             ) to Type.Directory,
 
             MediaEntry.File(

@@ -2,7 +2,7 @@ package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
-import io.alexeychurchill.dplayer.library.domain.DirectorySource
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -31,7 +31,7 @@ class MediaEntryStatusMapperTest {
             ),
             musicFileCount = 1,
             subDirectoryCount = 1,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -44,7 +44,7 @@ class MediaEntryStatusMapperTest {
             directoryEntry = null,
             musicFileCount = 0,
             subDirectoryCount = 0,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -61,7 +61,7 @@ class MediaEntryStatusMapperTest {
             ),
             musicFileCount = 0,
             subDirectoryCount = 0,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -78,7 +78,7 @@ class MediaEntryStatusMapperTest {
             ),
             musicFileCount = 0,
             subDirectoryCount = 1,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -95,7 +95,7 @@ class MediaEntryStatusMapperTest {
             ),
             musicFileCount = 1,
             subDirectoryCount = 0,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -112,7 +112,7 @@ class MediaEntryStatusMapperTest {
             ),
             musicFileCount = 1,
             subDirectoryCount = 1,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actual = mapper.mapToStatus(mediaEntry)

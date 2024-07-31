@@ -2,7 +2,7 @@ package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
-import io.alexeychurchill.dplayer.library.domain.DirectorySource
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ class MediaEntryTitleMapperTest {
             ),
             subDirectoryCount = 0,
             musicFileCount = 0,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
     }
 
@@ -30,7 +30,7 @@ class MediaEntryTitleMapperTest {
         val alias = "Alias Name"
         val mediaEntry = directoryPrototype.copy(
             directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Name(name)),
-            source = DirectorySource.FromUserLibrary(
+            source = EntrySource.UserLibrary(
                 aliasTitle = alias,
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
@@ -47,7 +47,7 @@ class MediaEntryTitleMapperTest {
         val alias = "Alias Name"
         val mediaEntry = directoryPrototype.copy(
             directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Unknown),
-            source = DirectorySource.FromUserLibrary(
+            source = EntrySource.UserLibrary(
                 aliasTitle = alias,
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
@@ -64,7 +64,7 @@ class MediaEntryTitleMapperTest {
         val name = "Original Name"
         val mediaEntry = directoryPrototype.copy(
             directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Name(name)),
-            source = DirectorySource.FromUserLibrary(
+            source = EntrySource.UserLibrary(
                 aliasTitle = null,
                 createdAt = LocalDateTime.now(),
                 updatedAt = LocalDateTime.now(),
@@ -81,7 +81,7 @@ class MediaEntryTitleMapperTest {
         val name = "Original Name"
         val mediaEntry = directoryPrototype.copy(
             directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Name(name)),
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actualTitle = mapper.mapToTitle(mediaEntry)
@@ -93,7 +93,7 @@ class MediaEntryTitleMapperTest {
     fun `directory has unknown name`() {
         val mediaEntry = directoryPrototype.copy(
             directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Unknown),
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actualTitle = mapper.mapToTitle(mediaEntry)

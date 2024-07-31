@@ -2,7 +2,7 @@ package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
-import io.alexeychurchill.dplayer.library.domain.DirectorySource
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,7 +17,7 @@ class DirectoryEntryChildInfoMapperTest {
             directoryEntry = null,
             subDirectoryCount = 1,
             musicFileCount = 1,
-            source = DirectorySource.FromFileSystem,
+            source = EntrySource.FileSystem,
         )
 
         val actual = mapper.mapToChildInfo(directoryEntry)

@@ -1,7 +1,7 @@
 package io.alexeychurchill.dplayer.library.data
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions
-import io.alexeychurchill.dplayer.library.domain.DirectorySource.FromFileSystem
+import io.alexeychurchill.dplayer.library.domain.EntrySource.FileSystem
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import javax.inject.Inject
@@ -11,7 +11,7 @@ class FileSystemRepositoryImpl @Inject constructor(
 ) : FileSystemRepository {
 
     override suspend fun getEntryBy(path: String): MediaEntry {
-        return mediaEntryStore.directoryMediaEntry(path, source = FromFileSystem)
+        return mediaEntryStore.directoryMediaEntry(path, source = FileSystem)
     }
 
     override suspend fun getEntriesFor(path: String): List<MediaEntry> {

@@ -1,7 +1,7 @@
 package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
-import io.alexeychurchill.dplayer.library.domain.DirectorySource
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Status
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Type
@@ -41,7 +41,7 @@ class MediaEntryTitleMapper @Inject constructor() {
 
     fun mapToTitle(entry: MediaEntry): String = when (entry) {
         is MediaEntry.Directory -> {
-            (entry.source as? DirectorySource.FromUserLibrary)?.aliasTitle
+            (entry.source as? EntrySource.UserLibrary)?.aliasTitle
                 ?: (entry.directoryEntry?.name as? FileName.Name)?.value
                 ?: FileName.DefaultUnknownValue
         }

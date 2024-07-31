@@ -6,7 +6,7 @@ import io.alexeychurchill.dplayer.library.data.database.DirectoryDao
 import io.alexeychurchill.dplayer.library.data.database.RoomLibraryRecord
 import io.alexeychurchill.dplayer.library.data.database.RoomLibraryRecordMapper
 import io.alexeychurchill.dplayer.library.domain.DirectoryPermissionsDispatcher
-import io.alexeychurchill.dplayer.library.domain.DirectorySource
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.LibraryRecord
 import io.alexeychurchill.dplayer.library.domain.LibraryRepository
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
@@ -52,8 +52,8 @@ class LibraryRepositoryImpl @Inject constructor(
         return mediaEntryStore.directoryMediaEntry(roomRecord.path, sourceFrom(roomRecord))
     }
 
-    private fun sourceFrom(roomRecord: RoomLibraryRecord): DirectorySource.FromUserLibrary {
-        return DirectorySource.FromUserLibrary(
+    private fun sourceFrom(roomRecord: RoomLibraryRecord): EntrySource.UserLibrary {
+        return EntrySource.UserLibrary(
             aliasTitle = roomRecord.aliasTitle,
             createdAt = roomRecord.createdAt,
             updatedAt = roomRecord.updatedAt,

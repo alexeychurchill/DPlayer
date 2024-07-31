@@ -18,7 +18,7 @@ sealed interface MediaEntry {
         val directoryEntry: FileSystemEntry.Directory?,
         val subDirectoryCount: Int,
         val musicFileCount: Int,
-        val source: DirectorySource,
+        val source: EntrySource,
     ) : MediaEntry
 
     data class File(
@@ -26,13 +26,13 @@ sealed interface MediaEntry {
     ) : MediaEntry
 }
 
-sealed interface DirectorySource {
+sealed interface EntrySource {
 
-    data object FromFileSystem : DirectorySource
+    data object FileSystem : EntrySource
 
-    data class FromUserLibrary(
+    data class UserLibrary(
         val createdAt: LocalDateTime,
         val updatedAt: LocalDateTime,
         val aliasTitle: String?,
-    ) : DirectorySource
+    ) : EntrySource
 }
