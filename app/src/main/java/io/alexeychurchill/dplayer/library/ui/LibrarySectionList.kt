@@ -18,6 +18,9 @@ import androidx.compose.ui.unit.sp
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState
+import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState.FilesAbsent
+import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState.Header
+import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState.MediaEntries
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState
 import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
 
@@ -30,19 +33,19 @@ fun LibrarySectionList(
     LazyColumn(modifier = modifier) {
         for (section in sections) {
             when (section) {
-                LibrarySectionViewState.Header.ForDirectories -> {
+                Header.ForDirectories -> {
                     directoriesHeader()
                 }
 
-                LibrarySectionViewState.Header.ForFiles -> {
+                Header.ForFiles -> {
                     filesHeader()
                 }
 
-                is LibrarySectionViewState.MediaEntries -> {
+                is MediaEntries -> {
                     mediaEntriesSection(section.items, onAction)
                 }
 
-                LibrarySectionViewState.FilesAbsent -> {
+                FilesAbsent -> {
                     noFilesSection()
                 }
 
@@ -76,8 +79,8 @@ private fun LazyListScope.mediaEntriesSection(
 ) {
     items(
         items = items,
-        /* key = { it.path ?: "" /** TODO: Remove this after refactoring MediaEntry **/ }, */
-        contentType = MediaEntryItemViewState::type,
+        key = MediaEntryItemViewState::path,
+        contentType = { it.type.name },
     ) { mediaEntry ->
         MediaEntryListItem(
             entry = mediaEntry,
