@@ -2,6 +2,7 @@ package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName.Unknown
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
+import io.alexeychurchill.dplayer.library.domain.EntryInfo
 import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Type
@@ -18,19 +19,21 @@ class MediaEntryTypeMapperTest {
     fun `media entry to types`(): Collection<DynamicTest> {
         val entryToType = listOf(
 
-            MediaEntry.Directory(
-                directoryEntry = FileSystemEntry.Directory(
+            MediaEntry(
+                fsEntry = FileSystemEntry.Directory(
                     path = "",
                     name = Unknown,
                     exists = true,
                 ),
-                subDirectoryCount = 0,
-                musicFileCount = 0,
                 source = EntrySource.FileSystem,
+                info = EntryInfo.Directory(
+                    directoryCount = 0,
+                    musicFileCount = 0,
+                ),
             ) to Type.Directory,
 
-            MediaEntry.File(
-                fileEntry = FileSystemEntry.File(
+            MediaEntry(
+                fsEntry = FileSystemEntry.File(
                     path = "", name = Unknown, extension = null
                 ),
             ) to Type.MusicFile,

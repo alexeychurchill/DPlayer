@@ -2,6 +2,7 @@ package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
+import io.alexeychurchill.dplayer.library.domain.EntryInfo
 import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import org.assertj.core.api.Assertions
@@ -13,8 +14,8 @@ class MediaEntryStatusMapperTest {
 
     @Test
     fun `status for file`() {
-        val mediaEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null),
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null),
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -23,15 +24,17 @@ class MediaEntryStatusMapperTest {
 
     @Test
     fun `status for non existent directory`() {
-        val mediaEntry = MediaEntry.Directory(
-            directoryEntry = FileSystemEntry.Directory(
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.Directory(
                 path = "",
                 name = FileName.Unknown,
                 exists = false,
             ),
-            musicFileCount = 1,
-            subDirectoryCount = 1,
             source = EntrySource.FileSystem,
+            info = EntryInfo.Directory(
+                musicFileCount = 1,
+                directoryCount = 1,
+            ),
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -40,15 +43,17 @@ class MediaEntryStatusMapperTest {
 
     @Test
     fun `status for empty directory`() {
-        val mediaEntry = MediaEntry.Directory(
-            directoryEntry = FileSystemEntry.Directory(
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.Directory(
                 path = "",
                 name = FileName.Unknown,
                 exists = true,
             ),
-            musicFileCount = 0,
-            subDirectoryCount = 0,
             source = EntrySource.FileSystem,
+            info = EntryInfo.Directory(
+                musicFileCount = 0,
+                directoryCount = 0,
+            ),
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -57,15 +62,17 @@ class MediaEntryStatusMapperTest {
 
     @Test
     fun `status for directory with directories`() {
-        val mediaEntry = MediaEntry.Directory(
-            directoryEntry = FileSystemEntry.Directory(
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.Directory(
                 path = "",
                 name = FileName.Unknown,
                 exists = true,
             ),
-            musicFileCount = 0,
-            subDirectoryCount = 1,
             source = EntrySource.FileSystem,
+            info = EntryInfo.Directory(
+                musicFileCount = 0,
+                directoryCount = 1,
+            )
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -74,15 +81,17 @@ class MediaEntryStatusMapperTest {
 
     @Test
     fun `status for directory with files`() {
-        val mediaEntry = MediaEntry.Directory(
-            directoryEntry = FileSystemEntry.Directory(
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.Directory(
                 path = "",
                 name = FileName.Unknown,
                 exists = true,
             ),
-            musicFileCount = 1,
-            subDirectoryCount = 0,
             source = EntrySource.FileSystem,
+            info = EntryInfo.Directory(
+                musicFileCount = 1,
+                directoryCount = 0,
+            ),
         )
 
         val actual = mapper.mapToStatus(mediaEntry)
@@ -91,15 +100,17 @@ class MediaEntryStatusMapperTest {
 
     @Test
     fun `status for directory with files and directories`() {
-        val mediaEntry = MediaEntry.Directory(
-            directoryEntry = FileSystemEntry.Directory(
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.Directory(
                 path = "",
                 name = FileName.Unknown,
                 exists = true,
             ),
-            musicFileCount = 1,
-            subDirectoryCount = 1,
             source = EntrySource.FileSystem,
+            info = EntryInfo.Directory(
+                musicFileCount = 1,
+                directoryCount = 1,
+            ),
         )
 
         val actual = mapper.mapToStatus(mediaEntry)

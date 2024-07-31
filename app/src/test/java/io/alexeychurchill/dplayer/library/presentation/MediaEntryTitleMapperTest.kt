@@ -2,6 +2,8 @@ package io.alexeychurchill.dplayer.library.presentation
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
+import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry.Directory
+import io.alexeychurchill.dplayer.library.domain.EntryInfo
 import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import org.assertj.core.api.Assertions.assertThat
@@ -12,13 +14,15 @@ import java.time.LocalDateTime
 class MediaEntryTitleMapperTest {
 
     private companion object {
-        val directoryPrototype = MediaEntry.Directory(
-            directoryEntry = FileSystemEntry.Directory(
+        val directoryPrototype = MediaEntry(
+            fsEntry = Directory(
                 path = "", name = FileName.Unknown, exists = true
             ),
-            subDirectoryCount = 0,
-            musicFileCount = 0,
             source = EntrySource.FileSystem,
+            info = EntryInfo.Directory(
+                directoryCount = 0,
+                musicFileCount = 0,
+            ),
         )
     }
 
@@ -29,7 +33,7 @@ class MediaEntryTitleMapperTest {
         val name = "Original Name"
         val alias = "Alias Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Name(name)),
+            fsEntry = (directoryPrototype.fsEntry as Directory).copy(name = FileName.Name(name)),
             source = EntrySource.UserLibrary(
                 aliasTitle = alias,
                 createdAt = LocalDateTime.now(),
@@ -46,7 +50,7 @@ class MediaEntryTitleMapperTest {
     fun `directory from user library with alias name and unknown name`() {
         val alias = "Alias Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Unknown),
+            fsEntry = (directoryPrototype.fsEntry as Directory).copy(name = FileName.Unknown),
             source = EntrySource.UserLibrary(
                 aliasTitle = alias,
                 createdAt = LocalDateTime.now(),
@@ -63,7 +67,7 @@ class MediaEntryTitleMapperTest {
     fun `directory from user library without alias name`() {
         val name = "Original Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Name(name)),
+            fsEntry = (directoryPrototype.fsEntry as Directory).copy(name = FileName.Name(name)),
             source = EntrySource.UserLibrary(
                 aliasTitle = null,
                 createdAt = LocalDateTime.now(),
@@ -80,7 +84,7 @@ class MediaEntryTitleMapperTest {
     fun `directory from file system`() {
         val name = "Original Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Name(name)),
+            fsEntry = (directoryPrototype.fsEntry as Directory).copy(name = FileName.Name(name)),
             source = EntrySource.FileSystem,
         )
 
@@ -92,7 +96,7 @@ class MediaEntryTitleMapperTest {
     @Test
     fun `directory has unknown name`() {
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Unknown),
+            fsEntry = (directoryPrototype.fsEntry as Directory).copy(name = FileName.Unknown),
             source = EntrySource.FileSystem,
         )
 
@@ -104,8 +108,8 @@ class MediaEntryTitleMapperTest {
     @Test
     fun `file has known name`() {
         val name = "Known name"
-        val mediaEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.File(
                 path = "", name = FileName.Name(name), extension = null
             )
         )
@@ -117,8 +121,8 @@ class MediaEntryTitleMapperTest {
 
     @Test
     fun `file has unknown name`() {
-        val mediaEntry = MediaEntry.File(
-            fileEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null)
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null)
         )
 
         val actualTitle = mapper.mapToTitle(mediaEntry)
