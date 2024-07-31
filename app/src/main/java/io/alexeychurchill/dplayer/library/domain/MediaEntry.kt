@@ -1,6 +1,8 @@
 package io.alexeychurchill.dplayer.library.domain
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
+import io.alexeychurchill.dplayer.library.domain.MediaEntry.Directory
+import io.alexeychurchill.dplayer.library.domain.MediaEntry.File
 import java.time.LocalDateTime
 
 /**
@@ -15,7 +17,7 @@ import java.time.LocalDateTime
 sealed interface MediaEntry {
 
     data class Directory(
-        val directoryEntry: FileSystemEntry.Directory?,
+        val directoryEntry: FileSystemEntry.Directory,
         val subDirectoryCount: Int,
         val musicFileCount: Int,
         val source: EntrySource,

@@ -31,8 +31,8 @@ class MediaEntryViewStateMapper @Inject constructor(
 
 class MediaEntryPathMapper @Inject constructor() {
 
-    fun mapToPath(entry: MediaEntry): String? = when (entry) {
-        is MediaEntry.Directory -> entry.directoryEntry?.path
+    fun mapToPath(entry: MediaEntry): String = when (entry) {
+        is MediaEntry.Directory -> entry.directoryEntry.path
         is MediaEntry.File -> entry.fileEntry.path
     }
 }
@@ -42,7 +42,7 @@ class MediaEntryTitleMapper @Inject constructor() {
     fun mapToTitle(entry: MediaEntry): String = when (entry) {
         is MediaEntry.Directory -> {
             (entry.source as? EntrySource.UserLibrary)?.aliasTitle
-                ?: (entry.directoryEntry?.name as? FileName.Name)?.value
+                ?: (entry.directoryEntry.name as? FileName.Name)?.value
                 ?: FileName.DefaultUnknownValue
         }
 
@@ -67,7 +67,7 @@ class MediaEntryStatusMapper @Inject constructor() {
             return Status.None
         }
 
-        val directoryExists = entry.directoryEntry?.exists == true
+        val directoryExists = entry.directoryEntry.exists
         val directoryHasChildren = (entry.subDirectoryCount + entry.musicFileCount) > 0
         return when {
             !directoryExists -> Status.Faulty

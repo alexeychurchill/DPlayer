@@ -29,7 +29,7 @@ class MediaEntryTitleMapperTest {
         val name = "Original Name"
         val alias = "Alias Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Name(name)),
+            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Name(name)),
             source = EntrySource.UserLibrary(
                 aliasTitle = alias,
                 createdAt = LocalDateTime.now(),
@@ -46,7 +46,7 @@ class MediaEntryTitleMapperTest {
     fun `directory from user library with alias name and unknown name`() {
         val alias = "Alias Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Unknown),
+            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Unknown),
             source = EntrySource.UserLibrary(
                 aliasTitle = alias,
                 createdAt = LocalDateTime.now(),
@@ -63,7 +63,7 @@ class MediaEntryTitleMapperTest {
     fun `directory from user library without alias name`() {
         val name = "Original Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Name(name)),
+            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Name(name)),
             source = EntrySource.UserLibrary(
                 aliasTitle = null,
                 createdAt = LocalDateTime.now(),
@@ -80,7 +80,7 @@ class MediaEntryTitleMapperTest {
     fun `directory from file system`() {
         val name = "Original Name"
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Name(name)),
+            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Name(name)),
             source = EntrySource.FileSystem,
         )
 
@@ -92,7 +92,7 @@ class MediaEntryTitleMapperTest {
     @Test
     fun `directory has unknown name`() {
         val mediaEntry = directoryPrototype.copy(
-            directoryEntry = directoryPrototype.directoryEntry?.copy(name = FileName.Unknown),
+            directoryEntry = directoryPrototype.directoryEntry.copy(name = FileName.Unknown),
             source = EntrySource.FileSystem,
         )
 

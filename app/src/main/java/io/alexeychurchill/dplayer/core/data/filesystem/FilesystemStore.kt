@@ -12,12 +12,12 @@ class FilesystemStore @Inject constructor(
     private val fileFactory: DocumentFileFactory,
 ) {
 
-    fun directoryBy(path: String): FileSystemEntry.Directory? {
-        val dirFile = treeFactory(path) ?: return null
+    fun directoryBy(path: String): FileSystemEntry.Directory {
+        val dirFile = treeFactory(path)
         return FileSystemEntry.Directory(
             path = path,
-            name = FileName.of(dirFile.name),
-            exists = dirFile.exists(),
+            name = FileName.of(dirFile?.name),
+            exists = dirFile?.exists() ?: false,
         )
     }
 

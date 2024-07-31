@@ -42,17 +42,4 @@ class MediaEntryPathMapperTest {
         val actual = mapper.mapToPath(mediaEntry)
         assertThat(actual).isEqualTo(path)
     }
-
-    @Test
-    fun `path for null dir media entry`() {
-        val mediaEntry = MediaEntry.Directory(
-            directoryEntry = null,
-            musicFileCount = 0,
-            subDirectoryCount = 0,
-            source = EntrySource.FileSystem,
-        )
-
-        val actual = mapper.mapToPath(mediaEntry)
-        assertThat(actual).isNull()
-    }
 }
