@@ -1,5 +1,7 @@
 package io.alexeychurchill.dplayer.library.presentation
 
+import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
+
 
 sealed interface LibraryViewState {
 
@@ -42,6 +44,7 @@ data class MediaEntryItemViewState(
     val status: Status = Status.None,
     val directoryChildInfo: DirectoryChildInfoViewState? = null,
     val fileExtension: String? = null,
+    val coverArtPath: CoverArtPath? = null,
 ) {
 
     enum class Type {

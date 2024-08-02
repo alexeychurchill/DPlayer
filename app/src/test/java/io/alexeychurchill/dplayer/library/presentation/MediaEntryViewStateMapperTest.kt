@@ -14,6 +14,7 @@ class MediaEntryViewStateMapperTest {
     private val statusMapperMock: MediaEntryStatusMapper = mockk(relaxed = true)
     private val childInfoMapperMock: DirectoryEntryChildInfoMapper = mockk(relaxed = true)
     private val fileExtensionMapperMock: EntryFileExtensionMapper = mockk(relaxed = true)
+    private val coverArtPathMapper: CoverArtPathMapper = mockk(relaxed = true)
 
     private val mapper = MediaEntryViewStateMapper(
         titleMapper = titleMapperMock,
@@ -21,6 +22,7 @@ class MediaEntryViewStateMapperTest {
         statusMapper = statusMapperMock,
         childInfoMapper = childInfoMapperMock,
         fileExtensionMapper = fileExtensionMapperMock,
+        coverArtPathMapper = coverArtPathMapper,
     )
 
     @Test
@@ -37,6 +39,7 @@ class MediaEntryViewStateMapperTest {
             statusMapperMock.mapToStatus(entry)
             childInfoMapperMock.mapToChildInfo(entry)
             fileExtensionMapperMock.mapToExtension(entry)
+            coverArtPathMapper.mapToCoverArtPath(entry)
         }
     }
 }

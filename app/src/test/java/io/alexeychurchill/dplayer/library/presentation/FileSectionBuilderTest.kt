@@ -9,7 +9,7 @@ class FileSectionBuilderTest {
 
     private val mediaEntryMapperMock: MediaEntryViewStateMapper = mockk {
         every { mapToViewState(any()) } returns MediaEntryItemViewState(
-            path = null,
+            path = "",
             title = "",
             type = MediaEntryItemViewState.Type.MusicFile,
         )

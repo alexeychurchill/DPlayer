@@ -9,7 +9,7 @@ class DirectorySectionBuilderTest {
 
     private val mediaEntryMapperMock: MediaEntryViewStateMapper = mockk {
         every { mapToViewState(any()) } returns MediaEntryItemViewState(
-            path = null,
+            path = "",
             title = "",
             type = MediaEntryItemViewState.Type.Directory,
             status = MediaEntryItemViewState.Status.Openable,

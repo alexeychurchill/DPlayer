@@ -95,6 +95,13 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
+    // Image Loading/Caching - Glide
+    val glideVersion = "4.14.2"
+    implementation("com.github.bumptech.glide:glide:$glideVersion")
+    kapt("com.github.bumptech.glide:compiler:$glideVersion")
+    val glideComposeVersion = "1.0.0-beta01"
+    implementation("com.github.bumptech.glide:compose:$glideComposeVersion")
+
     // Room
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")

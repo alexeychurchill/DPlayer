@@ -7,6 +7,7 @@ import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Status
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Type
+import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 import javax.inject.Inject
 
 
@@ -16,6 +17,7 @@ class MediaEntryViewStateMapper @Inject constructor(
     private val statusMapper: MediaEntryStatusMapper,
     private val childInfoMapper: DirectoryEntryChildInfoMapper,
     private val fileExtensionMapper: EntryFileExtensionMapper,
+    private val coverArtPathMapper: CoverArtPathMapper,
 ) {
 
     fun mapToViewState(entry: MediaEntry): MediaEntryItemViewState {
@@ -26,6 +28,7 @@ class MediaEntryViewStateMapper @Inject constructor(
             status = statusMapper.mapToStatus(entry),
             directoryChildInfo = childInfoMapper.mapToChildInfo(entry),
             fileExtension = fileExtensionMapper.mapToExtension(entry),
+            coverArtPath = coverArtPathMapper.mapToCoverArtPath(entry),
         )
     }
 }
@@ -91,5 +94,16 @@ class EntryFileExtensionMapper @Inject constructor() {
 
     fun mapToExtension(entry: MediaEntry): String? {
         return (entry.fsEntry as? FileSystemEntry.File)?.extension
+    }
+}
+
+class CoverArtPathMapper @Inject constructor() {
+
+    fun mapToCoverArtPath(entry: MediaEntry): CoverArtPath? {
+        if (entry.fsEntry !is FileSystemEntry.File) {
+            return null
+        }
+
+        return CoverArtPath.LocalUri(mediaUri = entry.fsEntry.path)
     }
 }
