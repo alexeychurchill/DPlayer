@@ -46,6 +46,7 @@ data class MediaEntryItemViewState(
     val secondaryInfo: SecondaryInfoViewState? = null,
     val fileExtension: String? = null,
     val coverArtPath: CoverArtPath? = null,
+    val openAction: LibraryAction,
 ) {
 
     enum class Type {

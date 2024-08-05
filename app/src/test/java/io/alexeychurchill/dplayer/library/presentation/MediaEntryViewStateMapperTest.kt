@@ -16,6 +16,7 @@ class MediaEntryViewStateMapperTest {
     private val fileExtensionMapperMock: EntryFileExtensionMapper = mockk(relaxed = true)
     private val coverArtPathMapperMock: CoverArtPathMapper = mockk(relaxed = true)
     private val secondaryInfoMapperMock: SecondaryInfoMapper = mockk(relaxed = true)
+    private val openActionMapperMock: MediaEntryOpenActionMapper = mockk(relaxed = true)
 
     private val mapper = MediaEntryViewStateMapper(
         titleMapper = titleMapperMock,
@@ -24,6 +25,7 @@ class MediaEntryViewStateMapperTest {
         fileExtensionMapper = fileExtensionMapperMock,
         coverArtPathMapper = coverArtPathMapperMock,
         secondaryInfoMapper = secondaryInfoMapperMock,
+        openActionMapper = openActionMapperMock,
     )
 
     @Test
@@ -42,6 +44,7 @@ class MediaEntryViewStateMapperTest {
             fileExtensionMapperMock.mapToExtension(entry)
             coverArtPathMapperMock.mapToCoverArtPath(entry)
             secondaryInfoMapperMock.mapToSecondaryInfo(entry, metadata)
+            openActionMapperMock.mapToOpenAction(entry)
         }
     }
 }

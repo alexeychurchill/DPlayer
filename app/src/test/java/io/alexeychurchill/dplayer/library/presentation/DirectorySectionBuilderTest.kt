@@ -13,6 +13,7 @@ class DirectorySectionBuilderTest {
             title = "",
             type = MediaEntryItemViewState.Type.Directory,
             status = MediaEntryItemViewState.Status.Openable,
+            openAction = LibraryAction.GoBack,
         )
     }
 

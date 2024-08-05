@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.alexeychurchill.dplayer.R
-import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState
 import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState.FilesAbsent
 import io.alexeychurchill.dplayer.library.presentation.LibrarySectionViewState.Header
@@ -84,10 +83,7 @@ private fun LazyListScope.mediaEntriesSection(
     ) { mediaEntry ->
         MediaEntryListItem(
             entry = mediaEntry,
-            onTap = {
-                val action = LibraryAction.OpenMediaEntry(mediaEntry.type, mediaEntry.path)
-                onAction(action)
-            },
+            onTap = { onAction(mediaEntry.openAction) },
         )
     }
 }

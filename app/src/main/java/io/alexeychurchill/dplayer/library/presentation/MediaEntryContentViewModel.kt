@@ -8,55 +8,58 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
-import io.alexeychurchill.dplayer.library.domain.LibraryRepository
-import io.alexeychurchill.dplayer.library.domain.PathCodec
 import io.alexeychurchill.dplayer.library.presentation.LibraryViewState.Loaded
 import io.alexeychurchill.dplayer.media.domain.FileMetadataRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.Lazily
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-private const val AssistedPathId = "pathId"
+private const val AssistedPayload = "payload"
 
 @HiltViewModel(assistedFactory = MediaEntryContentViewModel.Factory::class)
 class MediaEntryContentViewModel @AssistedInject constructor(
-    @Assisted(AssistedPathId) private val pathId: String?,
-    private val libraryRepository: LibraryRepository,
+    @Assisted(AssistedPayload) private val encodedPayload: String,
     private val fileSystemRepository: FileSystemRepository,
     private val fileMetadataRepository: FileMetadataRepository,
-    private val titleMapper: MediaEntryTitleMapper,
     private val contentBuilder: AggregateSectionsBuilder,
-    private val pathCodec: PathCodec,
+    private val payloadCodec: OpenDirectoryPayloadCodec,
 ) : ViewModel() {
 
-    val titleState: StateFlow<String?> by lazy {
-        flow {
-            val path = pathId?.let(pathCodec::decode) ?: return@flow
-            val mediaEntry = libraryRepository.getLibraryEntry(path)
-                ?: fileSystemRepository.getEntryBy(path)
+    private val payloadState = createPayloadState(encodedPayload)
 
-            emit(titleMapper.mapToTitle(mediaEntry, metadata = null))
-        }
-            .flowOn(Dispatchers.IO)
-            .stateIn(
-                scope = viewModelScope,
-                started = Lazily,
-                initialValue = null,
-            )
-    }
+    val titleState: StateFlow<String?> = payloadState
+        .filterNotNull()
+        .map { payload -> payload.title }
+        .stateIn(
+            scope = viewModelScope,
+            started = Eagerly,
+            initialValue = null,
+        )
 
     val libraryState: StateFlow<LibraryViewState> = createLibraryState()
+
+    private fun createPayloadState(encodedPayload: String): StateFlow<OpenDirectoryPayload?> {
+        val mutableState = MutableStateFlow<OpenDirectoryPayload?>(value = null)
+        viewModelScope.launch {
+            mutableState.emit(payloadCodec.decode(encodedPayload))
+        }
+        return mutableState
+    }
 
     private fun createLibraryState(): StateFlow<LibraryViewState> {
         val mutableState = MutableStateFlow<LibraryViewState>(LibraryViewState.Loading)
 
         viewModelScope.launch {
-            val path = pathId?.let(pathCodec::decode)
+            val path = payloadState
+                .filterNotNull()
+                .map { payload -> payload.path }
+                .firstOrNull()
+
             if (path == null) {
                 mutableState.emit(Loaded(emptyList()))
                 return@launch
@@ -76,6 +79,6 @@ class MediaEntryContentViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(@Assisted(AssistedPathId) pathId: String?): MediaEntryContentViewModel
+        fun create(@Assisted(AssistedPayload) payload: String): MediaEntryContentViewModel
     }
 }

@@ -13,6 +13,7 @@ class FileSectionBuilderTest {
             path = "",
             title = "",
             type = MediaEntryItemViewState.Type.MusicFile,
+            openAction = LibraryAction.GoBack,
         )
     }
 

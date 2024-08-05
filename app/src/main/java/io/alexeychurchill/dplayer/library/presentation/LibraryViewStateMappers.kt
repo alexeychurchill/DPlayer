@@ -5,6 +5,7 @@ import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.library.domain.EntryInfo
 import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
+import io.alexeychurchill.dplayer.library.presentation.LibraryAction.OpenMediaEntry
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Status
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Type
 import io.alexeychurchill.dplayer.media.domain.FileMetadata
@@ -19,6 +20,7 @@ class MediaEntryViewStateMapper @Inject constructor(
     private val fileExtensionMapper: EntryFileExtensionMapper,
     private val coverArtPathMapper: CoverArtPathMapper,
     private val secondaryInfoMapper: SecondaryInfoMapper,
+    private val openActionMapper: MediaEntryOpenActionMapper,
 ) {
 
     fun mapToViewState(
@@ -33,6 +35,7 @@ class MediaEntryViewStateMapper @Inject constructor(
             secondaryInfo = secondaryInfoMapper.mapToSecondaryInfo(entry, metadata),
             fileExtension = fileExtensionMapper.mapToExtension(entry),
             coverArtPath = coverArtPathMapper.mapToCoverArtPath(entry),
+            openAction = openActionMapper.mapToOpenAction(entry),
         )
     }
 }
@@ -135,5 +138,24 @@ class CoverArtPathMapper @Inject constructor() {
         }
 
         return CoverArtPath.LocalUri(mediaUri = entry.fsEntry.path)
+    }
+}
+
+class MediaEntryOpenActionMapper @Inject constructor(
+    private val titleMapper: MediaEntryTitleMapper,
+) {
+
+    fun mapToOpenAction(entry: MediaEntry): OpenMediaEntry = when (entry.fsEntry) {
+
+        is FileSystemEntry.Directory -> OpenMediaEntry.Directory(
+            payload = OpenDirectoryPayload(
+                path = entry.fsEntry.path,
+                title = titleMapper.mapToTitle(entry, metadata = null),
+            ),
+        )
+
+        is FileSystemEntry.File -> OpenMediaEntry.File(
+            path = entry.fsEntry.path,
+        )
     }
 }

@@ -45,6 +45,7 @@ object TestMediaEntryViewStates {
             title = "title$index",
             type = MediaEntryItemViewState.Type.Directory,
             status = MediaEntryItemViewState.Status.Openable,
+            openAction = LibraryAction.GoBack,
         )
     }
 
@@ -53,6 +54,7 @@ object TestMediaEntryViewStates {
             path = "path$index",
             title = "title$index",
             type = MediaEntryItemViewState.Type.MusicFile,
+            openAction = LibraryAction.GoBack,
         )
     }
 

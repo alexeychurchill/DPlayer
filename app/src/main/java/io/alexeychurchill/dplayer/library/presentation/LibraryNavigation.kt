@@ -13,14 +13,14 @@ sealed interface LibraryDirection : Direction {
         override val navPath: String = "library"
     }
 
-    data class Directory(val pathId: String) : LibraryDirection {
+    data class Directory(val encodedPayload: String) : LibraryDirection {
 
         companion object {
-            const val ArgPathId = "directoryPathId"
-            const val NavPattern = "library?path={$ArgPathId}"
+            const val ArgPayload = "payload"
+            const val NavPattern = "library?payload={$ArgPayload}"
         }
 
         override val navPath: String
-            get() = NavPattern.replace("{$ArgPathId}", pathId)
+            get() = NavPattern.replace("{$ArgPayload}", encodedPayload)
     }
 }

@@ -4,7 +4,7 @@ package io.alexeychurchill.dplayer.library.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -23,7 +23,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -81,17 +83,15 @@ private fun LibraryTopBar(
     TopAppBar(
         modifier = modifier,
         title = {
-            Crossfade(
-                targetState = title,
-                animationSpec = tween(),
-                label = "screen title crossfade",
-            ) { titleValue ->
-                if (titleValue != null) {
-                    Text(text = titleValue)
-                } else {
-                    AppBarTitlePlaceholder()
-                }
-            }
+            val titleAlpha by animateFloatAsState(
+                targetValue = if (title == null) 0.0f else 1.0f,
+                label = "screen title fade",
+            )
+            Text(
+                modifier = Modifier
+                    .graphicsLayer { alpha = titleAlpha },
+                text = title ?: "",
+            )
         },
         navigationIcon = navigationIcon,
         actions = actions,

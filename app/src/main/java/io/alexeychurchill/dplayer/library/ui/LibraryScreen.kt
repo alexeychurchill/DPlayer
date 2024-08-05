@@ -33,6 +33,8 @@ import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 import io.alexeychurchill.dplayer.library.presentation.LibraryDirection
 import io.alexeychurchill.dplayer.library.presentation.LibraryContentViewModel
+import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory.Companion
+import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory.Companion.ArgPayload
 import io.alexeychurchill.dplayer.library.presentation.LibraryViewModel
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryContentViewModel
 import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
@@ -76,11 +78,13 @@ fun LibraryScreen(
             exitTransition = { transitionExitToStart() },
             popExitTransition = { transitionExitToEnd() },
         ) { backStackEntry ->
-            val directoryPathId = backStackEntry.arguments
-                ?.getString(LibraryDirection.Directory.ArgPathId)
+            val payload = backStackEntry
+                .arguments
+                ?.getString(ArgPayload)
+                ?: throw IllegalArgumentException("$ArgPayload is missing!")
 
             MediaEntryLibraryScreen(
-                pathId = directoryPathId,
+                payload = payload,
                 onLibraryAction = viewModel::onAction,
             )
         }
@@ -149,10 +153,12 @@ private fun RootLibraryScreen(
 
 @Composable
 private fun MediaEntryLibraryScreen(
-    pathId: String?,
+    payload: String,
     modifier: Modifier = Modifier,
     viewModel: MediaEntryContentViewModel = hiltViewModel(
-        creationCallback = { factory: MediaEntryContentViewModel.Factory -> factory.create(pathId) }
+        creationCallback = { factory: MediaEntryContentViewModel.Factory ->
+            factory.create(payload)
+        },
     ),
     onLibraryAction: OnLibraryAction = {},
 ) {
