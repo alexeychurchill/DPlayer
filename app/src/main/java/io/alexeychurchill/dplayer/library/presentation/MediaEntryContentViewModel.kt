@@ -6,15 +6,20 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
 import io.alexeychurchill.dplayer.library.domain.LibraryRepository
 import io.alexeychurchill.dplayer.library.domain.PathCodec
+import io.alexeychurchill.dplayer.library.presentation.LibraryViewState.Loaded
+import io.alexeychurchill.dplayer.media.domain.FileMetadataRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Lazily
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 private const val AssistedPathId = "pathId"
 
@@ -23,6 +28,7 @@ class MediaEntryContentViewModel @AssistedInject constructor(
     @Assisted(AssistedPathId) private val pathId: String?,
     private val libraryRepository: LibraryRepository,
     private val fileSystemRepository: FileSystemRepository,
+    private val fileMetadataRepository: FileMetadataRepository,
     private val titleMapper: MediaEntryTitleMapper,
     private val contentBuilder: AggregateSectionsBuilder,
     private val pathCodec: PathCodec,
@@ -34,7 +40,7 @@ class MediaEntryContentViewModel @AssistedInject constructor(
             val mediaEntry = libraryRepository.getLibraryEntry(path)
                 ?: fileSystemRepository.getEntryBy(path)
 
-            emit(titleMapper.mapToTitle(mediaEntry))
+            emit(titleMapper.mapToTitle(mediaEntry, metadata = null))
         }
             .flowOn(Dispatchers.IO)
             .stateIn(
@@ -44,26 +50,28 @@ class MediaEntryContentViewModel @AssistedInject constructor(
             )
     }
 
-    val libraryState: StateFlow<LibraryViewState> by lazy {
-        flow {
-            if (pathId == null) {
-                emit(LibraryViewState.Loaded(emptyList()))
-                return@flow
+    val libraryState: StateFlow<LibraryViewState> = createLibraryState()
+
+    private fun createLibraryState(): StateFlow<LibraryViewState> {
+        val mutableState = MutableStateFlow<LibraryViewState>(LibraryViewState.Loading)
+
+        viewModelScope.launch {
+            val path = pathId?.let(pathCodec::decode)
+            if (path == null) {
+                mutableState.emit(Loaded(emptyList()))
+                return@launch
             }
 
-            emit(LibraryViewState.Loading)
-            val path = pathCodec.decode(pathId)
             val mediaEntries = fileSystemRepository.getEntriesFor(path)
             val content = contentBuilder.build(mediaEntries)
+            mutableState.emit(Loaded(content))
 
-            emit(LibraryViewState.Loaded(content))
+            val uris = mediaEntries.mapNotNull { (it.fsEntry as? FileSystemEntry.File)?.path }
+            val metadata = fileMetadataRepository.getBatchMetadata(uris)
+            mutableState.emit(Loaded(contentBuilder.build(mediaEntries, metadata)))
         }
-            .flowOn(Dispatchers.IO)
-            .stateIn(
-                scope = viewModelScope,
-                started = Lazily,
-                initialValue = LibraryViewState.Loading,
-            )
+
+        return mutableState
     }
 
     @AssistedFactory

@@ -41,8 +41,9 @@ data class MediaEntryItemViewState(
     val path: String,
     val title: String,
     val type: Type,
+    val artist: String? = null,
     val status: Status = Status.None,
-    val directoryChildInfo: DirectoryChildInfoViewState? = null,
+    val secondaryInfo: SecondaryInfoViewState? = null,
     val fileExtension: String? = null,
     val coverArtPath: CoverArtPath? = null,
 ) {
@@ -60,7 +61,15 @@ data class MediaEntryItemViewState(
     }
 }
 
-data class DirectoryChildInfoViewState(
-    val fileCount: Int?,
-    val subDirectoryCount: Int?,
-)
+sealed interface SecondaryInfoViewState {
+
+    data class DirectoryChildInfo(
+        val fileCount: Int?,
+        val subDirectoryCount: Int?,
+    ) : SecondaryInfoViewState
+
+    data class TrackInfo(
+        val artist: String? = null,
+        val year: Int? = null,
+    ) : SecondaryInfoViewState
+}

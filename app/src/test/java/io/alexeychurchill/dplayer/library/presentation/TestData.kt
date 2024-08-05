@@ -45,7 +45,6 @@ object TestMediaEntryViewStates {
             title = "title$index",
             type = MediaEntryItemViewState.Type.Directory,
             status = MediaEntryItemViewState.Status.Openable,
-            directoryChildInfo = null,
         )
     }
 

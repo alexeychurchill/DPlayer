@@ -25,7 +25,7 @@ class DirectoryEntryChildInfoMapperTest {
 
         val actual = mapper.mapToChildInfo(directoryEntry)
         assertThat(actual).isEqualTo(
-            DirectoryChildInfoViewState(subDirectoryCount = 1, fileCount = 1)
+            SecondaryInfoViewState.DirectoryChildInfo(subDirectoryCount = 1, fileCount = 1)
         )
     }
 

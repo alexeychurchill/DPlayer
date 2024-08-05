@@ -7,6 +7,7 @@ import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Status
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState.Type
+import io.alexeychurchill.dplayer.media.domain.FileMetadata
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 import javax.inject.Inject
 
@@ -15,18 +16,21 @@ class MediaEntryViewStateMapper @Inject constructor(
     private val titleMapper: MediaEntryTitleMapper,
     private val typeMapper: MediaEntryTypeMapper,
     private val statusMapper: MediaEntryStatusMapper,
-    private val childInfoMapper: DirectoryEntryChildInfoMapper,
     private val fileExtensionMapper: EntryFileExtensionMapper,
     private val coverArtPathMapper: CoverArtPathMapper,
+    private val secondaryInfoMapper: SecondaryInfoMapper,
 ) {
 
-    fun mapToViewState(entry: MediaEntry): MediaEntryItemViewState {
+    fun mapToViewState(
+        entry: MediaEntry,
+        metadata: FileMetadata? = null,
+    ): MediaEntryItemViewState {
         return MediaEntryItemViewState(
             path = entry.fsEntry.path,
-            title = titleMapper.mapToTitle(entry),
+            title = titleMapper.mapToTitle(entry, metadata),
             type = typeMapper.mapToType(entry),
             status = statusMapper.mapToStatus(entry),
-            directoryChildInfo = childInfoMapper.mapToChildInfo(entry),
+            secondaryInfo = secondaryInfoMapper.mapToSecondaryInfo(entry, metadata),
             fileExtension = fileExtensionMapper.mapToExtension(entry),
             coverArtPath = coverArtPathMapper.mapToCoverArtPath(entry),
         )
@@ -35,7 +39,7 @@ class MediaEntryViewStateMapper @Inject constructor(
 
 class MediaEntryTitleMapper @Inject constructor() {
 
-    fun mapToTitle(entry: MediaEntry): String = when (entry.fsEntry) {
+    fun mapToTitle(entry: MediaEntry, metadata: FileMetadata?): String = when (entry.fsEntry) {
         is FileSystemEntry.Directory -> {
             (entry.source as? EntrySource.UserLibrary)?.aliasTitle
                 ?: (entry.fsEntry.name as? FileName.Name)?.value
@@ -43,7 +47,9 @@ class MediaEntryTitleMapper @Inject constructor() {
         }
 
         is FileSystemEntry.File -> {
-            (entry.fsEntry.name as? FileName.Name)?.value ?: FileName.DefaultUnknownValue
+            metadata?.title
+                ?: (entry.fsEntry.name as? FileName.Name)?.value
+                ?: FileName.DefaultUnknownValue
         }
     }
 }
@@ -79,11 +85,35 @@ class MediaEntryStatusMapper @Inject constructor() {
     }
 }
 
+class SecondaryInfoMapper @Inject constructor(
+    private val trackInfoMapper: TrackInfoMapper,
+    private val directoryChildInfoMapper: DirectoryEntryChildInfoMapper,
+) {
+
+    fun mapToSecondaryInfo(entry: MediaEntry, metadata: FileMetadata?): SecondaryInfoViewState? {
+        return when (entry.fsEntry) {
+            is FileSystemEntry.File -> trackInfoMapper.mapToTrackInfo(metadata)
+            is FileSystemEntry.Directory -> directoryChildInfoMapper.mapToChildInfo(entry)
+        }
+    }
+}
+
+class TrackInfoMapper @Inject constructor() {
+
+    fun mapToTrackInfo(metadata: FileMetadata?): SecondaryInfoViewState.TrackInfo? {
+        metadata?.takeIf { it.title != null } ?: return null
+        return SecondaryInfoViewState.TrackInfo(
+            artist = metadata.artist,
+            year = metadata.year,
+        )
+    }
+}
+
 class DirectoryEntryChildInfoMapper @Inject constructor() {
 
-    fun mapToChildInfo(entry: MediaEntry): DirectoryChildInfoViewState? {
+    fun mapToChildInfo(entry: MediaEntry): SecondaryInfoViewState.DirectoryChildInfo? {
         if (entry.info !is EntryInfo.Directory) return null
-        return DirectoryChildInfoViewState(
+        return SecondaryInfoViewState.DirectoryChildInfo(
             subDirectoryCount = entry.info.directoryCount,
             fileCount = entry.info.musicFileCount,
         )

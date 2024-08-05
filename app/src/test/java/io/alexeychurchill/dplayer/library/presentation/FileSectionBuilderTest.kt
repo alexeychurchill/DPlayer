@@ -1,5 +1,6 @@
 package io.alexeychurchill.dplayer.library.presentation
 
+import io.alexeychurchill.dplayer.media.domain.FileMetadata
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -23,7 +24,8 @@ class FileSectionBuilderTest {
     fun `files present`() {
         val testData = TestMediaEntries.mixed
         val fileCount = TestMediaEntries.fileMediaEntries.size
-        val actual = builder.build(testData)
+        val metadata = emptyMap<String, FileMetadata>()
+        val actual = builder.build(testData, metadata)
 
         assertThat(actual)
             .first()
@@ -39,7 +41,8 @@ class FileSectionBuilderTest {
     @Test
     fun `no directories`() {
         val testData = TestMediaEntries.directoryMediaEntries
-        val actual = builder.build(testData)
+        val metadata = emptyMap<String, FileMetadata>()
+        val actual = builder.build(testData, metadata)
 
         assertThat(actual).first().isEqualTo(LibrarySectionViewState.Header.ForFiles)
         assertThat(actual).element(1).isEqualTo(LibrarySectionViewState.FilesAbsent)

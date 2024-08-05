@@ -58,7 +58,7 @@ class CoverArtModelLoader @Inject constructor(
 
 class CoverArtDataFetcher @AssistedInject constructor(
     @Assisted private val coverArtPath: CoverArtPath.LocalUri,
-    private val metadataResolver: MediaMetadataResolver,
+    private val metadataResolver: MediaMetadataStore,
 ) : DataFetcher<ByteBuffer> {
 
     override fun loadData(
