@@ -6,6 +6,7 @@ import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry.Directo
 import io.alexeychurchill.dplayer.library.domain.EntryInfo
 import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
+import io.alexeychurchill.dplayer.media.domain.FileMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -41,7 +42,7 @@ class MediaEntryTitleMapperTest {
             ),
         )
 
-        val actualTitle = mapper.mapToTitle(mediaEntry)
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = null)
 
         assertThat(actualTitle).isEqualTo(alias)
     }
@@ -58,7 +59,7 @@ class MediaEntryTitleMapperTest {
             ),
         )
 
-        val actualTitle = mapper.mapToTitle(mediaEntry)
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = null)
 
         assertThat(actualTitle).isEqualTo(alias)
     }
@@ -75,7 +76,7 @@ class MediaEntryTitleMapperTest {
             ),
         )
 
-        val actualTitle = mapper.mapToTitle(mediaEntry)
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = null)
 
         assertThat(actualTitle).isEqualTo(name)
     }
@@ -88,7 +89,7 @@ class MediaEntryTitleMapperTest {
             source = EntrySource.FileSystem,
         )
 
-        val actualTitle = mapper.mapToTitle(mediaEntry)
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = null)
 
         assertThat(actualTitle).isEqualTo(name)
     }
@@ -100,13 +101,13 @@ class MediaEntryTitleMapperTest {
             source = EntrySource.FileSystem,
         )
 
-        val actualTitle = mapper.mapToTitle(mediaEntry)
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = null)
 
         assertThat(actualTitle).isEqualTo(FileName.DefaultUnknownValue)
     }
 
     @Test
-    fun `file has known name`() {
+    fun `file has known name with no metadata`() {
         val name = "Known name"
         val mediaEntry = MediaEntry(
             fsEntry = FileSystemEntry.File(
@@ -114,20 +115,45 @@ class MediaEntryTitleMapperTest {
             )
         )
 
-        val actualTitle = mapper.mapToTitle(mediaEntry)
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = null)
 
         assertThat(actualTitle).isEqualTo(name)
     }
 
     @Test
-    fun `file has unknown name`() {
+    fun `file has unknown name with no metadata`() {
         val mediaEntry = MediaEntry(
             fsEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null)
         )
 
-        val actualTitle = mapper.mapToTitle(mediaEntry)
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = null)
 
         assertThat(actualTitle).isEqualTo(FileName.DefaultUnknownValue)
     }
-}
 
+    @Test
+    fun `file has known name with present metadata`() {
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.File(
+                path = "", name = FileName.Name("Known name"), extension = null
+            )
+        )
+        val metadata = FileMetadata(title = "Metatitle")
+
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = metadata)
+
+        assertThat(actualTitle).isEqualTo(metadata.title)
+    }
+
+    @Test
+    fun `file has unknown name with present metadata`() {
+        val mediaEntry = MediaEntry(
+            fsEntry = FileSystemEntry.File(path = "", name = FileName.Unknown, extension = null)
+        )
+        val metadata = FileMetadata(title = "Metatitle")
+
+        val actualTitle = mapper.mapToTitle(mediaEntry, metadata = metadata)
+
+        assertThat(actualTitle).isEqualTo(metadata.title)
+    }
+}

@@ -21,8 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemViewState
+import io.alexeychurchill.dplayer.library.presentation.SecondaryInfoViewState
 
 private const val NoCountValue = "-"
 
@@ -37,15 +45,16 @@ fun MediaEntryListItem(
         headlineContent = {
             Text(
                 text = entry.title,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
                 style = MaterialTheme.typography.bodyLarge,
             )
         },
         supportingContent = {
-            entry.directoryChildInfo?.let { info ->
-                DirectoryChildCount(
+            entry.secondaryInfo?.let { info ->
+                SecondaryInfo(
                     modifier = Modifier.padding(top = 4.dp),
-                    subDirectoryCount = info.subDirectoryCount,
-                    fileCount = info.fileCount,
+                    state = info,
                 )
             }
         },
@@ -81,6 +90,44 @@ private fun StatusIcon(
             )
         }
     }
+}
+
+@Composable
+private fun SecondaryInfo(
+    state: SecondaryInfoViewState,
+    modifier: Modifier = Modifier,
+) {
+    when (state) {
+        is SecondaryInfoViewState.TrackInfo -> ArtistAndYearInfo(
+            modifier = modifier,
+            artist = state.artist,
+        )
+
+        is SecondaryInfoViewState.DirectoryChildInfo -> DirectoryChildCount(
+            modifier = modifier,
+            subDirectoryCount = state.subDirectoryCount,
+            fileCount = state.fileCount,
+        )
+    }
+}
+
+@Composable
+private fun ArtistAndYearInfo(
+    modifier: Modifier = Modifier,
+    artist: String? = null,
+) {
+    val isUnknown = artist == null
+    val defaultStyle = MaterialTheme.typography.bodyMedium
+    Text(
+        modifier = modifier,
+        text = artist ?: stringResource(R.string.library_item_track_unknown),
+        overflow = TextOverflow.Clip,
+        maxLines = 1,
+        style = defaultStyle.copy(
+            fontWeight = FontWeight.SemiBold,
+            fontStyle = if (isUnknown) FontStyle.Italic else defaultStyle.fontStyle,
+        ),
+    )
 }
 
 @Composable

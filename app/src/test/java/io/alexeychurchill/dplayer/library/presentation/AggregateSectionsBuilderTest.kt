@@ -1,5 +1,6 @@
 package io.alexeychurchill.dplayer.library.presentation
 
+import io.alexeychurchill.dplayer.media.domain.FileMetadata
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,7 +24,7 @@ class AggregateSectionsBuilderTest {
         every { build(any()) } returns TestDirSection
     }
     private val fileSectionBuilderMock: FileSectionBuilder = mockk {
-        every { build(any()) } returns TestFileSection
+        every { build(any(), any()) } returns TestFileSection
     }
 
     private val builder = AggregateSectionsBuilder(
@@ -34,11 +35,12 @@ class AggregateSectionsBuilderTest {
     @Test
     fun `builder calls sections builders and returns grouped result`() {
         val testEntries = TestMediaEntries.mixed
-        val result = builder.build(testEntries)
+        val metadata = emptyMap<String, FileMetadata>()
+        val result = builder.build(testEntries, metadata)
 
         verify {
             directorySectionBuilderMock.build(testEntries)
-            fileSectionBuilderMock.build(testEntries)
+            fileSectionBuilderMock.build(testEntries, metadata)
         }
 
         assertThat(result).containsExactly(

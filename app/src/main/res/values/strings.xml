@@ -6,4 +6,6 @@
     <string name="library_section_files_header_title">Files</string>
     <string name="library_section_files_empty">No Files</string>
     <string name="library_section_directories_header_title">Directories</string>
+
+    <string name="library_item_track_unknown">Unknown</string>
 </resources>
