@@ -2,6 +2,7 @@ package io.alexeychurchill.dplayer.core.data.filesystem
 
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileName
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
+import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions.Separator
 import javax.inject.Inject
 
 class FilesystemStore @Inject constructor(
@@ -11,12 +12,12 @@ class FilesystemStore @Inject constructor(
     private val fileFactory: DocumentFileFactory,
 ) {
 
-    fun directoryBy(path: String): FileSystemEntry.Directory? {
-        val dirFile = treeFactory(path) ?: return null
+    fun directoryBy(path: String): FileSystemEntry.Directory {
+        val dirFile = treeFactory(path)
         return FileSystemEntry.Directory(
             path = path,
-            name = FileName.of(dirFile.name),
-            exists = dirFile.exists(),
+            name = FileName.of(dirFile?.name),
+            exists = dirFile?.exists() ?: false,
         )
     }
 
@@ -24,7 +25,8 @@ class FilesystemStore @Inject constructor(
         val file = fileFactory(path) ?: return null
         return FileSystemEntry.File(
             path = path,
-            name = FileName.of(file.name)
+            name = FileName.of(file.name?.withNoExtension),
+            extension = file.name?.fileExtension,
         )
     }
 
@@ -43,3 +45,15 @@ class FilesystemStore @Inject constructor(
             }
     }
 }
+
+private val String.withNoExtension: String
+    get() = takeIf { it.contains(Separator) && it.last() != Separator }
+        ?.dropLastWhile { it != Separator }
+        ?.dropLast(n = 1)
+        ?: this
+
+private val String.fileExtension: String?
+    get() = split(Separator)
+        .takeIf { it.size > 1 }
+        ?.last()
+        ?.lowercase()

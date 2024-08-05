@@ -5,7 +5,8 @@ import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.core.domain.filesystem.FilesExtensions
 import io.alexeychurchill.dplayer.core.domain.filesystem.directoryCount
 import io.alexeychurchill.dplayer.core.domain.filesystem.fileCount
-import io.alexeychurchill.dplayer.library.domain.DirectorySource
+import io.alexeychurchill.dplayer.library.domain.EntryInfo
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -18,14 +19,18 @@ class MediaEntryStore @Inject constructor(
 
     fun directoryMediaEntry(
         path: String,
-        source: DirectorySource = DirectorySource.FromFileSystem,
-    ): MediaEntry.Directory {
+        source: EntrySource = EntrySource.FileSystem,
+    ): MediaEntry {
         val childEntries = filesystemStore.list(path)
-        return MediaEntry.Directory(
-            directoryEntry = filesystemStore.directoryBy(path),
-            musicFileCount = childEntries.fileCount { ext -> ext in FilesExtensions.MusicFiles },
-            subDirectoryCount = childEntries.directoryCount(),
+        return MediaEntry(
+            fsEntry = filesystemStore.directoryBy(path),
             source = source,
+            info = EntryInfo.Directory(
+                directoryCount = childEntries.directoryCount(),
+                musicFileCount = childEntries.fileCount { ext ->
+                    (ext ?: "") in FilesExtensions.MusicFiles
+                },
+            ),
         )
     }
 
@@ -36,7 +41,7 @@ class MediaEntryStore @Inject constructor(
                 async {
                     when (child) {
                         is FileSystemEntry.Directory -> directoryMediaEntry(path = child.path)
-                        is FileSystemEntry.File -> MediaEntry.File(fileEntry = child)
+                        is FileSystemEntry.File -> MediaEntry(fsEntry = child)
                     }
                 }
             }

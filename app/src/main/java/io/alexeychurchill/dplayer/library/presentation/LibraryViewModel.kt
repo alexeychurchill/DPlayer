@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.library.domain.AddDirectoryUseCase
-import io.alexeychurchill.dplayer.library.domain.PathCodec
 import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
     private val addFolderUseCase: AddDirectoryUseCase,
-    private val pathCodec: PathCodec,
+    private val payloadCodec: OpenDirectoryPayloadCodec,
 ) : ViewModel() {
 
     private val mutableOpenDirectoryFlow = MutableSharedFlow<Unit>()
@@ -35,17 +34,19 @@ class LibraryViewModel @Inject constructor(
     fun onAction(action: LibraryAction) {
         viewModelScope.launch {
             when (action) {
-                is LibraryAction.OpenMediaEntry -> {
-                    if (action.type == MediaEntryItemViewState.Type.Directory) {
-                        action.path?.let { path ->
-                            val direction = Directory(pathId = pathCodec.encode(path))
-                            mutableDirectionFlow.emit(direction)
-                        }
-                    }
+                is LibraryAction.OpenMediaEntry.File -> {
+                    /** TBD **/
+                }
+
+                is LibraryAction.OpenMediaEntry.Directory -> {
+                    val encodedPayload = payloadCodec.encode(action.payload)
+                    mutableDirectionFlow.emit(Directory(encodedPayload = encodedPayload))
                 }
 
                 LibraryAction.OpenTreePicker -> mutableOpenDirectoryFlow.emit(Unit)
+
                 is LibraryAction.TreePicked -> addFolderUseCase(action.uriPath)
+
                 LibraryAction.GoBack -> mutableBackDirectionFlow.emit(Unit)
             }
         }

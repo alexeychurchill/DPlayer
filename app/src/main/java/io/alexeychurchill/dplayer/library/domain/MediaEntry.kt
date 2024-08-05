@@ -3,27 +3,29 @@ package io.alexeychurchill.dplayer.library.domain
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import java.time.LocalDateTime
 
-sealed interface MediaEntry {
+data class MediaEntry(
+    val fsEntry: FileSystemEntry,
+    val source: EntrySource = EntrySource.FileSystem,
+    val info: EntryInfo = EntryInfo.None,
+)
 
-    data class Directory(
-        val directoryEntry: FileSystemEntry.Directory?,
-        val subDirectoryCount: Int,
-        val musicFileCount: Int,
-        val source: DirectorySource,
-    ) : MediaEntry
+sealed interface EntrySource {
 
-    data class File(
-        val fileEntry: FileSystemEntry.File,
-    ) : MediaEntry
-}
+    data object FileSystem : EntrySource
 
-sealed interface DirectorySource {
-
-    data object FromFileSystem : DirectorySource
-
-    data class FromUserLibrary(
+    data class UserLibrary(
         val createdAt: LocalDateTime,
         val updatedAt: LocalDateTime,
         val aliasTitle: String?,
-    ) : DirectorySource
+    ) : EntrySource
+}
+
+sealed interface EntryInfo {
+
+    data object None : EntryInfo
+
+    data class Directory(
+        val directoryCount: Int,
+        val musicFileCount: Int,
+    ) : EntryInfo
 }

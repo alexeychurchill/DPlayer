@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class LibraryItemsViewModel @Inject constructor(
+class LibraryContentViewModel @Inject constructor(
     libraryRepository: LibraryRepository,
     private val mediaEntryMapper: MediaEntryViewStateMapper,
 ) : ViewModel() {

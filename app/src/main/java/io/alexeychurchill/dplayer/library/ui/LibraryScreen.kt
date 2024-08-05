@@ -32,9 +32,11 @@ import androidx.navigation.compose.rememberNavController
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 import io.alexeychurchill.dplayer.library.presentation.LibraryDirection
-import io.alexeychurchill.dplayer.library.presentation.LibraryItemsViewModel
+import io.alexeychurchill.dplayer.library.presentation.LibraryContentViewModel
+import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory.Companion
+import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory.Companion.ArgPayload
 import io.alexeychurchill.dplayer.library.presentation.LibraryViewModel
-import io.alexeychurchill.dplayer.library.presentation.MediaEntryItemsViewModel
+import io.alexeychurchill.dplayer.library.presentation.MediaEntryContentViewModel
 import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -76,11 +78,13 @@ fun LibraryScreen(
             exitTransition = { transitionExitToStart() },
             popExitTransition = { transitionExitToEnd() },
         ) { backStackEntry ->
-            val directoryPathId = backStackEntry.arguments
-                ?.getString(LibraryDirection.Directory.ArgPathId)
+            val payload = backStackEntry
+                .arguments
+                ?.getString(ArgPayload)
+                ?: throw IllegalArgumentException("$ArgPayload is missing!")
 
             MediaEntryLibraryScreen(
-                pathId = directoryPathId,
+                payload = payload,
                 onLibraryAction = viewModel::onAction,
             )
         }
@@ -130,7 +134,7 @@ private fun transitionExitToEnd(): ExitTransition {
 @Composable
 private fun RootLibraryScreen(
     modifier: Modifier = Modifier,
-    viewModel: LibraryItemsViewModel = hiltViewModel(),
+    viewModel: LibraryContentViewModel = hiltViewModel(),
     onLibraryAction: OnLibraryAction = {},
 ) {
     val state by viewModel.libraryViewState.collectAsState()
@@ -149,10 +153,12 @@ private fun RootLibraryScreen(
 
 @Composable
 private fun MediaEntryLibraryScreen(
-    pathId: String?,
+    payload: String,
     modifier: Modifier = Modifier,
-    viewModel: MediaEntryItemsViewModel = hiltViewModel(
-        creationCallback = { factory: MediaEntryItemsViewModel.Factory -> factory.create(pathId) }
+    viewModel: MediaEntryContentViewModel = hiltViewModel(
+        creationCallback = { factory: MediaEntryContentViewModel.Factory ->
+            factory.create(payload)
+        },
     ),
     onLibraryAction: OnLibraryAction = {},
 ) {
