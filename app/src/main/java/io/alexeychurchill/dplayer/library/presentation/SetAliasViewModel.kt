@@ -6,6 +6,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.LibraryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,17 +29,22 @@ class SetAliasViewModel @AssistedInject constructor(
 
     private val _onDoneEvent = MutableSharedFlow<Unit>()
 
-    private val _aliasValue = MutableStateFlow("")
+    private val _mode = MutableStateFlow<SetAliasNameMode?>(null)
 
-    private val _actionsEnabled = MutableStateFlow(true)
+    private val _aliasValue = MutableStateFlow<String?>(null)
+
+    private val _actionsEnabled = MutableStateFlow(false)
 
     val onDoneEvent: Flow<Unit> = _onDoneEvent.asSharedFlow()
 
-    val aliasValue: StateFlow<String> = _aliasValue.asStateFlow()
+    val mode: StateFlow<SetAliasNameMode?> = _mode.asStateFlow()
+
+    val aliasValue: StateFlow<String?> = _aliasValue.asStateFlow()
 
     val applyEnabled: StateFlow<Boolean> = _actionsEnabled
-        .combine(_aliasValue) { actionsEnabled, aliasValue ->
-            actionsEnabled && aliasValue.isNotEmpty() && aliasValue.isNotBlank()
+        .combine(_aliasValue) { enabled, aliasValue ->
+            val valuePresent = aliasValue?.let { it.isNotEmpty() && it.isNotBlank() } ?: false
+            enabled && valuePresent
         }
         .stateIn(
             scope = viewModelScope,
@@ -48,6 +54,26 @@ class SetAliasViewModel @AssistedInject constructor(
 
     val cancelEnabled: StateFlow<Boolean> = _actionsEnabled.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            val libraryEntry = libraryRepository.getLibraryEntry(directoryUri)
+            if (libraryEntry == null || libraryEntry.source !is EntrySource.UserLibrary) {
+                _onDoneEvent.emit(Unit)
+                return@launch
+            }
+
+            val alias = libraryEntry.source.aliasTitle
+            if (alias == null) {
+                _mode.emit(SetAliasNameMode.Set)
+                _aliasValue.emit("")
+            } else {
+                _mode.emit(SetAliasNameMode.Update)
+                _aliasValue.emit(alias)
+            }
+            _actionsEnabled.emit(true)
+        }
+    }
+
     fun onAliasValueChange(value: String) {
         _aliasValue.tryEmit(value)
     }
@@ -55,8 +81,8 @@ class SetAliasViewModel @AssistedInject constructor(
     fun onApply() {
         if (!applyEnabled.value) return
         viewModelScope.launch {
+            val aliasValue = _aliasValue.value?.trim() ?: return@launch
             _actionsEnabled.emit(false)
-            val aliasValue = _aliasValue.value.trim()
             libraryRepository.setDirectoryAlias(directoryUri, aliasValue)
             _onDoneEvent.emit(Unit)
         }
@@ -74,4 +100,9 @@ class SetAliasViewModel @AssistedInject constructor(
     interface Factory {
         fun create(@Assisted(AssistedDirectoryUri) directoryUri: String): SetAliasViewModel
     }
+}
+
+enum class SetAliasNameMode {
+    Set,
+    Update,
 }

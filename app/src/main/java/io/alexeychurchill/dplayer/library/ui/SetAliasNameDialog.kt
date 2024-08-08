@@ -29,19 +29,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
+import io.alexeychurchill.dplayer.library.presentation.SetAliasNameMode
 import io.alexeychurchill.dplayer.library.presentation.SetAliasViewModel
 import io.alexeychurchill.dplayer.library.presentation.SetAliasViewModel.Factory
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun SetAliasNameDialog(
@@ -60,17 +68,13 @@ fun SetAliasNameDialog(
         }
     }
 
+    val mode by viewModel.mode.collectAsState()
+
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onClose,
         windowInsets = WindowInsets(top = 0.dp, bottom = 0.dp, left = 0.dp, right = 0.dp),
     ) {
-        val valueFocusRequester = remember { FocusRequester() }
-
-        LaunchedEffect(key1 = null) {
-            valueFocusRequester.requestFocus()
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,21 +105,12 @@ fun SetAliasNameDialog(
                 textAlign = TextAlign.Center,
             )
 
-            val aliasValue by viewModel.aliasValue.collectAsState()
-            OutlinedTextField(
+            AliasValue(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
-                    .focusRequester(valueFocusRequester),
-                value = aliasValue,
+                    .padding(top = 16.dp),
+                value = viewModel.aliasValue,
                 onValueChange = viewModel::onAliasValueChange,
-                maxLines = 1,
-                label = {
-                    Text(text = stringResource(R.string.library_alias_value_label))
-                },
-                placeholder = {
-                    Text(text = stringResource(R.string.library_alias_value_placeholder))
-                },
             )
 
             Row(
@@ -134,7 +129,7 @@ fun SetAliasNameDialog(
                     onClick = viewModel::onCancel,
                     enabled = cancelEnabled
                 ) {
-                    Text(text = "Cancel")
+                    Text(text = stringResource(R.string.generic_cancel))
                 }
 
                 val applyEnabled by viewModel.applyEnabled.collectAsState()
@@ -142,9 +137,53 @@ fun SetAliasNameDialog(
                     onClick = viewModel::onApply,
                     enabled = applyEnabled,
                 ) {
-                    Text(text = "Apply")
+                    Text(
+                        text = when (mode) {
+                            SetAliasNameMode.Set -> stringResource(R.string.generic_apply)
+                            SetAliasNameMode.Update -> stringResource(R.string.generic_update)
+                            null -> stringResource(R.string.generic_loading)
+                        },
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun AliasValue(
+    value: StateFlow<String?>,
+    modifier: Modifier = Modifier,
+    onValueChange: (String) -> Unit = {},
+) {
+    val focusRequester = remember { FocusRequester() }
+    var aliasText by remember { mutableStateOf(TextFieldValue()) }
+    LaunchedEffect(key1 = value) {
+        val initialValue = value
+            .filterNotNull()
+            .first()
+
+        aliasText = aliasText.copy(
+            text = initialValue,
+            selection = TextRange(initialValue.length),
+        )
+        focusRequester.requestFocus()
+    }
+
+    OutlinedTextField(
+        modifier = modifier
+            .focusRequester(focusRequester),
+        value = aliasText,
+        onValueChange = { newAliasText ->
+            aliasText = newAliasText
+            onValueChange(newAliasText.text)
+        },
+        maxLines = 1,
+        label = {
+            Text(text = stringResource(R.string.library_alias_value_label))
+        },
+        placeholder = {
+            Text(text = stringResource(R.string.library_alias_value_placeholder))
+        },
+    )
 }
