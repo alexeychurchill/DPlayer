@@ -1,6 +1,5 @@
 package io.alexeychurchill.dplayer.library.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocumentTree
 import androidx.compose.animation.EnterTransition
@@ -10,18 +9,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowBack
-import androidx.compose.material.icons.twotone.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -29,15 +18,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 import io.alexeychurchill.dplayer.library.presentation.LibraryDirection
-import io.alexeychurchill.dplayer.library.presentation.LibraryContentViewModel
-import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory.Companion
 import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory.Companion.ArgPayload
 import io.alexeychurchill.dplayer.library.presentation.LibraryViewModel
-import io.alexeychurchill.dplayer.library.presentation.MediaEntryContentViewModel
-import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
@@ -132,57 +116,6 @@ private fun transitionExitToEnd(): ExitTransition {
 }
 
 @Composable
-private fun RootLibraryScreen(
-    modifier: Modifier = Modifier,
-    viewModel: LibraryContentViewModel = hiltViewModel(),
-    onLibraryAction: OnLibraryAction = {},
-) {
-    val state by viewModel.libraryViewState.collectAsState()
-    LibraryScreenLayout(
-        modifier = modifier.fillMaxSize(),
-        title = stringResource(R.string.library_title),
-        state = state,
-        actions = {
-            AddButton {
-                onLibraryAction(LibraryAction.OpenTreePicker)
-            }
-        },
-        onLibraryAction = onLibraryAction,
-    )
-}
-
-@Composable
-private fun MediaEntryLibraryScreen(
-    payload: String,
-    modifier: Modifier = Modifier,
-    viewModel: MediaEntryContentViewModel = hiltViewModel(
-        creationCallback = { factory: MediaEntryContentViewModel.Factory ->
-            factory.create(payload)
-        },
-    ),
-    onLibraryAction: OnLibraryAction = {},
-) {
-    BackHandler { onLibraryAction(LibraryAction.GoBack) }
-
-    val title by viewModel.titleState.collectAsState()
-    val state by viewModel.libraryState.collectAsState()
-    LibraryScreenLayout(
-        modifier = modifier.fillMaxSize(),
-        title = title,
-        state = state,
-        navigationIcon = {
-            IconButton(onClick = { onLibraryAction(LibraryAction.GoBack) }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.TwoTone.ArrowBack,
-                    contentDescription = null,
-                )
-            }
-        },
-        onLibraryAction = onLibraryAction,
-    )
-}
-
-@Composable
 private fun TreePickerEffect(
     openPickerFlow: Flow<Unit>,
     onPicked: (path: String?) -> Unit,
@@ -193,22 +126,6 @@ private fun TreePickerEffect(
 
     LaunchedEffect(key1 = openPickerFlow, key2 = onPicked) {
         openPickerFlow.collectLatest { treePicker.launch(null) }
-    }
-}
-
-@Composable
-private fun AddButton(
-    modifier: Modifier = Modifier,
-    onTap: () -> Unit = {},
-) {
-    IconButton(
-        modifier = modifier,
-        onClick = onTap,
-    ) {
-        Icon(
-            imageVector = Icons.TwoTone.Add,
-            contentDescription = null
-        )
     }
 }
 

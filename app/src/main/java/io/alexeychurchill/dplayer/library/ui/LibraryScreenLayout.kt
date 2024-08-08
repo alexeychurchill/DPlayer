@@ -5,20 +5,13 @@ package io.alexeychurchill.dplayer.library.ui
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,11 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import androidx.compose.ui.unit.dp
 import io.alexeychurchill.dplayer.library.presentation.LibraryViewState
 import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
 import io.alexeychurchill.dplayer.ui.theme.DPlayerTheme
@@ -74,7 +65,7 @@ fun LibraryScreenLayout(
 }
 
 @Composable
-private fun LibraryTopBar(
+fun LibraryTopBar(
     title: String?,
     modifier: Modifier = Modifier,
     navigationIcon: @Composable (() -> Unit) = {},
@@ -99,21 +90,23 @@ private fun LibraryTopBar(
 }
 
 @Composable
-private fun AppBarTitlePlaceholder(modifier: Modifier = Modifier) {
-    val placeholderHeight = with(LocalDensity.current) {
-        LocalTextStyle.current.copy().lineHeight.toDp()
-    }
+fun LibraryContentLayout(
+    state: LibraryViewState,
+    screenPaddings: PaddingValues = PaddingValues(),
+    content: @Composable (loadedState: LibraryViewState.Loaded, paddings: PaddingValues) -> Unit,
+) {
+    Crossfade(
+        targetState = state,
+        label = "library content ",
+    ) { currentState ->
+        when (currentState) {
+            LibraryViewState.Loading -> LoadingLibraryLayout(
+                modifier = Modifier
+                    .padding(screenPaddings),
+            )
 
-    BoxWithConstraints(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .width(maxWidth * 0.7f)
-                .height(placeholderHeight)
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(4.dp),
-                ),
-        )
+            is LibraryViewState.Loaded -> content(currentState, screenPaddings)
+        }
     }
 }
 

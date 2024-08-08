@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package io.alexeychurchill.dplayer.library.ui
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,8 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,10 +39,16 @@ private const val NoCountValue = "-"
 fun MediaEntryListItem(
     entry: MediaEntryItemViewState,
     modifier: Modifier = Modifier,
-    onTap: () -> Unit = { },
+    onTap: () -> Unit = {},
+    secondaryActionMenu: (@Composable () -> Unit)? = null,
+    onSecondaryAction: () -> Unit = {},
 ) {
     ListItem(
-        modifier = modifier.clickable(onClick = onTap),
+        modifier = modifier
+            .combinedClickable(
+                onClick = onTap,
+                onLongClick = onSecondaryAction.takeIf { secondaryActionMenu != null },
+            ),
         headlineContent = {
             Text(
                 text = entry.title,
@@ -67,6 +74,11 @@ fun MediaEntryListItem(
         },
         trailingContent = {
             StatusIcon(status = entry.status)
+            secondaryActionMenu?.let { actionMenu ->
+                Box {
+                    actionMenu()
+                }
+            }
         },
     )
 }
