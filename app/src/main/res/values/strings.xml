@@ -11,11 +11,11 @@
     <string name="library_section_files_empty">No Files</string>
     <string name="library_section_directories_header_title">Directories</string>
 
-    <string name="library_item_track_unknown">Unknown</string>
+    <string name="library_item_track_artist_unknown">Unknown</string>
 
     <string name="library_alias_title">Set alias name</string>
     <string name="library_alias_value_label">Alias name</string>
     <string name="library_alias_value_placeholder">Enter directory alias name…</string>
     <string name="library_root_action_set_alias">Set alias</string>
-    <string name="generic_loading">Loading...</string>
+    <string name="generic_loading">Loading…</string>
 </resources>

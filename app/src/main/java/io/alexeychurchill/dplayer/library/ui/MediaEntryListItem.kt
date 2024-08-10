@@ -132,7 +132,7 @@ private fun ArtistAndYearInfo(
     val defaultStyle = MaterialTheme.typography.bodyMedium
     Text(
         modifier = modifier,
-        text = artist ?: stringResource(R.string.library_item_track_unknown),
+        text = artist ?: stringResource(R.string.library_item_track_artist_unknown),
         overflow = TextOverflow.Clip,
         maxLines = 1,
         style = defaultStyle.copy(

@@ -1,5 +1,6 @@
 package io.alexeychurchill.dplayer.library.presentation
 
+import io.alexeychurchill.dplayer.library.presentation.viewstate.FileEntryViewState
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 
 
@@ -35,8 +36,16 @@ sealed interface LibrarySectionViewState {
      * [MediaEntryItemViewState] (representation of the MediaEntry) collection
      */
     data class MediaEntries(val items: List<MediaEntryItemViewState>) : LibrarySectionViewState
+
+    /**
+     * Files section
+     */
+    data class FilesSection(
+        val items: List<FileEntryViewState>,
+    ) : LibrarySectionViewState
 }
 
+@Deprecated(message = "Should be split into particular type view states")
 data class MediaEntryItemViewState(
     val path: String,
     val title: String,
