@@ -7,11 +7,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.library.domain.LibraryRepository
 import io.alexeychurchill.dplayer.library.presentation.mapper.LibraryEntryViewStateMapper
-import io.alexeychurchill.dplayer.library.presentation.model.AliasOperationViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState.Loaded
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState.Loading
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState.EditingAlias
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState.None
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState.RemovingAlias
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState.RemovingFromLibrary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,8 +34,8 @@ class LibraryRootViewModel @Inject constructor(
     private val entryMapper: LibraryEntryViewStateMapper,
 ) : ViewModel() {
 
-    private val _aliasOperationState =
-        MutableStateFlow<AliasOperationViewState>(AliasOperationViewState.None)
+    private val _ongoingOperationState =
+        MutableStateFlow<OngoingOperationViewState>(None)
 
     val libraryViewState: StateFlow<LibraryRootViewState> = libraryRepository
         .allEntries
@@ -47,21 +51,28 @@ class LibraryRootViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    val aliasOperationState: StateFlow<AliasOperationViewState> =
-        _aliasOperationState.asStateFlow()
+    val ongoingOperationState: StateFlow<OngoingOperationViewState> =
+        _ongoingOperationState.asStateFlow()
 
     fun onDirectoryAction(action: LibraryDirectoryAction) {
         viewModelScope.launch {
             when (action) {
                 is LibraryDirectoryAction.SetAlias, is LibraryDirectoryAction.UpdateAlias -> {
-                    _aliasOperationState.emit(
-                        AliasOperationViewState.Editing(directoryUri = action.directoryUri)
-                    )
+                    _ongoingOperationState.emit(EditingAlias(directoryUri = action.directoryUri))
                 }
 
                 is LibraryDirectoryAction.RemoveAlias -> {
-                    _aliasOperationState.emit(
-                        AliasOperationViewState.Removing(
+                    _ongoingOperationState.emit(
+                        RemovingAlias(
+                            directoryUri = action.directoryUri,
+                            directoryTitle = action.directoryTitle,
+                        )
+                    )
+                }
+
+                is LibraryDirectoryAction.RemoveFromLibrary -> {
+                    _ongoingOperationState.emit(
+                        RemovingFromLibrary(
                             directoryUri = action.directoryUri,
                             directoryTitle = action.directoryTitle,
                         )
@@ -73,13 +84,19 @@ class LibraryRootViewModel @Inject constructor(
 
     fun onEditAliasDismiss() {
         viewModelScope.launch {
-            _aliasOperationState.emit(AliasOperationViewState.None)
+            _ongoingOperationState.emit(None)
         }
     }
 
     fun onRemoveAliasDismiss() {
         viewModelScope.launch {
-            _aliasOperationState.emit(AliasOperationViewState.None)
+            _ongoingOperationState.emit(None)
+        }
+    }
+
+    fun onRemoveFromLibraryDismiss() {
+        viewModelScope.launch {
+            _ongoingOperationState.emit(None)
         }
     }
 }

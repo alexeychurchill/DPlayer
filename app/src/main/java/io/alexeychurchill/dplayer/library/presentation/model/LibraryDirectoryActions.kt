@@ -24,4 +24,9 @@ sealed class LibraryDirectoryAction(open val directoryUri: String) {
         override val directoryUri: String,
         val directoryTitle: String,
     ) : LibraryDirectoryAction(directoryUri)
+
+    data class RemoveFromLibrary(
+        override val directoryUri: String,
+        val directoryTitle: String,
+    ) : LibraryDirectoryAction(directoryUri)
 }

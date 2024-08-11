@@ -20,4 +20,7 @@ abstract class DirectoryDao {
 
     @Update
     abstract suspend fun updateDirectory(record: RoomLibraryRecord)
+
+    @Query("DELETE FROM user_directories WHERE path=:path")
+    abstract suspend fun removeDirectory(path: String)
 }

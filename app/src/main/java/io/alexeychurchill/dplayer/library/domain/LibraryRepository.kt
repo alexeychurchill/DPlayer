@@ -11,4 +11,6 @@ interface LibraryRepository {
     suspend fun setDirectoryAlias(uri: String, aliasName: String?)
 
     suspend fun putLibraryRecord(record: LibraryRecord)
+
+    suspend fun removeEntry(path: String)
 }
