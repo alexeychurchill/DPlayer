@@ -6,5 +6,8 @@ sealed interface AliasOperationViewState {
 
     data class Editing(val directoryUri: String) : AliasOperationViewState
 
-    data class Removing(val directoryUri: String) : AliasOperationViewState
+    data class Removing(
+        val directoryUri: String,
+        val directoryTitle: String,
+    ) : AliasOperationViewState
 }

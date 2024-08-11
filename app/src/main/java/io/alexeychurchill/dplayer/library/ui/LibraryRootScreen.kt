@@ -78,6 +78,7 @@ fun LibraryRootScreen(
     (setAliasState as? AliasOperationViewState.Removing)?.let { removing ->
         RemoveAliasNameDialog(
             directoryUri = removing.directoryUri,
+            directoryTitle = removing.directoryTitle,
             onDismiss = viewModel::onRemoveAliasDismiss,
         )
     }
@@ -176,7 +177,6 @@ private fun LibraryEntry(
             ) {
                 LibraryDirectoryMenu(
                     shown = actionsShown,
-                    directoryUri = entryState.directory.path,
                     state = actions,
                     onAction = onDirectoryAction,
                     onDismiss = { actionsShown = false },

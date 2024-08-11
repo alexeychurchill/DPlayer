@@ -30,7 +30,7 @@ class LibraryRootViewModel @Inject constructor(
     private val entryMapper: LibraryEntryViewStateMapper,
 ) : ViewModel() {
 
-    private val mutableAliasOperationState =
+    private val _aliasOperationState =
         MutableStateFlow<AliasOperationViewState>(AliasOperationViewState.None)
 
     val libraryViewState: StateFlow<LibraryRootViewState> = libraryRepository
@@ -48,17 +48,24 @@ class LibraryRootViewModel @Inject constructor(
         )
 
     val aliasOperationState: StateFlow<AliasOperationViewState> =
-        mutableAliasOperationState.asStateFlow()
+        _aliasOperationState.asStateFlow()
 
     fun onDirectoryAction(action: LibraryDirectoryAction) {
         viewModelScope.launch {
             when (action) {
                 is LibraryDirectoryAction.SetAlias, is LibraryDirectoryAction.UpdateAlias -> {
-                    mutableAliasOperationState.emit(AliasOperationViewState.Editing(action.path))
+                    _aliasOperationState.emit(
+                        AliasOperationViewState.Editing(directoryUri = action.directoryUri)
+                    )
                 }
 
                 is LibraryDirectoryAction.RemoveAlias -> {
-                    mutableAliasOperationState.emit(AliasOperationViewState.Removing(action.path))
+                    _aliasOperationState.emit(
+                        AliasOperationViewState.Removing(
+                            directoryUri = action.directoryUri,
+                            directoryTitle = action.directoryTitle,
+                        )
+                    )
                 }
             }
         }
@@ -66,13 +73,13 @@ class LibraryRootViewModel @Inject constructor(
 
     fun onEditAliasDismiss() {
         viewModelScope.launch {
-            mutableAliasOperationState.emit(AliasOperationViewState.None)
+            _aliasOperationState.emit(AliasOperationViewState.None)
         }
     }
 
     fun onRemoveAliasDismiss() {
         viewModelScope.launch {
-            mutableAliasOperationState.emit(AliasOperationViewState.None)
+            _aliasOperationState.emit(AliasOperationViewState.None)
         }
     }
 }

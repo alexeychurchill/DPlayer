@@ -21,7 +21,6 @@ import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryDirectoryA
 @Composable
 fun LibraryDirectoryMenu(
     shown: Boolean,
-    directoryUri: String,
     state: LibraryDirectoryActionsViewState,
     modifier: Modifier = Modifier,
     onAction: OnLibraryDirectoryAction,
@@ -45,7 +44,7 @@ fun LibraryDirectoryMenu(
                 },
                 onClick = {
                     onDismiss()
-                    onAction(SetAlias(directoryUri))
+                    onAction(SetAlias(state.directoryUri))
                 }
             )
         }
@@ -63,7 +62,7 @@ fun LibraryDirectoryMenu(
                 },
                 onClick = {
                     onDismiss()
-                    onAction(UpdateAlias(directoryUri))
+                    onAction(UpdateAlias(state.directoryUri))
                 },
             )
         }
@@ -81,7 +80,12 @@ fun LibraryDirectoryMenu(
                 },
                 onClick = {
                     onDismiss()
-                    onAction(RemoveAlias(directoryUri))
+                    onAction(
+                        RemoveAlias(
+                            directoryUri = state.directoryUri,
+                            directoryTitle = state.directoryTitle,
+                        )
+                    )
                 },
             )
         }

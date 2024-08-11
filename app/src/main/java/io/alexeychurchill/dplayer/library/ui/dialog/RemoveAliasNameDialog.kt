@@ -12,8 +12,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
@@ -24,9 +22,12 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun RemoveAliasNameDialog(
     directoryUri: String,
+    directoryTitle: String,
     viewModel: RemoveAliasViewModel = hiltViewModel(
         key = "${directoryUri}:${System.currentTimeMillis()}",
-        creationCallback = { factory: Factory -> factory.create(directoryUri) },
+        creationCallback = { factory: Factory ->
+            factory.create(directoryUri)
+        },
     ),
     onDismiss: () -> Unit = {},
 ) {
@@ -35,8 +36,6 @@ fun RemoveAliasNameDialog(
             onDismiss()
         }
     }
-
-    val directoryTitle by viewModel.aliasName.collectAsState()
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -51,10 +50,7 @@ fun RemoveAliasNameDialog(
         },
         text = {
             Text(
-                text = stringResource(
-                    R.string.library_alias_description_remove,
-                    directoryTitle ?: stringResource(R.string.generic_placeholder),
-                ),
+                text = stringResource(R.string.library_alias_description_remove, directoryTitle),
             )
         },
         confirmButton = {

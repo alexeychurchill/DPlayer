@@ -16,9 +16,12 @@ class LibraryEntryViewStateMapper @Inject constructor(
                 "Cannot map entries with source other than UserLibrary!"
             )
 
+        val directoryViewState = directoryMapper.mapToViewState(entry)
         return LibraryEntryViewState(
-            directory = directoryMapper.mapToViewState(entry),
+            directory = directoryViewState,
             actions = LibraryDirectoryActionsViewState(
+                directoryUri = entry.fsEntry.path,
+                directoryTitle = directoryViewState.visibleTitle,
                 setAliasEnabled = source.aliasTitle == null,
                 updateAliasEnabled = source.aliasTitle != null,
                 removeAliasEnabled = source.aliasTitle != null,
