@@ -4,7 +4,7 @@ import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 
 data class DirectoryEntryViewState(
     val path: String,
-    val visibleTitle: Any?,
+    val visibleTitle: String,
     val status: DirectoryStatusViewState,
     val fileCount: Int?,
     val directoryCount: Int?,
