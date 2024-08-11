@@ -50,7 +50,7 @@ fun LibraryScreenLayout(
             label = "content crossfade",
         ) { currentState ->
             when (currentState) {
-                LibraryViewState.Loading -> LoadingLibraryLayout(
+                LibraryViewState.Loading -> LibraryLoadingPlaceholder(
                     modifier = Modifier.padding(screenPaddings)
                 )
 
@@ -90,28 +90,7 @@ fun LibraryTopBar(
 }
 
 @Composable
-fun LibraryContentLayout(
-    state: LibraryViewState,
-    screenPaddings: PaddingValues = PaddingValues(),
-    content: @Composable (loadedState: LibraryViewState.Loaded, paddings: PaddingValues) -> Unit,
-) {
-    Crossfade(
-        targetState = state,
-        label = "library content ",
-    ) { currentState ->
-        when (currentState) {
-            LibraryViewState.Loading -> LoadingLibraryLayout(
-                modifier = Modifier
-                    .padding(screenPaddings),
-            )
-
-            is LibraryViewState.Loaded -> content(currentState, screenPaddings)
-        }
-    }
-}
-
-@Composable
-private fun LoadingLibraryLayout(modifier: Modifier = Modifier) {
+fun LibraryLoadingPlaceholder(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize()) {
         repeat(30) { // Let's assume that this is enough to fill the screen
             ShadeLibraryItem(modifier = Modifier.fillMaxWidth())

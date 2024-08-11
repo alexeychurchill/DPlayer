@@ -52,7 +52,7 @@ fun LibraryScreen(
             popEnterTransition = { transitionEnterFromStart() },
             exitTransition = { transitionExitToStart() },
         ) {
-            RootLibraryScreen(onLibraryAction = viewModel::onAction)
+            LibraryRootScreen(onLibraryAction = viewModel::onAction)
         }
 
         composable(
