@@ -64,7 +64,10 @@ fun FileEntryItem(
             )
         },
         leadingContent = {
-            CoverArt(coverArtPath = state.coverArtPath)
+            CoverArt(
+                coverArtPath = state.coverArtPath,
+                extension = state.fileExtension,
+            )
         },
     )
 }
