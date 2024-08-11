@@ -5,9 +5,9 @@ import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.library.domain.EntryInfo
 import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.Faulty
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.None
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.Openable
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.Faulty
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.None
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.Openable
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

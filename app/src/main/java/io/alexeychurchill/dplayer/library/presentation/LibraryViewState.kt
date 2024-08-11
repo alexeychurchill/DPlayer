@@ -1,6 +1,6 @@
 package io.alexeychurchill.dplayer.library.presentation
 
-import io.alexeychurchill.dplayer.library.presentation.viewstate.FileEntryViewState
+import io.alexeychurchill.dplayer.library.presentation.model.FileEntryViewState
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 
 

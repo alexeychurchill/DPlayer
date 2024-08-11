@@ -7,7 +7,7 @@ import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry.Directo
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry.File
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction.OpenMediaEntry
-import io.alexeychurchill.dplayer.library.presentation.viewstate.FileEntryViewState
+import io.alexeychurchill.dplayer.library.presentation.model.FileEntryViewState
 import io.alexeychurchill.dplayer.media.domain.FileMetadata
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath.LocalUri
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat

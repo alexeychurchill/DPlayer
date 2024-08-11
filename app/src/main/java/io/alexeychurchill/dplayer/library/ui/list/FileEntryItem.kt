@@ -36,7 +36,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import io.alexeychurchill.dplayer.R
-import io.alexeychurchill.dplayer.library.presentation.viewstate.FileEntryViewState
+import io.alexeychurchill.dplayer.library.presentation.model.FileEntryViewState
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 import io.alexeychurchill.dplayer.ui.theme.DPlayerTheme
 

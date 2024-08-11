@@ -10,8 +10,8 @@ import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction.OpenMediaEntry
 import io.alexeychurchill.dplayer.library.presentation.OpenDirectoryPayload
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryEntryViewState
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.None
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryEntryViewState
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.None
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat

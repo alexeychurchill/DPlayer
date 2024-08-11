@@ -8,11 +8,11 @@ import io.alexeychurchill.dplayer.library.domain.EntrySource.UserLibrary
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction.OpenMediaEntry
 import io.alexeychurchill.dplayer.library.presentation.OpenDirectoryPayload
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryEntryViewState
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.Faulty
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.None
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.Openable
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryEntryViewState
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.Faulty
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.None
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.Openable
 import javax.inject.Inject
 
 class DirectoryEntryViewStateMapper @Inject constructor(

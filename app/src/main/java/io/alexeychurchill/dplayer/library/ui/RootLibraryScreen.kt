@@ -118,7 +118,7 @@ private fun UserDirectoryEntryListItem(
         onTap = onTap,
         onSecondaryAction = { menuShown = true },
         secondaryActionMenu = {
-            UserDirectoryMenu(
+            UserDirectoryMenu___(
                 expanded = menuShown,
                 onDismiss = { menuShown = false },
                 onSetAliasTap = onSetAliasTap,
@@ -128,7 +128,7 @@ private fun UserDirectoryEntryListItem(
 }
 
 @Composable
-private fun UserDirectoryMenu(
+private fun UserDirectoryMenu___(
     expanded: Boolean = false,
     onSetAliasTap: () -> Unit = {},
     onDismiss: () -> Unit = {},

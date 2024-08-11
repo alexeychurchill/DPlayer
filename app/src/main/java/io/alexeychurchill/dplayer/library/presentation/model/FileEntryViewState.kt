@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.library.presentation.viewstate
+package io.alexeychurchill.dplayer.library.presentation.model
 
 import io.alexeychurchill.dplayer.library.presentation.LibraryAction
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath

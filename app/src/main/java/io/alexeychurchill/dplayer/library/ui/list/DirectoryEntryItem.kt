@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package io.alexeychurchill.dplayer.library.ui.list
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,10 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryEntryViewState
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.Faulty
-import io.alexeychurchill.dplayer.library.presentation.viewstate.DirectoryStatusViewState.Openable
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryEntryViewState
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.Faulty
+import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.Openable
 
 private const val NoCountValue = "-"
 
@@ -35,10 +38,15 @@ fun DirectoryEntryItem(
     entry: DirectoryEntryViewState,
     modifier: Modifier = Modifier,
     onTap: () -> Unit = {},
+    onActionsMenuRequest: (() -> Unit)? = null,
+    actionsMenu: (@Composable () -> Unit)? = null,
 ) {
     ListItem(
         modifier = modifier
-            .clickable(onClick = onTap),
+            .combinedClickable(
+                onClick = onTap,
+                onLongClick = onActionsMenuRequest,
+            ),
         headlineContent = {
             Text(
                 text = entry.visibleTitle,
@@ -61,6 +69,8 @@ fun DirectoryEntryItem(
             StatusIcon(status = entry.status)
         },
     )
+
+    actionsMenu?.invoke()
 }
 
 @Composable
