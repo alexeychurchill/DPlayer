@@ -6,6 +6,7 @@ import io.alexeychurchill.dplayer.library.domain.EntrySource
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime.now
@@ -50,8 +51,8 @@ class LibraryEntryViewStateMapperTest {
         }
     }
 
-    /* @Test
-    fun `set alias action available if alias not set`() {
+    @Test
+    fun `set alias action is available if alias not set`() {
         val entry = MediaEntry(
             fsEntry = FileSystemEntry.Directory(
                 path = "", name = FileName.of("dname"), exists = true,
@@ -63,6 +64,23 @@ class LibraryEntryViewStateMapperTest {
 
         val actual = mapper.mapToViewState(entry)
 
-        // TBD
-    } */
+        assertThat(actual.actions?.setAliasEnabled).isTrue()
+    }
+
+    @Test
+    fun `update alias and remove alias actions are available if alias set`() {
+        val entry = MediaEntry(
+            fsEntry = FileSystemEntry.Directory(
+                path = "", name = FileName.of("dname"), exists = true,
+            ),
+            source = EntrySource.UserLibrary(
+                createdAt = now(), updatedAt = now(), aliasTitle = "null",
+            ),
+        )
+
+        val actual = mapper.mapToViewState(entry)
+
+        assertThat(actual.actions?.updateAliasEnabled).isTrue()
+        assertThat(actual.actions?.removeAliasEnabled).isTrue()
+    }
 }

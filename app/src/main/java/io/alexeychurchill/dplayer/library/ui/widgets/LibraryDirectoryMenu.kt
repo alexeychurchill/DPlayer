@@ -13,6 +13,8 @@ import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryDirectoryA
 
 @Composable
 fun LibraryDirectoryMenu(
+    shown: Boolean,
+    directoryUri: String,
     state: LibraryDirectoryActionsViewState,
     modifier: Modifier = Modifier,
     onAction: OnLibraryDirectoryAction,
@@ -20,7 +22,7 @@ fun LibraryDirectoryMenu(
 ) {
     DropdownMenu(
         modifier = modifier,
-        expanded = true,
+        expanded = shown,
         onDismissRequest = onDismiss,
     ) {
         if (state.setAliasEnabled) {
@@ -30,7 +32,7 @@ fun LibraryDirectoryMenu(
                 },
                 onClick = {
                     onDismiss()
-                    onAction(SetAlias)
+                    onAction(SetAlias(directoryUri))
                 }
             )
         }

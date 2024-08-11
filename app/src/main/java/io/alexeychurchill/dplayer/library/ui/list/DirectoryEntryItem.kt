@@ -42,14 +42,13 @@ fun DirectoryEntryItem(
     entry: DirectoryEntryViewState,
     modifier: Modifier = Modifier,
     onTap: () -> Unit = {},
-    onActionsMenuRequest: (() -> Unit)? = null,
-    actionsMenu: (@Composable () -> Unit)? = null,
+    onLongTap: (() -> Unit)? = null,
 ) {
     ListItem(
         modifier = modifier
             .combinedClickable(
                 onClick = onTap,
-                onLongClick = onActionsMenuRequest,
+                onLongClick = onLongTap,
             ),
         headlineContent = {
             Text(
@@ -73,8 +72,6 @@ fun DirectoryEntryItem(
             StatusIcon(status = entry.status)
         },
     )
-
-    actionsMenu?.invoke()
 }
 
 @Composable

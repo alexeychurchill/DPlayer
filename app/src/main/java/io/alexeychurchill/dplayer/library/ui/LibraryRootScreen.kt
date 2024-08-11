@@ -11,13 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,13 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction
-import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryAction
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryEntryViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState
+import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryAction
+import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryDirectoryAction
 import io.alexeychurchill.dplayer.library.presentation.model.SetAliasViewState
 import io.alexeychurchill.dplayer.library.presentation.viewmodel.LibraryRootViewModel
 import io.alexeychurchill.dplayer.library.ui.dialog.SetAliasNameDialog
 import io.alexeychurchill.dplayer.library.ui.list.DirectoryEntryItem
+import io.alexeychurchill.dplayer.library.ui.widgets.LibraryDirectoryMenu
 import io.alexeychurchill.dplayer.library.ui.widgets.LibraryLoadingPlaceholder
 import io.alexeychurchill.dplayer.library.ui.widgets.LibraryTopBar
 
@@ -61,10 +60,10 @@ fun LibraryRootScreen(
         },
     ) { screenPaddings ->
         Content(
-            modifier = Modifier.padding(screenPaddings),
             state = state,
+            modifier = Modifier.padding(screenPaddings),
             onLibraryAction = onLibraryAction,
-            onSetAliasTap = viewModel::onSetAliasRequest,
+            onDirectoryAction = viewModel::onDirectoryAction,
         )
     }
 
@@ -81,7 +80,7 @@ private fun Content(
     state: LibraryRootViewState,
     modifier: Modifier = Modifier,
     onLibraryAction: OnLibraryAction = {},
-    onSetAliasTap: (String) -> Unit = {},
+    onDirectoryAction: OnLibraryDirectoryAction = {},
 ) {
     Crossfade(
         modifier = modifier,
@@ -97,10 +96,10 @@ private fun Content(
 
             is LibraryRootViewState.Loaded -> {
                 LibraryEntriesList(
-                    modifier = Modifier.fillMaxSize(),
                     entries = currentState.items,
+                    modifier = Modifier.fillMaxSize(),
                     onLibraryAction = onLibraryAction,
-                    onSetAliasTap = onSetAliasTap,
+                    onDirectoryAction = onDirectoryAction,
                 )
             }
         }
@@ -128,7 +127,7 @@ private fun LibraryEntriesList(
     entries: List<LibraryEntryViewState>,
     modifier: Modifier = Modifier,
     onLibraryAction: OnLibraryAction = {},
-    onSetAliasTap: (String) -> Unit = {},
+    onDirectoryAction: OnLibraryDirectoryAction = {},
 ) {
     LazyColumn(modifier = modifier) {
         items(
@@ -139,7 +138,7 @@ private fun LibraryEntriesList(
             LibraryEntry(
                 entryState = entryState,
                 onTap = { onLibraryAction(entryState.directory.openAction) },
-                onSetAliasTap = { onSetAliasTap(entryState.directory.path) },
+                onDirectoryAction = onDirectoryAction,
             )
         }
     }
@@ -150,49 +149,31 @@ private fun LibraryEntry(
     entryState: LibraryEntryViewState,
     modifier: Modifier = Modifier,
     onTap: () -> Unit = {},
-    onSetAliasTap: () -> Unit = {},
+    onDirectoryAction: OnLibraryDirectoryAction = {},
 ) {
     var actionsShown by remember { mutableStateOf(false) }
     Box(modifier = modifier) {
         DirectoryEntryItem(
             entry = entryState.directory,
             onTap = onTap,
-            onActionsMenuRequest = { actionsShown = true },
+            onLongTap = { actionsShown = true },
         )
 
-        Box(
-            modifier = Modifier
-                .padding(end = 64.dp)
-                .align(Alignment.CenterEnd)
-                .width(64.dp),
-        ) {
-            UserDirectoryMenu___(
-                expanded = actionsShown,
-                onDismiss = { actionsShown = false },
-                onSetAliasTap = onSetAliasTap,
-            )
+        entryState.actions?.let { actions ->
+            Box(
+                modifier = Modifier
+                    .padding(end = 64.dp)
+                    .align(Alignment.CenterEnd)
+                    .width(64.dp),
+            ) {
+                LibraryDirectoryMenu(
+                    shown = actionsShown,
+                    directoryUri = entryState.directory.path,
+                    state = actions,
+                    onAction = onDirectoryAction,
+                    onDismiss = { actionsShown = false },
+                )
+            }
         }
-    }
-}
-
-@Composable
-private fun UserDirectoryMenu___(
-    expanded: Boolean = false,
-    onSetAliasTap: () -> Unit = {},
-    onDismiss: () -> Unit = {},
-) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = onDismiss,
-    ) {
-        DropdownMenuItem(
-            text = {
-                Text(text = stringResource(R.string.library_root_action_set_alias))
-            },
-            onClick = {
-                onDismiss()
-                onSetAliasTap()
-            },
-        )
     }
 }

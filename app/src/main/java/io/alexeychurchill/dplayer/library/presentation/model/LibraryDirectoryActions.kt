@@ -4,12 +4,21 @@ typealias OnLibraryDirectoryAction = (LibraryDirectoryAction) -> Unit
 
 data class LibraryDirectoryActionsViewState(
     val setAliasEnabled: Boolean = false,
+    val updateAliasEnabled: Boolean = false,
     val removeAliasEnabled: Boolean = false,
 )
 
-sealed interface LibraryDirectoryAction {
+sealed class LibraryDirectoryAction(open val path: String) {
 
-    data object SetAlias : LibraryDirectoryAction
+    data class SetAlias(
+        override val path: String,
+    ) : LibraryDirectoryAction(path)
 
-    data object RemoveAlias : LibraryDirectoryAction
+    data class UpdateAlias(
+        override val path: String,
+    ) : LibraryDirectoryAction(path)
+
+    data class RemoveAlias(
+        override val path: String,
+    ) : LibraryDirectoryAction(path)
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.library.domain.LibraryRepository
 import io.alexeychurchill.dplayer.library.presentation.mapper.LibraryEntryViewStateMapper
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState.Loaded
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState.Loading
@@ -47,9 +48,17 @@ class LibraryRootViewModel @Inject constructor(
 
     val setAliasState: StateFlow<SetAliasViewState> = mutableSetAliasState.asStateFlow()
 
-    fun onSetAliasRequest(directoryUri: String) {
+    fun onDirectoryAction(action: LibraryDirectoryAction) {
         viewModelScope.launch {
-            mutableSetAliasState.emit(SetAliasViewState.Editing(directoryUri))
+            when (action) {
+                is LibraryDirectoryAction.SetAlias, is LibraryDirectoryAction.UpdateAlias -> {
+                    mutableSetAliasState.emit(SetAliasViewState.Editing(action.path))
+                }
+
+                is LibraryDirectoryAction.RemoveAlias -> {
+                    TODO()
+                }
+            }
         }
     }
 
