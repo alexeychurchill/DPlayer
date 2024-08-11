@@ -2,8 +2,8 @@
 
 package io.alexeychurchill.dplayer.library.data
 
-import io.alexeychurchill.dplayer.library.presentation.OpenDirectoryPayload
-import io.alexeychurchill.dplayer.library.presentation.OpenDirectoryPayloadCodec
+import io.alexeychurchill.dplayer.library.presentation.model.OpenDirectoryPayload
+import io.alexeychurchill.dplayer.library.presentation.mapper.OpenDirectoryPayloadCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString

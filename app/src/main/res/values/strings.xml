@@ -1,11 +1,28 @@
 <resources>
     <string name="app_name">DPlayer</string>
 
+    <string name="generic_apply">Apply</string>
+    <string name="generic_update">Update</string>
+    <string name="generic_remove">Remove</string>
+    <string name="generic_cancel">Cancel</string>
+    <string name="generic_placeholder">…</string>
+
     <string name="library_title">Library</string>
 
     <string name="library_section_files_header_title">Files</string>
     <string name="library_section_files_empty">No Files</string>
     <string name="library_section_directories_header_title">Directories</string>
 
-    <string name="library_item_track_unknown">Unknown</string>
+    <string name="library_item_track_artist_unknown">Unknown</string>
+
+    <string name="library_alias_title_set">Set alias name</string>
+    <string name="library_alias_title_update">Update alias name</string>
+    <string name="library_alias_title_remove">Remove alias name</string>
+    <string name="library_alias_description_remove">Do you want to remove an alias name for %s?</string>
+    <string name="library_alias_value_label">Alias name</string>
+    <string name="library_alias_value_placeholder">Enter directory alias name…</string>
+    <string name="library_root_action_set_alias">Set alias</string>
+    <string name="library_root_action_update_alias">Update alias</string>
+    <string name="library_root_action_remove_alias">Remove alias</string>
+    <string name="generic_loading">Loading…</string>
 </resources>

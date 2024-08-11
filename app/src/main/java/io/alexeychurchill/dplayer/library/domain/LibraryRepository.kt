@@ -8,5 +8,7 @@ interface LibraryRepository {
 
     suspend fun getLibraryEntry(path: String): MediaEntry?
 
-    suspend fun addLibraryRecord(record: LibraryRecord)
+    suspend fun setDirectoryAlias(uri: String, aliasName: String?)
+
+    suspend fun putLibraryRecord(record: LibraryRecord)
 }

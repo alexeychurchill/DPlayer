@@ -22,7 +22,7 @@ class AddDirectoryUseCase @Inject constructor(
             createdAt = now,
             updatedAt = now,
         )
-        libraryRepository.addLibraryRecord(record)
+        libraryRepository.putLibraryRecord(record)
     }
 }
 

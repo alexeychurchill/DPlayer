@@ -9,7 +9,7 @@ import io.alexeychurchill.dplayer.library.data.FileSystemRepositoryImpl
 import io.alexeychurchill.dplayer.library.data.LibraryRepositoryImpl
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
 import io.alexeychurchill.dplayer.library.domain.LibraryRepository
-import io.alexeychurchill.dplayer.library.presentation.OpenDirectoryPayloadCodec
+import io.alexeychurchill.dplayer.library.presentation.mapper.OpenDirectoryPayloadCodec
 
 @InstallIn(SingletonComponent::class)
 @Module
