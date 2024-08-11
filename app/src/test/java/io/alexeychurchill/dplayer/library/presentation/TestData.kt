@@ -36,27 +36,3 @@ object TestMediaEntries {
     val mixed: List<MediaEntry>
         get() = directoryMediaEntries + fileMediaEntries
 }
-
-object TestMediaEntryViewStates {
-
-    val directory = List(3) { index ->
-        MediaEntryItemViewState(
-            path = "path$index",
-            title = "title$index",
-            type = MediaEntryItemViewState.Type.Directory,
-            status = MediaEntryItemViewState.Status.Openable,
-            openAction = LibraryAction.GoBack,
-        )
-    }
-
-    val file = List(3) { index ->
-        MediaEntryItemViewState(
-            path = "path$index",
-            title = "title$index",
-            type = MediaEntryItemViewState.Type.MusicFile,
-            openAction = LibraryAction.GoBack,
-        )
-    }
-
-    val mixed = directory + file
-}

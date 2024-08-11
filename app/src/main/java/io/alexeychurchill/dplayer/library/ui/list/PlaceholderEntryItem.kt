@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.library.ui
+package io.alexeychurchill.dplayer.library.ui.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)
 @Composable
-fun ShadeLibraryItem(modifier: Modifier = Modifier) {
+fun PlaceholderEntryItem(modifier: Modifier = Modifier) {
     ListItem(
         headlineContent = {
             Box(

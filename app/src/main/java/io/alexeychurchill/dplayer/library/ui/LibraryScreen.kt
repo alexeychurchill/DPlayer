@@ -67,7 +67,7 @@ fun LibraryScreen(
                 ?.getString(ArgPayload)
                 ?: throw IllegalArgumentException("$ArgPayload is missing!")
 
-            MediaEntryLibraryScreen(
+            EntryContentScreen(
                 payload = payload,
                 onLibraryAction = viewModel::onAction,
             )
