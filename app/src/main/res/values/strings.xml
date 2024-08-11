@@ -4,6 +4,7 @@
     <string name="generic_apply">Apply</string>
     <string name="generic_update">Update</string>
     <string name="generic_cancel">Cancel</string>
+    <string name="generic_placeholder">…</string>
 
     <string name="library_title">Library</string>
 
@@ -13,9 +14,11 @@
 
     <string name="library_item_track_artist_unknown">Unknown</string>
 
-    <string name="library_alias_title">Set alias name</string>
+    <string name="library_alias_title_set">Set alias name</string>
+    <string name="library_alias_title_update">Update alias name</string>
     <string name="library_alias_value_label">Alias name</string>
     <string name="library_alias_value_placeholder">Enter directory alias name…</string>
     <string name="library_root_action_set_alias">Set alias</string>
+    <string name="library_root_action_update_alias">Update alias</string>
     <string name="generic_loading">Loading…</string>
 </resources>

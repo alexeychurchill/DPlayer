@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.Label
 import androidx.compose.material.icons.twotone.NewLabel
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -92,7 +93,10 @@ fun SetAliasNameDialog(
                 modifier = Modifier
                     .size(24.dp)
                     .align(Alignment.CenterHorizontally),
-                imageVector = Icons.TwoTone.NewLabel,
+                imageVector = when (mode) {
+                    SetAliasNameMode.Set -> Icons.TwoTone.NewLabel
+                    else -> Icons.AutoMirrored.TwoTone.Label
+                },
                 contentDescription = null,
             )
 
@@ -100,7 +104,11 @@ fun SetAliasNameDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                text = stringResource(R.string.library_alias_title),
+                text = when (mode) {
+                    SetAliasNameMode.Set -> stringResource(R.string.library_alias_title_set)
+                    SetAliasNameMode.Update -> stringResource(R.string.library_alias_title_update)
+                    null -> stringResource(R.string.generic_update)
+                },
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
             )
