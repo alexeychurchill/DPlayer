@@ -55,6 +55,11 @@ class LibraryRepositoryImpl @Inject constructor(
         directoryDao.insertDirectory(libraryRecordMapper.mapToRoom(record))
     }
 
+    override suspend fun removeEntry(path: String) {
+        permissionsDispatcher.releasePermissions(path)
+        directoryDao.removeDirectory(path)
+    }
+
     private suspend fun createDirectories(
         roomDirs: List<RoomLibraryRecord>
     ): List<MediaEntry> = coroutineScope {

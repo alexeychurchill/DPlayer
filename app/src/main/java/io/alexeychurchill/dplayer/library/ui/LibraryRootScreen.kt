@@ -27,15 +27,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
-import io.alexeychurchill.dplayer.library.presentation.model.AliasOperationViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryEntryViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState
 import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryAction
 import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryDirectoryAction
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState.EditingAlias
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState.RemovingAlias
+import io.alexeychurchill.dplayer.library.presentation.model.OngoingOperationViewState.RemovingFromLibrary
 import io.alexeychurchill.dplayer.library.presentation.viewmodel.LibraryRootViewModel
 import io.alexeychurchill.dplayer.library.ui.dialog.EditAliasNameBottomSheet
 import io.alexeychurchill.dplayer.library.ui.dialog.RemoveAliasNameDialog
+import io.alexeychurchill.dplayer.library.ui.dialog.RemoveFromLibraryDialog
 import io.alexeychurchill.dplayer.library.ui.list.DirectoryEntryItem
 import io.alexeychurchill.dplayer.library.ui.widgets.LibraryDirectoryMenu
 import io.alexeychurchill.dplayer.library.ui.widgets.LibraryLoadingPlaceholder
@@ -48,7 +52,7 @@ fun LibraryRootScreen(
     onLibraryAction: OnLibraryAction = {},
 ) {
     val state by viewModel.libraryViewState.collectAsState()
-    val setAliasState by viewModel.aliasOperationState.collectAsState()
+    val ongoingOperation by viewModel.ongoingOperationState.collectAsState()
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -68,18 +72,26 @@ fun LibraryRootScreen(
         )
     }
 
-    (setAliasState as? AliasOperationViewState.Editing)?.let { editing ->
+    (ongoingOperation as? EditingAlias)?.let { editingAlias ->
         EditAliasNameBottomSheet(
-            directoryUri = editing.directoryUri,
+            directoryUri = editingAlias.directoryUri,
             onClose = viewModel::onEditAliasDismiss,
         )
     }
 
-    (setAliasState as? AliasOperationViewState.Removing)?.let { removing ->
+    (ongoingOperation as? RemovingAlias)?.let { removingAlias ->
         RemoveAliasNameDialog(
-            directoryUri = removing.directoryUri,
-            directoryTitle = removing.directoryTitle,
+            directoryUri = removingAlias.directoryUri,
+            directoryTitle = removingAlias.directoryTitle,
             onDismiss = viewModel::onRemoveAliasDismiss,
+        )
+    }
+
+    (ongoingOperation as? RemovingFromLibrary)?.let { removingFromLibrary ->
+        RemoveFromLibraryDialog(
+            directoryUri = removingFromLibrary.directoryUri,
+            directoryTitle = removingFromLibrary.directoryTitle,
+            onDismiss = viewModel::onRemoveFromLibraryDismiss,
         )
     }
 }

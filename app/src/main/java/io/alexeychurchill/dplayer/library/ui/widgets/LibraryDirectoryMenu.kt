@@ -4,14 +4,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.Label
 import androidx.compose.material.icons.automirrored.twotone.LabelOff
 import androidx.compose.material.icons.twotone.NewLabel
+import androidx.compose.material.icons.twotone.RemoveCircle
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.alexeychurchill.dplayer.R
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction.RemoveAlias
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction.SetAlias
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction.UpdateAlias
@@ -89,5 +93,30 @@ fun LibraryDirectoryMenu(
                 },
             )
         }
+
+        val errorColor = MaterialTheme.colorScheme.error
+        DropdownMenuItem(
+            colors = MenuDefaults.itemColors(
+                leadingIconColor = errorColor,
+                textColor = errorColor,
+            ),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.TwoTone.RemoveCircle,
+                    contentDescription = null,
+                )
+            },
+            text = {
+                Text(text = stringResource(R.string.library_root_action_remove_from_library))
+            },
+            onClick = {
+                onDismiss()
+                val action = LibraryDirectoryAction.RemoveFromLibrary(
+                    directoryUri = state.directoryUri,
+                    directoryTitle = state.directoryTitle,
+                )
+                onAction(action)
+            },
+        )
     }
 }

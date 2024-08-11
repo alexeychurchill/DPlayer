@@ -15,6 +15,10 @@
 
     <string name="library_item_track_artist_unknown">Unknown</string>
 
+    <string name="library_root_entry_remove_title">Remove from library</string>
+    <string name="library_root_entry_remove_description_start">Are you sure that you want to remove</string>
+    <string name="library_root_entry_remove_description_end">from your library? The directory won\'t be deleted from file system, but will not be accessible in the DPlayer.</string>
+
     <string name="library_alias_title_set">Set alias name</string>
     <string name="library_alias_title_update">Update alias name</string>
     <string name="library_alias_title_remove">Remove alias name</string>
@@ -24,5 +28,6 @@
     <string name="library_root_action_set_alias">Set alias</string>
     <string name="library_root_action_update_alias">Update alias</string>
     <string name="library_root_action_remove_alias">Remove alias</string>
+    <string name="library_root_action_remove_from_library">Remove from library</string>
     <string name="generic_loading">Loading…</string>
 </resources>
