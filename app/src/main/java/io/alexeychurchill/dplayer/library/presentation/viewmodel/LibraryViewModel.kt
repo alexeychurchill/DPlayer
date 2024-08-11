@@ -1,10 +1,13 @@
-package io.alexeychurchill.dplayer.library.presentation
+package io.alexeychurchill.dplayer.library.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.library.domain.AddDirectoryUseCase
-import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection.Directory
+import io.alexeychurchill.dplayer.library.presentation.mapper.OpenDirectoryPayloadCodec
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch

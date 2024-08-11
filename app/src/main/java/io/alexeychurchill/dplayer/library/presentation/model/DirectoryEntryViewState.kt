@@ -1,7 +1,5 @@
 package io.alexeychurchill.dplayer.library.presentation.model
 
-import io.alexeychurchill.dplayer.library.presentation.LibraryAction
-
 data class DirectoryEntryViewState(
     val path: String,
     val visibleTitle: String,

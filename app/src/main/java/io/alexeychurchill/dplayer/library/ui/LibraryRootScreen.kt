@@ -30,13 +30,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
-import io.alexeychurchill.dplayer.library.presentation.LibraryAction
-import io.alexeychurchill.dplayer.library.presentation.OnLibraryAction
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction
+import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryAction
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryEntryViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState
 import io.alexeychurchill.dplayer.library.presentation.model.SetAliasViewState
 import io.alexeychurchill.dplayer.library.presentation.viewmodel.LibraryRootViewModel
+import io.alexeychurchill.dplayer.library.ui.dialog.SetAliasNameDialog
 import io.alexeychurchill.dplayer.library.ui.list.DirectoryEntryItem
+import io.alexeychurchill.dplayer.library.ui.widgets.LibraryLoadingPlaceholder
+import io.alexeychurchill.dplayer.library.ui.widgets.LibraryTopBar
 
 @Composable
 fun LibraryRootScreen(

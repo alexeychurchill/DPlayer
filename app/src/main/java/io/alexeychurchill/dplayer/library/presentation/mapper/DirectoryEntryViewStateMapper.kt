@@ -6,8 +6,8 @@ import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.library.domain.EntryInfo.Directory
 import io.alexeychurchill.dplayer.library.domain.EntrySource.UserLibrary
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
-import io.alexeychurchill.dplayer.library.presentation.LibraryAction.OpenMediaEntry
-import io.alexeychurchill.dplayer.library.presentation.OpenDirectoryPayload
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction.OpenMediaEntry
+import io.alexeychurchill.dplayer.library.presentation.model.OpenDirectoryPayload
 import io.alexeychurchill.dplayer.library.presentation.model.DirectoryEntryViewState
 import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState
 import io.alexeychurchill.dplayer.library.presentation.model.DirectoryStatusViewState.Faulty

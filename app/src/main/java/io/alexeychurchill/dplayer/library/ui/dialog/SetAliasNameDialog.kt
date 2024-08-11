@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 
-package io.alexeychurchill.dplayer.library.ui
+package io.alexeychurchill.dplayer.library.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,9 +43,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
-import io.alexeychurchill.dplayer.library.presentation.SetAliasNameMode
-import io.alexeychurchill.dplayer.library.presentation.SetAliasViewModel
-import io.alexeychurchill.dplayer.library.presentation.SetAliasViewModel.Factory
+import io.alexeychurchill.dplayer.library.presentation.viewmodel.SetAliasNameMode
+import io.alexeychurchill.dplayer.library.presentation.viewmodel.SetAliasViewModel
+import io.alexeychurchill.dplayer.library.presentation.viewmodel.SetAliasViewModel.Factory
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull

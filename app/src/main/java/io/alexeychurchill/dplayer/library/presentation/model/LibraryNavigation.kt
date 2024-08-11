@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.library.presentation
+package io.alexeychurchill.dplayer.library.presentation.model
 
 import io.alexeychurchill.dplayer.core.presentation.Direction
 

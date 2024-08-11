@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.library.presentation
+package io.alexeychurchill.dplayer.library.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

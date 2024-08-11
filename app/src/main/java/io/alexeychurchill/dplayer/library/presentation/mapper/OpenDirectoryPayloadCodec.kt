@@ -1,4 +1,6 @@
-package io.alexeychurchill.dplayer.library.presentation
+package io.alexeychurchill.dplayer.library.presentation.mapper
+
+import io.alexeychurchill.dplayer.library.presentation.model.OpenDirectoryPayload
 
 interface OpenDirectoryPayloadCodec {
 

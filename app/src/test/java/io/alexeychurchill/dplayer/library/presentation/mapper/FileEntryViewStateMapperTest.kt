@@ -6,7 +6,7 @@ import io.alexeychurchill.dplayer.core.domain.filesystem.FileName.Unknown
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry.Directory
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry.File
 import io.alexeychurchill.dplayer.library.domain.MediaEntry
-import io.alexeychurchill.dplayer.library.presentation.LibraryAction.OpenMediaEntry
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction.OpenMediaEntry
 import io.alexeychurchill.dplayer.library.presentation.model.FileEntryViewState
 import io.alexeychurchill.dplayer.media.domain.FileMetadata
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath.LocalUri

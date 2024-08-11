@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package io.alexeychurchill.dplayer.library.ui
+package io.alexeychurchill.dplayer.library.ui.widgets
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column

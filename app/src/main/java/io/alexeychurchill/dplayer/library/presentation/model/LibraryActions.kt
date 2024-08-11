@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.library.presentation
+package io.alexeychurchill.dplayer.library.presentation.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

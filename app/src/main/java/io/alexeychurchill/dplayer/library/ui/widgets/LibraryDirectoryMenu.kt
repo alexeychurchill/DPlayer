@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.library.ui.list
+package io.alexeychurchill.dplayer.library.ui.widgets
 
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem

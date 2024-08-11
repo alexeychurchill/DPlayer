@@ -18,10 +18,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.alexeychurchill.dplayer.library.presentation.LibraryAction
-import io.alexeychurchill.dplayer.library.presentation.LibraryDirection
-import io.alexeychurchill.dplayer.library.presentation.LibraryDirection.Directory.Companion.ArgPayload
-import io.alexeychurchill.dplayer.library.presentation.LibraryViewModel
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection.Directory.Companion.ArgPayload
+import io.alexeychurchill.dplayer.library.presentation.viewmodel.LibraryViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 

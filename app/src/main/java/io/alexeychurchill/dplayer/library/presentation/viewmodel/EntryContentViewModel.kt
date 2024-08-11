@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.library.presentation
+package io.alexeychurchill.dplayer.library.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,13 +8,14 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.core.domain.filesystem.FileSystemEntry
 import io.alexeychurchill.dplayer.library.domain.FileSystemRepository
+import io.alexeychurchill.dplayer.library.presentation.mapper.OpenDirectoryPayloadCodec
 import io.alexeychurchill.dplayer.library.presentation.mapper.EntryContentViewStateMapper
 import io.alexeychurchill.dplayer.library.presentation.model.EntryContentSectionsViewState
 import io.alexeychurchill.dplayer.library.presentation.model.EntryContentViewState
-import io.alexeychurchill.dplayer.library.presentation.model.EntryContentViewState.*
+import io.alexeychurchill.dplayer.library.presentation.model.OpenDirectoryPayload
 import io.alexeychurchill.dplayer.media.domain.FileMetadataRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -41,7 +42,7 @@ class EntryContentViewModel @AssistedInject constructor(
         .map { payload -> payload.title }
         .stateIn(
             scope = viewModelScope,
-            started = Eagerly,
+            started = SharingStarted.Eagerly,
             initialValue = null,
         )
 
@@ -56,12 +57,12 @@ class EntryContentViewModel @AssistedInject constructor(
     }
 
     private fun createContentState(): StateFlow<EntryContentViewState> {
-        val mutableState = MutableStateFlow<EntryContentViewState>(Loading)
+        val mutableState = MutableStateFlow<EntryContentViewState>(EntryContentViewState.Loading)
 
         viewModelScope.launch {
             val path = getPath()
             if (path == null) {
-                mutableState.emit(Loaded(EntryContentSectionsViewState()))
+                mutableState.emit(EntryContentViewState.Loaded(EntryContentSectionsViewState()))
                 return@launch
             }
 
@@ -70,7 +71,7 @@ class EntryContentViewModel @AssistedInject constructor(
             val metadata = fileMetadataRepository.getBatchMetadata(uris)
 
             val contentState = contentMapper.mapToViewState(children, metadata)
-            mutableState.emit(Loaded(contentState))
+            mutableState.emit(EntryContentViewState.Loaded(contentState))
         }
         return mutableState.asStateFlow()
     }
