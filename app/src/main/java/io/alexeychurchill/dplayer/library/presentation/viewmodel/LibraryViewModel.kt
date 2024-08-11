@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.library.domain.AddDirectoryUseCase
-import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection
-import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection.Directory
 import io.alexeychurchill.dplayer.library.presentation.mapper.OpenDirectoryPayloadCodec
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirection.Directory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -19,20 +19,20 @@ class LibraryViewModel @Inject constructor(
     private val payloadCodec: OpenDirectoryPayloadCodec,
 ) : ViewModel() {
 
-    private val mutableOpenDirectoryFlow = MutableSharedFlow<Unit>()
+    private val _openDirectoryFlow = MutableSharedFlow<Unit>()
 
-    private val mutableDirectionFlow = MutableSharedFlow<LibraryDirection>()
+    private val _directionFlow = MutableSharedFlow<LibraryDirection>()
 
-    private val mutableBackDirectionFlow = MutableSharedFlow<Unit>()
+    private val _backDirectionFlow = MutableSharedFlow<Unit>()
 
     val openDirectoryFlow: Flow<Unit>
-        get() = mutableOpenDirectoryFlow
+        get() = _openDirectoryFlow
 
     val directionFlow: Flow<LibraryDirection>
-        get() = mutableDirectionFlow
+        get() = _directionFlow
 
     val backDirectionFlow: Flow<Unit>
-        get() = mutableBackDirectionFlow
+        get() = _backDirectionFlow
 
     fun onAction(action: LibraryAction) {
         viewModelScope.launch {
@@ -43,14 +43,14 @@ class LibraryViewModel @Inject constructor(
 
                 is LibraryAction.OpenMediaEntry.Directory -> {
                     val encodedPayload = payloadCodec.encode(action.payload)
-                    mutableDirectionFlow.emit(Directory(encodedPayload = encodedPayload))
+                    _directionFlow.emit(Directory(encodedPayload = encodedPayload))
                 }
 
-                LibraryAction.OpenTreePicker -> mutableOpenDirectoryFlow.emit(Unit)
+                LibraryAction.OpenTreePicker -> _openDirectoryFlow.emit(Unit)
 
                 is LibraryAction.TreePicked -> addFolderUseCase(action.uriPath)
 
-                LibraryAction.GoBack -> mutableBackDirectionFlow.emit(Unit)
+                LibraryAction.GoBack -> _backDirectionFlow.emit(Unit)
             }
         }
     }
