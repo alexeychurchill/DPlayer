@@ -45,17 +45,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.library.presentation.viewmodel.SetAliasNameMode
-import io.alexeychurchill.dplayer.library.presentation.viewmodel.SetAliasViewModel
-import io.alexeychurchill.dplayer.library.presentation.viewmodel.SetAliasViewModel.Factory
+import io.alexeychurchill.dplayer.library.presentation.viewmodel.EditAliasViewModel
+import io.alexeychurchill.dplayer.library.presentation.viewmodel.EditAliasViewModel.Factory
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
 @Composable
-fun SetAliasNameDialog(
+fun EditAliasNameBottomSheet(
     directoryUri: String,
-    viewModel: SetAliasViewModel = hiltViewModel(
+    viewModel: EditAliasViewModel = hiltViewModel(
         key = "$directoryUri:${System.currentTimeMillis()}",
         creationCallback = { factory: Factory -> factory.create(directoryUri) },
     ),

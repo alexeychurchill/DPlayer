@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.library.domain.LibraryRepository
 import io.alexeychurchill.dplayer.library.presentation.mapper.LibraryEntryViewStateMapper
+import io.alexeychurchill.dplayer.library.presentation.model.AliasOperationViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState.Loaded
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryRootViewState.Loading
-import io.alexeychurchill.dplayer.library.presentation.model.SetAliasViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +30,8 @@ class LibraryRootViewModel @Inject constructor(
     private val entryMapper: LibraryEntryViewStateMapper,
 ) : ViewModel() {
 
-    private val mutableSetAliasState = MutableStateFlow<SetAliasViewState>(SetAliasViewState.None)
+    private val mutableAliasOperationState =
+        MutableStateFlow<AliasOperationViewState>(AliasOperationViewState.None)
 
     val libraryViewState: StateFlow<LibraryRootViewState> = libraryRepository
         .allEntries
@@ -46,25 +47,32 @@ class LibraryRootViewModel @Inject constructor(
             initialValue = Loading,
         )
 
-    val setAliasState: StateFlow<SetAliasViewState> = mutableSetAliasState.asStateFlow()
+    val aliasOperationState: StateFlow<AliasOperationViewState> =
+        mutableAliasOperationState.asStateFlow()
 
     fun onDirectoryAction(action: LibraryDirectoryAction) {
         viewModelScope.launch {
             when (action) {
                 is LibraryDirectoryAction.SetAlias, is LibraryDirectoryAction.UpdateAlias -> {
-                    mutableSetAliasState.emit(SetAliasViewState.Editing(action.path))
+                    mutableAliasOperationState.emit(AliasOperationViewState.Editing(action.path))
                 }
 
                 is LibraryDirectoryAction.RemoveAlias -> {
-                    TODO()
+                    mutableAliasOperationState.emit(AliasOperationViewState.Removing(action.path))
                 }
             }
         }
     }
 
-    fun onSetAliasDismiss() {
+    fun onEditAliasDismiss() {
         viewModelScope.launch {
-            mutableSetAliasState.emit(SetAliasViewState.None)
+            mutableAliasOperationState.emit(AliasOperationViewState.None)
+        }
+    }
+
+    fun onRemoveAliasDismiss() {
+        viewModelScope.launch {
+            mutableAliasOperationState.emit(AliasOperationViewState.None)
         }
     }
 }

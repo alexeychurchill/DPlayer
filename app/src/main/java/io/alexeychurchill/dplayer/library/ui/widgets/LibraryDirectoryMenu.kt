@@ -2,6 +2,7 @@ package io.alexeychurchill.dplayer.library.ui.widgets
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.Label
+import androidx.compose.material.icons.automirrored.twotone.LabelOff
 import androidx.compose.material.icons.twotone.NewLabel
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.alexeychurchill.dplayer.R
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction.RemoveAlias
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction.SetAlias
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryAction.UpdateAlias
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryDirectoryActionsViewState
@@ -62,6 +64,24 @@ fun LibraryDirectoryMenu(
                 onClick = {
                     onDismiss()
                     onAction(UpdateAlias(directoryUri))
+                },
+            )
+        }
+
+        if (state.removeAliasEnabled) {
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.TwoTone.LabelOff,
+                        contentDescription = null,
+                    )
+                },
+                text = {
+                    Text(text = stringResource(R.string.library_root_action_remove_alias))
+                },
+                onClick = {
+                    onDismiss()
+                    onAction(RemoveAlias(directoryUri))
                 },
             )
         }

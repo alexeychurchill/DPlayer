@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 
 private const val AssistedDirectoryUri = "directoryUri"
 
-@HiltViewModel(assistedFactory = SetAliasViewModel.Factory::class)
-class SetAliasViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = EditAliasViewModel.Factory::class)
+class EditAliasViewModel @AssistedInject constructor(
     @Assisted(AssistedDirectoryUri) private val directoryUri: String,
     private val libraryRepository: LibraryRepository,
 ) : ViewModel() {
@@ -98,7 +98,7 @@ class SetAliasViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(@Assisted(AssistedDirectoryUri) directoryUri: String): SetAliasViewModel
+        fun create(@Assisted(AssistedDirectoryUri) directoryUri: String): EditAliasViewModel
     }
 }
 
