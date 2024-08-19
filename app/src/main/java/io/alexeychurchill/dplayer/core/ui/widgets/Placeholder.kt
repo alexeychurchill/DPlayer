@@ -3,9 +3,11 @@ package io.alexeychurchill.dplayer.core.ui.widgets
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
@@ -13,9 +15,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Placeholder(
     modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
 ) {
-    val containerColor = MaterialTheme.colorScheme.primaryContainer
-    val boundLinesColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val boundLinesColor = MaterialTheme.colorScheme.contentColorFor(containerColor)
     Canvas(
         modifier = modifier
             .fillMaxSize(),
