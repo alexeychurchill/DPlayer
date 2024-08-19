@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,13 @@ import io.alexeychurchill.dplayer.core.ui.layout.BottomScreenScaffoldScreen.Main
 enum class BottomScreenScaffoldScreen {
     Main,
     Bottom,
+}
+
+internal object BottomScreenScaffoldDefaults {
+
+    const val PositionalThresholdFactor = 0.5f
+
+    const val VelocityThresholdFactor = 3.5f
 }
 
 class BottomScreenScaffoldState internal constructor(
@@ -65,6 +73,14 @@ class BottomScreenScaffoldState internal constructor(
         )
     )
 
+    suspend fun openMain() {
+        anchoredDraggableState.animateTo(Main)
+    }
+
+    suspend fun openBottom() {
+        anchoredDraggableState.animateTo(Bottom)
+    }
+
     internal fun updateExtent(vertical: Float) {
         verticalExtent = vertical
         anchoredDraggableState.updateAnchors(anchors())
@@ -78,12 +94,6 @@ class BottomScreenScaffoldState internal constructor(
     }
 }
 
-internal object BottomScreenScaffoldDefaults {
-
-    const val PositionalThresholdFactor = 0.5f
-
-    const val VelocityThresholdFactor = 3.5f
-}
 
 @Composable
 fun rememberBottomScreenScaffoldState(
