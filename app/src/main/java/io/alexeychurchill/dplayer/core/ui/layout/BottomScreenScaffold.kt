@@ -1,9 +1,13 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package io.alexeychurchill.dplayer.core.ui.layout
 
-import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,13 +15,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import kotlinx.coroutines.launch
+import io.alexeychurchill.dplayer.core.ui.layout.BottomScreenScaffoldScreen.Bottom
+import io.alexeychurchill.dplayer.core.ui.layout.BottomScreenScaffoldScreen.Main
+
+enum class BottomScreenScaffoldScreen {
+    Main,
+    Bottom,
+}
 
 @Composable
 fun BottomScreenScaffold(
@@ -29,32 +39,39 @@ fun BottomScreenScaffold(
 
     // TODO: Add bottom navigation bar padding to the bottomScreenSize
 
-    val scope = rememberCoroutineScope()
-
-    var isDragInProgress by remember { mutableStateOf(false) }
     var verticalExtent by remember { mutableStateOf<Float?>(null) }
-    val verticalOffset = remember { Animatable(initialValue = 0.0f) }
 
-    val draggableState = rememberDraggableState(onDelta = { delta ->
-        scope.launch {
-            verticalOffset.snapTo(verticalOffset.value + delta)
+    val density = LocalDensity.current
+
+    val anchors = DraggableAnchors {
+        Main at 0.0f
+        verticalExtent?.let {
+            Bottom at it
         }
-    })
+    }
 
-    LaunchedEffect(key1 = isDragInProgress) {
-        val extent = verticalExtent ?: return@LaunchedEffect
-        if (!isDragInProgress) {
-            val progress = verticalOffset.value / extent
-            verticalOffset.animateTo(targetValue = if (progress < 0.35f) 0.0f else extent)
+    val draggableState = remember {
+        AnchoredDraggableState(
+            initialValue = Main,
+            positionalThreshold = { position -> 0.5f * position },
+            velocityThreshold = { 1.5f * with(density) { bottomScreenSize.toPx() } },
+            animationSpec = tween(),
+        )
+    }
+
+    LaunchedEffect(key1 = verticalExtent) {
+        if (verticalExtent != null) {
+            draggableState.updateAnchors(anchors)
         }
     }
 
     BottomScreenLayout(
+        modifier = modifier,
         content = {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .onSizeChanged { (_, height) -> verticalExtent = -height.toFloat() },
+                    .onSizeChanged { (_, height) -> verticalExtent = height.toFloat() },
             ) {
                 content()
             }
@@ -63,24 +80,17 @@ fun BottomScreenScaffold(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .draggable(
-                        orientation = Orientation.Vertical,
+                    .anchoredDraggable(
                         state = draggableState,
-                        onDragStarted = {
-                            verticalOffset.stop()
-                            isDragInProgress = true
-                        },
-                        onDragStopped = {
-                            isDragInProgress = false
-                        },
+                        orientation = Orientation.Vertical,
+                        reverseDirection = true,
                     ),
             ) {
                 bottomScreen()
             }
         },
         bottomScreenSize = bottomScreenSize,
-        modifier = modifier,
-        verticalOffset = verticalOffset.value,
+        verticalOffset = -(draggableState.offset.takeUnless { it.isNaN() } ?: 0.0f),
     )
 }
 
