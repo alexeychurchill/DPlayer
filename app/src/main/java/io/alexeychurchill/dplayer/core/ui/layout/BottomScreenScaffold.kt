@@ -2,6 +2,7 @@
 
 package io.alexeychurchill.dplayer.core.ui.layout
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -9,9 +10,10 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import io.alexeychurchill.dplayer.core.ui.layout.BottomScreenScaffoldDefaults.PositionalThresholdFactor
+import io.alexeychurchill.dplayer.core.ui.layout.BottomScreenScaffoldDefaults.VelocityThresholdFactor
 import io.alexeychurchill.dplayer.core.ui.layout.BottomScreenScaffoldScreen.Bottom
 import io.alexeychurchill.dplayer.core.ui.layout.BottomScreenScaffoldScreen.Main
 
@@ -29,49 +34,94 @@ enum class BottomScreenScaffoldScreen {
     Bottom,
 }
 
+class BottomScreenScaffoldState internal constructor(
+    internal val anchoredDraggableState: AnchoredDraggableState<BottomScreenScaffoldScreen>,
+) {
+
+    private var verticalExtent by mutableStateOf<Float?>(value = null)
+
+    internal val absoluteOffset: Float
+        get() = anchoredDraggableState.offset.takeUnless { it.isNaN() } ?: 0.0f
+
+    val relativeOffset: Float
+        get() = verticalExtent?.let { extent -> absoluteOffset / extent } ?: 0.0f
+
+    val currentScreen: BottomScreenScaffoldScreen
+        get() = anchoredDraggableState.currentValue
+
+    internal constructor(
+        initialScreen: BottomScreenScaffoldScreen,
+        density: Density,
+        bottomScreenPeekHeight: Dp,
+        animationSpec: AnimationSpec<Float> = tween(),
+    ) : this(
+        anchoredDraggableState = AnchoredDraggableState(
+            initialValue = initialScreen,
+            positionalThreshold = { position -> PositionalThresholdFactor * position },
+            velocityThreshold = {
+                VelocityThresholdFactor * with(density) { bottomScreenPeekHeight.toPx() }
+            },
+            animationSpec = animationSpec,
+        )
+    )
+
+    internal fun updateExtent(vertical: Float) {
+        verticalExtent = vertical
+        anchoredDraggableState.updateAnchors(anchors())
+    }
+
+    private fun anchors() = DraggableAnchors {
+        Main at 0.0f
+        verticalExtent?.let { extent ->
+            Bottom at extent
+        }
+    }
+}
+
+internal object BottomScreenScaffoldDefaults {
+
+    const val PositionalThresholdFactor = 0.5f
+
+    const val VelocityThresholdFactor = 3.5f
+}
+
+@Composable
+fun rememberBottomScreenScaffoldState(
+    bottomScreenPeekHeight: Dp,
+    initialScreen: BottomScreenScaffoldScreen = Main,
+    animationSpec: AnimationSpec<Float> = tween(),
+): BottomScreenScaffoldState {
+    val density = LocalDensity.current
+    return remember(key1 = density) {
+        BottomScreenScaffoldState(
+            initialScreen = initialScreen,
+            density = density,
+            bottomScreenPeekHeight = bottomScreenPeekHeight,
+            animationSpec = animationSpec,
+        )
+    }
+}
+
 @Composable
 fun BottomScreenScaffold(
     content: @Composable () -> Unit,
     bottomScreen: @Composable () -> Unit,
-    bottomScreenSize: Dp,
+    bottomScreenPeekHeight: Dp,
     modifier: Modifier = Modifier,
+    state: BottomScreenScaffoldState = rememberBottomScreenScaffoldState(
+        bottomScreenPeekHeight = bottomScreenPeekHeight,
+    ),
 ) {
-
-    // TODO: Add bottom navigation bar padding to the bottomScreenSize
-
-    var verticalExtent by remember { mutableStateOf<Float?>(null) }
-
     val density = LocalDensity.current
-
-    val anchors = DraggableAnchors {
-        Main at 0.0f
-        verticalExtent?.let {
-            Bottom at it
-        }
-    }
-
-    val draggableState = remember {
-        AnchoredDraggableState(
-            initialValue = Main,
-            positionalThreshold = { position -> 0.5f * position },
-            velocityThreshold = { 1.5f * with(density) { bottomScreenSize.toPx() } },
-            animationSpec = tween(),
-        )
-    }
-
-    LaunchedEffect(key1 = verticalExtent) {
-        if (verticalExtent != null) {
-            draggableState.updateAnchors(anchors)
-        }
-    }
-
+    val systemBarsInsets = WindowInsets.systemBars
+    val systemBottomPadding = with(density) { systemBarsInsets.getBottom(density).toDp() }
     BottomScreenLayout(
         modifier = modifier,
         content = {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .onSizeChanged { (_, height) -> verticalExtent = height.toFloat() },
+                    .onSizeChanged { (_, height) -> state.updateExtent(height.toFloat()) },
             ) {
                 content()
             }
@@ -81,7 +131,7 @@ fun BottomScreenScaffold(
                 modifier = Modifier
                     .fillMaxSize()
                     .anchoredDraggable(
-                        state = draggableState,
+                        state = state.anchoredDraggableState,
                         orientation = Orientation.Vertical,
                         reverseDirection = true,
                     ),
@@ -89,8 +139,8 @@ fun BottomScreenScaffold(
                 bottomScreen()
             }
         },
-        bottomScreenSize = bottomScreenSize,
-        verticalOffset = -(draggableState.offset.takeUnless { it.isNaN() } ?: 0.0f),
+        bottomScreenSize = bottomScreenPeekHeight + systemBottomPadding,
+        verticalOffset = -state.absoluteOffset,
     )
 }
 
