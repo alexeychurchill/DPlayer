@@ -11,6 +11,7 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -29,6 +30,7 @@ private const val TransitionAlpha = 0.35f
 
 @Composable
 fun LibraryScreen(
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
@@ -46,7 +48,11 @@ fun LibraryScreen(
         navController = navController,
     )
 
-    NavHost(navController, startDestination = LibraryDirection.start) {
+    NavHost(
+        modifier = modifier,
+        navController = navController,
+        startDestination = LibraryDirection.start,
+    ) {
         composable(
             route = LibraryDirection.Root.navPath,
             popEnterTransition = { transitionEnterFromStart() },

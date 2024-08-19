@@ -1,6 +1,6 @@
 package io.alexeychurchill.dplayer
 
-import android.graphics.Color
+import android.graphics.Color.TRANSPARENT
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -40,8 +40,8 @@ class MainActivity : ComponentActivity() {
 
     private fun setupEdgeToEdge() {
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+            statusBarStyle = SystemBarStyle.auto(TRANSPARENT, TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.auto(TRANSPARENT, TRANSPARENT)
         )
         // Workaround, which disables enforced NavBar contrast
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
