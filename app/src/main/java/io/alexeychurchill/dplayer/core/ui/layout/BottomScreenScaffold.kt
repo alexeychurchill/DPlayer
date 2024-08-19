@@ -33,19 +33,19 @@ fun BottomScreenScaffold(
 
     var isDragInProgress by remember { mutableStateOf(false) }
     var verticalExtent by remember { mutableStateOf<Float?>(null) }
-    val offsetAnimation = remember { Animatable(initialValue = 0.0f) }
+    val verticalOffset = remember { Animatable(initialValue = 0.0f) }
 
     val draggableState = rememberDraggableState(onDelta = { delta ->
         scope.launch {
-            offsetAnimation.snapTo(offsetAnimation.value - delta)
+            verticalOffset.snapTo(verticalOffset.value + delta)
         }
     })
 
     LaunchedEffect(key1 = isDragInProgress) {
         val extent = verticalExtent ?: return@LaunchedEffect
         if (!isDragInProgress) {
-            val progress = offsetAnimation.value / extent
-            offsetAnimation.animateTo(targetValue = if (progress < 0.35f) 0.0f else extent)
+            val progress = verticalOffset.value / extent
+            verticalOffset.animateTo(targetValue = if (progress < 0.35f) 0.0f else extent)
         }
     }
 
@@ -54,7 +54,7 @@ fun BottomScreenScaffold(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .onSizeChanged { (_, height) -> verticalExtent = height.toFloat() },
+                    .onSizeChanged { (_, height) -> verticalExtent = -height.toFloat() },
             ) {
                 content()
             }
@@ -67,7 +67,7 @@ fun BottomScreenScaffold(
                         orientation = Orientation.Vertical,
                         state = draggableState,
                         onDragStarted = {
-                            offsetAnimation.stop()
+                            verticalOffset.stop()
                             isDragInProgress = true
                         },
                         onDragStopped = {
@@ -80,7 +80,7 @@ fun BottomScreenScaffold(
         },
         bottomScreenSize = bottomScreenSize,
         modifier = modifier,
-        progress = verticalExtent?.let { extent -> offsetAnimation.value / extent } ?: 0.0f,
+        verticalOffset = verticalOffset.value,
     )
 }
 
@@ -90,7 +90,7 @@ private fun BottomScreenLayout(
     bottomScreen: @Composable () -> Unit,
     bottomScreenSize: Dp,
     modifier: Modifier = Modifier,
-    progress: Float = 0.0f,
+    verticalOffset: Float = 0.0f,
 ) {
     Layout(
         modifier = modifier,
@@ -105,20 +105,19 @@ private fun BottomScreenLayout(
         }
 
         val contentPlacements = content.map { it.measure(contentConstraints) }
-        val maxTopOffset = contentPlacements.maxOfOrNull { it.height } ?: 0
-        val topOffset = (maxTopOffset * progress).toInt()
+        val topOffset = verticalOffset.toInt()
         val baseBottomScreenTopOffset = contentPlacements.maxByOrNull { it.height }?.height ?: 0
         val bottomScreenPlacements = bottomScreen.map { it.measure(constraints) }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             contentPlacements.forEach { contentPlacement ->
-                contentPlacement.placeRelative(x = 0, y = -topOffset)
+                contentPlacement.placeRelative(x = 0, y = topOffset)
             }
 
             bottomScreenPlacements.forEach { bottomScreenPlacement ->
                 bottomScreenPlacement.placeRelative(
                     x = 0,
-                    y = baseBottomScreenTopOffset - topOffset,
+                    y = baseBottomScreenTopOffset + topOffset,
                 )
             }
         }
