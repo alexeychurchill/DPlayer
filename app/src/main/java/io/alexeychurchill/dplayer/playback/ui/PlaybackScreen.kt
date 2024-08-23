@@ -6,10 +6,13 @@
 package io.alexeychurchill.dplayer.playback.ui
 
 import android.net.Uri
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -19,27 +22,33 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.FastForward
 import androidx.compose.material.icons.twotone.FastRewind
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
+import androidx.compose.material.icons.twotone.Pause
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension.Companion.fillToConstraints
-import androidx.constraintlayout.compose.Dimension.Companion.value
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import io.alexeychurchill.dplayer.playback.presentation.PlaybackAction
+import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowViewState
+import io.alexeychurchill.dplayer.playback.presentation.PlaybackState
+
+private val PlaybackFlowButtonSize = 80.dp
+private val PlaybackFlowButtonIconSize = 40.dp
 
 @Composable
 fun PlaybackScreen(
@@ -160,80 +169,80 @@ fun PlaybackScreen(
 
             // Playback flow controls
             val playbackControlsGuideline = createGuidelineFromTop(fraction = 0.80f)
-
-            val (rewindRef, playRef, forwardRef) = createRefs()
-            createHorizontalChain(
-                rewindRef.withChainParams(endMargin = 24.dp),
-                playRef.withChainParams(endMargin = 24.dp),
-                forwardRef,
-                chainStyle = ChainStyle.Packed,
-            )
-
-            val baseControlButtonSize = 56.dp
-            val playbackButtonSize = 96.dp
-
-            OutlinedIconButton(
-                modifier = Modifier
-                    .constrainAs(rewindRef) {
-                        width = value(baseControlButtonSize)
-                        height = value(baseControlButtonSize)
-                        top.linkTo(playRef.top)
-                        bottom.linkTo(playRef.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(playRef.start)
-                    },
-                onClick = { /*TODO*/ },
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    imageVector = Icons.TwoTone.FastRewind,
-                    contentDescription = null,
-                )
-            }
-
-            FilledIconButton(
+            val playRef = createRef()
+            PlaybackFlowControls(
                 modifier = Modifier
                     .constrainAs(playRef) {
-                        width = value(playbackButtonSize)
-                        height = value(playbackButtonSize)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
                         top.linkTo(playbackControlsGuideline)
                         bottom.linkTo(playbackControlsGuideline)
-                        start.linkTo(rewindRef.end)
-                        end.linkTo(forwardRef.start)
                     },
-                onClick = { /*TODO*/ },
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    imageVector = Icons.TwoTone.PlayArrow,
-                    contentDescription = null,
-                )
-            }
+                state = PlaybackFlowViewState(
+                    controlsEnabled = true,
+                    playbackState = PlaybackState.Paused,
+                ),
+            )
+        }
+    }
+}
 
-            OutlinedIconButton(
+@Composable
+private fun PlaybackFlowControls(
+    state: PlaybackFlowViewState,
+    modifier: Modifier = Modifier,
+    onAction: (PlaybackAction) -> Unit = {},
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(
+            space = 16.dp,
+            alignment = Alignment.CenterHorizontally,
+        ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+
+        IconButton(
+            modifier = Modifier
+                .size(PlaybackFlowButtonSize),
+            onClick = { onAction(PlaybackAction.Rewind) },
+        ) {
+            Icon(
                 modifier = Modifier
-                    .constrainAs(forwardRef) {
-                        width = value(baseControlButtonSize)
-                        height = value(baseControlButtonSize)
-                        top.linkTo(playRef.top)
-                        bottom.linkTo(playRef.bottom)
-                        start.linkTo(playRef.end)
-                        end.linkTo(parent.end)
-                    },
-                onClick = { /*TODO*/ },
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    imageVector = Icons.TwoTone.FastForward,
-                    contentDescription = null,
-                )
+                    .size(PlaybackFlowButtonIconSize),
+                imageVector = Icons.TwoTone.FastRewind,
+                contentDescription = null,
+            )
+        }
+
+        FilledIconButton(
+            modifier = Modifier
+                .size(PlaybackFlowButtonSize),
+            onClick = { onAction(PlaybackAction.TogglePlayback) },
+        ) {
+            val iconVector = when (state.playbackState) {
+                PlaybackState.Playing -> Icons.TwoTone.Pause
+                else -> Icons.TwoTone.PlayArrow
             }
+            Icon(
+                modifier = Modifier
+                    .size(PlaybackFlowButtonIconSize),
+                imageVector = iconVector,
+                contentDescription = null,
+            )
+        }
+
+        IconButton(
+            modifier = Modifier
+                .size(PlaybackFlowButtonSize),
+            onClick = { onAction(PlaybackAction.Next) },
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(PlaybackFlowButtonIconSize),
+                imageVector = Icons.TwoTone.FastForward,
+                contentDescription = null,
+            )
         }
     }
 }
