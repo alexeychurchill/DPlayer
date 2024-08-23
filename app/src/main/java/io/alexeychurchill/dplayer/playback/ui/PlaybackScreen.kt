@@ -6,7 +6,11 @@
 package io.alexeychurchill.dplayer.playback.ui
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,15 +48,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension.Companion.fillToConstraints
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackAction
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackState
+import io.alexeychurchill.dplayer.playback.presentation.PlayingTrackInfoViewState
 
 private val PlaybackFlowButtonSize = 80.dp
 private val PlaybackFlowButtonIconSize = 40.dp
@@ -90,28 +100,18 @@ fun PlaybackScreen(
                 )
             }
 
-            val (coverArtRef, trackNameRef, artistNameRef) = createRefs()
-            Text(
+            val (coverArtRef, trackInfoRef) = createRefs()
+            TrackInfo(
                 modifier = Modifier
-                    .constrainAs(trackNameRef) {
+                    .constrainAs(trackInfoRef) {
+                        width = fillToConstraints
                         top.linkTo(coverArtRef.bottom, margin = 32.dp)
                         start.linkTo(parent.start, margin = 16.dp)
                         end.linkTo(parent.end, margin = 16.dp)
                     },
-                text = "Track Name",
-                style = MaterialTheme.typography.titleLarge,
-            )
-
-            Text(
-                modifier = Modifier
-                    .constrainAs(artistNameRef) {
-                        top.linkTo(trackNameRef.bottom, margin = 4.dp)
-                        start.linkTo(parent.start, margin = 16.dp)
-                        end.linkTo(parent.end, margin = 16.dp)
-                    },
-                text = "Artist Name",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.ExtraBold,
+                state = PlayingTrackInfoViewState(
+                    title = "Track Title",
+                    artist = "Artist Name",
                 ),
             )
 
@@ -169,6 +169,55 @@ fun PlaybackScreen(
                     controlsEnabled = true,
                     playbackState = PlaybackState.Paused,
                 ),
+            )
+        }
+    }
+}
+
+@Composable
+private fun TrackInfo(
+    state: PlayingTrackInfoViewState,
+    modifier: Modifier = Modifier,
+) {
+    val unknownText = stringResource(R.string.playback_screen_track_info_unknown)
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(
+            space = 4.dp,
+            alignment = Alignment.Top,
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        AnimatedContent(
+            label = "track title",
+            targetState = state.title,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+        ) { currentTitle ->
+            Text(
+                text = currentTitle ?: unknownText,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontStyle = if (currentTitle == null) FontStyle.Italic else FontStyle.Normal,
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+            )
+        }
+
+        AnimatedContent(
+            label = "track artist",
+            targetState = state.artist,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+        ) { currentArtist ->
+            Text(
+                text = currentArtist ?: unknownText,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    fontStyle = if (currentArtist == null) FontStyle.Italic else FontStyle.Normal,
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
             )
         }
     }

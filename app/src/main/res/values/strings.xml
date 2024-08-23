@@ -30,4 +30,6 @@
     <string name="library_root_action_remove_alias">Remove alias</string>
     <string name="library_root_action_remove_from_library">Remove from library</string>
     <string name="generic_loading">Loading…</string>
+
+    <string name="playback_screen_track_info_unknown">Unknown</string>
 </resources>

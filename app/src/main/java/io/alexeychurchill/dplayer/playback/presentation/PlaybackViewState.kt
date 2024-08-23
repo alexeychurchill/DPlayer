@@ -11,6 +11,11 @@ enum class PlaybackState {
     Paused,
 }
 
+data class PlayingTrackInfoViewState(
+    val title: String? = null,
+    val artist: String? = null,
+)
+
 sealed interface PlaybackAction {
 
     data object TogglePlayback : PlaybackAction
