@@ -6,11 +6,14 @@
 package io.alexeychurchill.dplayer.playback.ui
 
 import android.net.Uri
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -34,6 +37,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -131,40 +138,20 @@ fun PlaybackScreen(
                 )
             }
 
-            val (seekbarRef, elapsedRef, remainingRef) = createRefs()
+            // Playback time controls
+            val timeControlRef = createRef()
             val seekControlsGuideline = createGuidelineFromTop(fraction = 0.65f)
-
-            Slider(
+            PlaybackTimeControls(
                 modifier = Modifier
-                    .constrainAs(seekbarRef) {
+                    .constrainAs(timeControlRef) {
                         width = fillToConstraints
-                        bottom.linkTo(seekControlsGuideline)
-                        start.linkTo(parent.start, margin = 20.dp)
-                        end.linkTo(parent.end, margin = 20.dp)
-                    },
-                value = 0.0f,
-                onValueChange = { },
-            )
-
-            val timeTextStyle = MaterialTheme.typography.bodyMedium
-            Text(
-                modifier = Modifier
-                    .constrainAs(elapsedRef) {
+                        start.linkTo(parent.start, margin = 16.dp)
+                        end.linkTo(parent.end, margin = 16.dp)
                         top.linkTo(seekControlsGuideline)
-                        start.linkTo(seekbarRef.start, margin = 8.dp)
                     },
-                text = "000:00:00",
-                style = timeTextStyle,
-            )
-
-            Text(
-                modifier = Modifier
-                    .constrainAs(remainingRef) {
-                        top.linkTo(seekControlsGuideline)
-                        end.linkTo(seekbarRef.end, margin = 8.dp)
-                    },
-                text = "000:00:00",
-                style = timeTextStyle,
+                elapsedTimeText = "000:00:00",
+                totalTimeText = "000:00:00",
+                elapsedPercent = 0.5f,
             )
 
             // Playback flow controls
@@ -182,6 +169,64 @@ fun PlaybackScreen(
                     controlsEnabled = true,
                     playbackState = PlaybackState.Paused,
                 ),
+            )
+        }
+    }
+}
+
+@Composable
+private fun PlaybackTimeControls(
+    elapsedTimeText: String,
+    totalTimeText: String,
+    elapsedPercent: Float,
+    modifier: Modifier = Modifier,
+    onElapsedChange: (percent: Float) -> Unit = {},
+) {
+    var isChangeInProgress by remember { mutableStateOf(false) }
+    val sliderTimeSpacing by animateDpAsState(
+        label = "space between time text and slider",
+        targetValue = if (isChangeInProgress) 4.dp else 0.dp,
+    )
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(
+            space = sliderTimeSpacing,
+            alignment = Alignment.Top,
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Slider(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = elapsedPercent,
+            onValueChange = { value ->
+                isChangeInProgress = true
+                onElapsedChange(value)
+            },
+            onValueChangeFinished = {
+                isChangeInProgress = false
+            },
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val timeTextStyle = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+            )
+
+            Text(
+                text = elapsedTimeText,
+                style = timeTextStyle,
+            )
+
+            Text(
+                text = totalTimeText,
+                style = timeTextStyle,
             )
         }
     }
