@@ -3,7 +3,9 @@
 package io.alexeychurchill.dplayer.core.ui.layout
 
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -61,7 +63,8 @@ class BottomScreenScaffoldState internal constructor(
         initialScreen: BottomScreenScaffoldScreen,
         density: Density,
         bottomScreenPeekHeight: Dp,
-        animationSpec: AnimationSpec<Float> = tween(),
+        snapAnimationSpec: AnimationSpec<Float> = tween(),
+        decayAnimationSpec: DecayAnimationSpec<Float> = splineBasedDecay(density),
     ) : this(
         anchoredDraggableState = AnchoredDraggableState(
             initialValue = initialScreen,
@@ -69,7 +72,8 @@ class BottomScreenScaffoldState internal constructor(
             velocityThreshold = {
                 VelocityThresholdFactor * with(density) { bottomScreenPeekHeight.toPx() }
             },
-            animationSpec = animationSpec,
+            snapAnimationSpec = snapAnimationSpec,
+            decayAnimationSpec = decayAnimationSpec,
         )
     )
 
@@ -107,7 +111,7 @@ fun rememberBottomScreenScaffoldState(
             initialScreen = initialScreen,
             density = density,
             bottomScreenPeekHeight = bottomScreenPeekHeight,
-            animationSpec = animationSpec,
+            snapAnimationSpec = animationSpec,
         )
     }
 }
