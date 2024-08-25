@@ -2,7 +2,6 @@
 
 package io.alexeychurchill.dplayer.playback.ui
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,6 +42,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
+import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 
 private object Id {
     const val CloseButton = "CloseButton"
@@ -56,11 +56,14 @@ private object Id {
 fun PlaybackToolbar(
     progress: Float,
     modifier: Modifier = Modifier,
+    onClose: () -> Unit = {},
+    onPlayPause: () -> Unit = {},
+    onNext: () -> Unit = {},
 ) {
     val density = LocalDensity.current
     val systemTopPadding = with(density) { WindowInsets.systemBars.getTop(density).toDp() }
     val scene = remember(key1 = systemTopPadding) {
-        createPlaybackToolbarMotionScene(systemTopPadding)
+        createPlaybackMotionScene(systemTopPadding)
     }
 
     MotionLayout(
@@ -73,7 +76,7 @@ fun PlaybackToolbar(
 
         FilledTonalIconButton(
             modifier = Modifier.layoutId(Id.CloseButton),
-            onClick = { /*TODO*/ },
+            onClick = onClose,
         ) {
             Icon(
                 imageVector = Icons.TwoTone.KeyboardArrowDown,
@@ -85,7 +88,8 @@ fun PlaybackToolbar(
             modifier = Modifier
                 .layoutId(Id.CoverArt)
                 .clip(RoundedCornerShape(8.dp)),
-            uri = "file:///android_asset/cover1.jpg",
+            // TODO: Pass real instance
+            coverArtPath = CoverArtPath.LocalUri(mediaUri = "uri here"),
         )
 
         TrackTitle(
@@ -95,7 +99,7 @@ fun PlaybackToolbar(
 
         FilledTonalIconButton(
             modifier = Modifier.layoutId(Id.PlayPauseButton),
-            onClick = { /*TODO*/ },
+            onClick = onPlayPause,
         ) {
             Icon(
                 imageVector = Icons.TwoTone.PlayArrow,
@@ -105,7 +109,7 @@ fun PlaybackToolbar(
 
         IconButton(
             modifier = Modifier.layoutId(Id.NextButton),
-            onClick = { /*TODO*/ },
+            onClick = onNext,
         ) {
             Icon(
                 imageVector = Icons.TwoTone.FastForward,
@@ -115,7 +119,7 @@ fun PlaybackToolbar(
     }
 }
 
-private fun createPlaybackToolbarMotionScene(systemTopPadding: Dp): MotionScene = MotionScene {
+private fun createPlaybackMotionScene(systemTopPadding: Dp): MotionScene = MotionScene {
     val closeButtonRef = createRefFor(Id.CloseButton)
     val (playButtonRef, nextButtonRef) = createRefsFor(Id.PlayPauseButton, Id.NextButton)
     val titleRef = createRefFor(Id.TrackTitle)
@@ -189,17 +193,12 @@ private fun createPlaybackToolbarMotionScene(systemTopPadding: Dp): MotionScene 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun CoverArt(
-    uri: String?,
+    coverArtPath: CoverArtPath,
     modifier: Modifier = Modifier,
 ) {
-    if (uri == null) {
-        CoverArtPlaceholder(modifier = modifier)
-        return
-    }
-
     GlideSubcomposition(
         modifier = modifier,
-        model = Uri.parse(uri),
+        model = coverArtPath,
     ) {
         when (state) {
             RequestState.Loading, RequestState.Failure -> {
