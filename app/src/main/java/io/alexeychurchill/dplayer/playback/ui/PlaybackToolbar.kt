@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -41,8 +43,10 @@ import androidx.constraintlayout.compose.MotionScene
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
+import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
+import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
 
 private object Id {
     const val CloseButton = "CloseButton"
@@ -50,10 +54,12 @@ private object Id {
     const val NextButton = "NextButton"
     const val CoverArt = "CoverArt"
     const val TrackTitle = "TrackTitle"
+    const val NoTrackLabel = "NoTrackLabel"
 }
 
 @Composable
 fun PlaybackToolbar(
+    state: CollapsedPlaybackViewState,
     progress: Float,
     modifier: Modifier = Modifier,
     onClose: () -> Unit = {},
@@ -62,13 +68,85 @@ fun PlaybackToolbar(
 ) {
     val density = LocalDensity.current
     val systemTopPadding = with(density) { WindowInsets.systemBars.getTop(density).toDp() }
+    val barHeight = 96.dp + (1.0f - progress) * systemTopPadding
+
+    when (state) {
+        CollapsedPlaybackViewState.Empty -> {
+            NoTrackLayout(
+                modifier = modifier.height(barHeight),
+                progress = progress,
+                systemTopPadding = systemTopPadding,
+                onClose = onClose,
+            )
+        }
+
+        is CollapsedPlaybackViewState.Track -> {
+            CollapsedPlayback(
+                modifier = modifier.height(barHeight),
+                state = state,
+                progress = progress,
+                systemTopPadding = systemTopPadding,
+                onClose = onClose,
+                onPlayPause = onPlayPause,
+                onNext = onNext,
+            )
+        }
+    }
+}
+
+@Composable
+private fun NoTrackLayout(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    systemTopPadding: Dp = 0.dp,
+    onClose: () -> Unit = {},
+) {
+    val scene = remember(key1 = systemTopPadding) {
+        createNoTrackMotionScene(systemTopPadding)
+    }
+
+    MotionLayout(
+        modifier = modifier,
+        motionScene = scene,
+        progress = progress,
+        debugFlags = DebugFlags.All,
+    ) {
+        FilledTonalIconButton(
+            modifier = Modifier.layoutId(Id.CloseButton),
+            onClick = onClose,
+        ) {
+            Icon(
+                imageVector = Icons.TwoTone.KeyboardArrowDown,
+                contentDescription = null,
+            )
+        }
+
+        Text(
+            modifier = Modifier.layoutId(Id.NoTrackLabel),
+            text = stringResource(R.string.playback_screen_no_track),
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun CollapsedPlayback(
+    progress: Float,
+    state: CollapsedPlaybackViewState.Track,
+    modifier: Modifier = Modifier,
+    systemTopPadding: Dp = 0.dp,
+    onClose: () -> Unit = {},
+    onPlayPause: () -> Unit = {},
+    onNext: () -> Unit = {},
+) {
     val scene = remember(key1 = systemTopPadding) {
         createPlaybackMotionScene(systemTopPadding)
     }
 
     MotionLayout(
-        modifier = modifier
-            .height(96.dp + (1.0f - progress) * systemTopPadding),
+        modifier = modifier,
         motionScene = scene,
         progress = progress,
         debugFlags = DebugFlags.All,
@@ -88,13 +166,13 @@ fun PlaybackToolbar(
             modifier = Modifier
                 .layoutId(Id.CoverArt)
                 .clip(RoundedCornerShape(8.dp)),
-            // TODO: Pass real instance
-            coverArtPath = CoverArtPath.LocalUri(mediaUri = "uri here"),
+            coverArtPath = state.coverArtPath,
         )
 
         TrackTitle(
             modifier = Modifier.layoutId(Id.TrackTitle),
-            title = "Track Name",
+            title = state.title ?: stringResource(R.string.playback_screen_track_info_unknown),
+            fontStyle = FontStyle.Italic.takeUnless { state.title != null },
         )
 
         FilledTonalIconButton(
@@ -117,6 +195,39 @@ fun PlaybackToolbar(
             )
         }
     }
+}
+
+private fun createNoTrackMotionScene(systemTopPadding: Dp): MotionScene = MotionScene {
+    val closeButtonRef = createRefFor(Id.CloseButton)
+    val noTrackLabel = createRefFor(Id.NoTrackLabel)
+    defaultTransition(
+        from = constraintSet {
+            constrain(closeButtonRef) {
+                top.linkTo(parent.top, margin = systemTopPadding)
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end, margin = 16.dp)
+            }
+
+            constrain(noTrackLabel) {
+                bottom.linkTo(parent.top, margin = 16.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        },
+        to = constraintSet {
+            constrain(closeButtonRef) {
+                bottom.linkTo(parent.top, margin = 16.dp)
+                end.linkTo(parent.end, margin = 16.dp)
+            }
+
+            constrain(noTrackLabel) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        },
+    )
 }
 
 private fun createPlaybackMotionScene(systemTopPadding: Dp): MotionScene = MotionScene {
@@ -193,9 +304,14 @@ private fun createPlaybackMotionScene(systemTopPadding: Dp): MotionScene = Motio
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun CoverArt(
-    coverArtPath: CoverArtPath,
+    coverArtPath: CoverArtPath?,
     modifier: Modifier = Modifier,
 ) {
+    if (coverArtPath == null) {
+        CoverArtPlaceholder(modifier = modifier)
+        return
+    }
+
     GlideSubcomposition(
         modifier = modifier,
         model = coverArtPath,
@@ -220,6 +336,7 @@ private fun CoverArt(
 private fun TrackTitle(
     title: String,
     modifier: Modifier = Modifier,
+    fontStyle: FontStyle? = null,
 ) {
     AnimatedContent(
         modifier = modifier,
@@ -236,6 +353,7 @@ private fun TrackTitle(
             text = currentTitle,
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.SemiBold,
+                fontStyle = fontStyle ?: FontStyle.Normal,
             ),
         )
     }
