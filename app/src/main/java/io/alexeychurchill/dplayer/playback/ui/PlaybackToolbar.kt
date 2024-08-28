@@ -109,7 +109,6 @@ private fun NoTrackLayout(
         modifier = modifier,
         motionScene = scene,
         progress = progress,
-        debugFlags = DebugFlags.All,
     ) {
         FilledTonalIconButton(
             modifier = Modifier.layoutId(Id.CloseButton),
@@ -149,7 +148,6 @@ private fun CollapsedPlayback(
         modifier = modifier,
         motionScene = scene,
         progress = progress,
-        debugFlags = DebugFlags.All,
     ) {
 
         FilledTonalIconButton(
