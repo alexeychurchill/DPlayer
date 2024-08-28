@@ -13,10 +13,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,7 +32,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.FastForward
 import androidx.compose.material.icons.twotone.FastRewind
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
-import androidx.compose.material.icons.twotone.MusicNote
 import androidx.compose.material.icons.twotone.Pause
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,7 +52,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -69,6 +65,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import io.alexeychurchill.dplayer.R
+import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackAction
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackState
@@ -172,7 +169,7 @@ private fun CoverArtSlider(
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { 7 })
-    val borderColor = MaterialTheme.colorScheme.onSecondaryContainer
+    val borderColor = MaterialTheme.colorScheme.onTertiaryContainer
     HorizontalPager(
         modifier = modifier
             .systemGestureExclusion(),
@@ -226,27 +223,6 @@ private fun CoverArtSlider(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun CoverArtPlaceholder(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .background(color = MaterialTheme.colorScheme.secondaryContainer),
-    ) {
-        Image(
-            modifier = Modifier
-                .size(128.dp)
-                .align(Alignment.Center),
-            imageVector = Icons.TwoTone.MusicNote,
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-        )
     }
 }
 
