@@ -45,6 +45,7 @@ internal object BottomScreenScaffoldDefaults {
 }
 
 class BottomScreenScaffoldState internal constructor(
+    internal val bottomScreenPeekHeight: Dp,
     internal val anchoredDraggableState: AnchoredDraggableState<BottomScreenScaffoldScreen>,
 ) {
 
@@ -66,6 +67,7 @@ class BottomScreenScaffoldState internal constructor(
         snapAnimationSpec: AnimationSpec<Float> = tween(),
         decayAnimationSpec: DecayAnimationSpec<Float> = splineBasedDecay(density),
     ) : this(
+        bottomScreenPeekHeight = bottomScreenPeekHeight,
         anchoredDraggableState = AnchoredDraggableState(
             initialValue = initialScreen,
             positionalThreshold = { position -> PositionalThresholdFactor * position },
@@ -118,13 +120,10 @@ fun rememberBottomScreenScaffoldState(
 
 @Composable
 fun BottomScreenScaffold(
+    state: BottomScreenScaffoldState,
     content: @Composable () -> Unit,
     bottomScreen: @Composable () -> Unit,
-    bottomScreenPeekHeight: Dp,
     modifier: Modifier = Modifier,
-    state: BottomScreenScaffoldState = rememberBottomScreenScaffoldState(
-        bottomScreenPeekHeight = bottomScreenPeekHeight,
-    ),
 ) {
     val density = LocalDensity.current
     val systemBarsInsets = WindowInsets.systemBars
@@ -153,7 +152,7 @@ fun BottomScreenScaffold(
                 bottomScreen()
             }
         },
-        bottomScreenSize = bottomScreenPeekHeight + systemBottomPadding,
+        bottomScreenSize = state.bottomScreenPeekHeight + systemBottomPadding,
         verticalOffset = -state.absoluteOffset,
     )
 }
