@@ -12,6 +12,7 @@ import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
 import io.alexeychurchill.dplayer.library.data.filesystem.SafDirectoryPermissionsDispatcher
 import io.alexeychurchill.dplayer.library.ui.LibraryScreen
+import io.alexeychurchill.dplayer.playback.ui.WithPlaybackScreen
 import io.alexeychurchill.dplayer.ui.theme.DPlayerTheme
 import javax.inject.Inject
 
@@ -28,7 +29,11 @@ class MainActivity : ComponentActivity() {
         lifecycle.addObserver(safDirectoryPermissionsDispatcher)
         setContent {
             DPlayerTheme {
-                LibraryScreen()
+                WithPlaybackScreen(
+                    content = {
+                        LibraryScreen()
+                    },
+                )
             }
         }
     }
