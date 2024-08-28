@@ -18,12 +18,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,12 +32,10 @@ import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.FastForward
 import androidx.compose.material.icons.twotone.FastRewind
-import androidx.compose.material.icons.twotone.KeyboardArrowDown
 import androidx.compose.material.icons.twotone.Pause
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,12 +52,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension.Companion.fillToConstraints
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -66,6 +67,7 @@ import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
+import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackAction
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackState
@@ -81,33 +83,62 @@ fun PlaybackScreen(
     Surface(
         modifier = modifier.fillMaxSize(),
     ) {
+        val density = LocalDensity.current
+        val bottomSystemPadding = with(density) {
+            WindowInsets.systemBars.getBottom(density).toDp()
+        }
         ConstraintLayout(
             modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding(),
+                .fillMaxSize(),
         ) {
 
-            val closeButtonRef = createRef()
-            FilledTonalIconButton(
-                modifier = Modifier
-                    .constrainAs(closeButtonRef) {
-                        top.linkTo(parent.top, margin = 16.dp)
-                        end.linkTo(parent.end, margin = 16.dp)
-                    },
-                onClick = { /*TODO*/ },
-            ) {
-                Icon(
-                    imageVector = Icons.TwoTone.KeyboardArrowDown,
-                    contentDescription = null,
-                )
-            }
+            val toolbarRef = createRef()
+            val trackInfoRef = createRef()
+            val sliderRef = createRef()
+            val (timeControlsRef, flowControlsRef) = createRefs()
 
-            val (coverArtRef, trackInfoRef) = createRefs()
+            createVerticalChain(
+                toolbarRef,
+                sliderRef.withChainParams(topMargin = 48.dp),
+                trackInfoRef.withChainParams(topMargin = 16.dp),
+                timeControlsRef.withChainParams(topMargin = 32.dp),
+                flowControlsRef.withChainParams(
+                    topMargin = 32.dp,
+                    bottomMargin = bottomSystemPadding,
+                ),
+                chainStyle = ChainStyle.Packed,
+            )
+
+            PlaybackToolbar(
+                modifier = Modifier
+                    .constrainAs(toolbarRef) {
+                        width = fillToConstraints
+                        top.linkTo(parent.top)
+                        bottom.linkTo(sliderRef.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        verticalBias = 0.0f
+                    },
+                state = CollapsedPlaybackViewState.Empty,
+                progress = 0.0f,
+            )
+
+            CoverArtSlider(
+                modifier = Modifier
+                    .constrainAs(sliderRef) {
+                        top.linkTo(toolbarRef.bottom)
+                        bottom.linkTo(trackInfoRef.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+            )
+
             TrackInfo(
                 modifier = Modifier
                     .constrainAs(trackInfoRef) {
                         width = fillToConstraints
-                        top.linkTo(coverArtRef.bottom, margin = 32.dp)
+                        top.linkTo(sliderRef.bottom)
+                        bottom.linkTo(timeControlsRef.top)
                         start.linkTo(parent.start, margin = 16.dp)
                         end.linkTo(parent.end, margin = 16.dp)
                     },
@@ -117,27 +148,15 @@ fun PlaybackScreen(
                 ),
             )
 
-            val coverArtGuideline = createGuidelineFromTop(fraction = 0.30f)
-            CoverArtSlider(
-                modifier = Modifier
-                    .constrainAs(coverArtRef) {
-                        top.linkTo(coverArtGuideline)
-                        bottom.linkTo(coverArtGuideline)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    },
-            )
-
             // Playback time controls
-            val timeControlRef = createRef()
-            val seekControlsGuideline = createGuidelineFromTop(fraction = 0.65f)
             PlaybackTimeControls(
                 modifier = Modifier
-                    .constrainAs(timeControlRef) {
+                    .constrainAs(timeControlsRef) {
                         width = fillToConstraints
+                        top.linkTo(trackInfoRef.bottom)
+                        bottom.linkTo(flowControlsRef.top)
                         start.linkTo(parent.start, margin = 16.dp)
                         end.linkTo(parent.end, margin = 16.dp)
-                        top.linkTo(seekControlsGuideline)
                     },
                 elapsedTimeText = "000:00:00",
                 totalTimeText = "000:00:00",
@@ -145,15 +164,13 @@ fun PlaybackScreen(
             )
 
             // Playback flow controls
-            val playbackControlsGuideline = createGuidelineFromTop(fraction = 0.80f)
-            val playRef = createRef()
             PlaybackFlowControls(
                 modifier = Modifier
-                    .constrainAs(playRef) {
+                    .constrainAs(flowControlsRef) {
+                        top.linkTo(timeControlsRef.bottom)
+                        bottom.linkTo(parent.bottom, margin = bottomSystemPadding)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        top.linkTo(playbackControlsGuideline)
-                        bottom.linkTo(playbackControlsGuideline)
                     },
                 state = PlaybackFlowViewState(
                     controlsEnabled = true,
