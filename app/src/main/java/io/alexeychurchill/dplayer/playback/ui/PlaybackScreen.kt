@@ -79,6 +79,9 @@ private val PlaybackFlowButtonIconSize = 40.dp
 @Composable
 fun PlaybackScreen(
     modifier: Modifier = Modifier,
+    progress: Float = 0.0f,
+    onOpen: () -> Unit = {},
+    onClose: () -> Unit = {},
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -120,7 +123,9 @@ fun PlaybackScreen(
                         verticalBias = 0.0f
                     },
                 state = CollapsedPlaybackViewState.Empty,
-                progress = 0.0f,
+                progress = 1.0f - progress,
+                onOpen = onOpen,
+                onClose = onClose,
             )
 
             CoverArtSlider(
