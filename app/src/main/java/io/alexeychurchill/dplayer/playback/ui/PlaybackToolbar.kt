@@ -9,6 +9,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -35,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
-import androidx.constraintlayout.compose.DebugFlags
 import androidx.constraintlayout.compose.Dimension.Companion.value
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
@@ -47,6 +48,8 @@ import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
+
+private const val OpenAreaProgressThreshold = 0.75f
 
 private object Id {
     const val CloseButton = "CloseButton"
@@ -62,6 +65,7 @@ fun PlaybackToolbar(
     state: CollapsedPlaybackViewState,
     progress: Float,
     modifier: Modifier = Modifier,
+    onOpen: () -> Unit = {},
     onClose: () -> Unit = {},
     onPlayPause: () -> Unit = {},
     onNext: () -> Unit = {},
@@ -70,26 +74,36 @@ fun PlaybackToolbar(
     val systemTopPadding = with(density) { WindowInsets.systemBars.getTop(density).toDp() }
     val barHeight = 96.dp + (1.0f - progress) * systemTopPadding
 
-    when (state) {
-        CollapsedPlaybackViewState.Empty -> {
-            NoTrackLayout(
-                modifier = modifier.height(barHeight),
-                progress = progress,
-                systemTopPadding = systemTopPadding,
-                onClose = onClose,
+    Box(modifier = modifier.height(barHeight)) {
+        if (progress >= OpenAreaProgressThreshold) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(onClick = onOpen),
             )
         }
 
-        is CollapsedPlaybackViewState.Track -> {
-            CollapsedPlayback(
-                modifier = modifier.height(barHeight),
-                state = state,
-                progress = progress,
-                systemTopPadding = systemTopPadding,
-                onClose = onClose,
-                onPlayPause = onPlayPause,
-                onNext = onNext,
-            )
+        when (state) {
+            CollapsedPlaybackViewState.Empty -> {
+                NoTrackLayout(
+                    modifier = Modifier.fillMaxSize(),
+                    progress = progress,
+                    systemTopPadding = systemTopPadding,
+                    onClose = onClose,
+                )
+            }
+
+            is CollapsedPlaybackViewState.Track -> {
+                CollapsedPlayback(
+                    modifier = Modifier.fillMaxSize(),
+                    state = state,
+                    progress = progress,
+                    systemTopPadding = systemTopPadding,
+                    onClose = onClose,
+                    onPlayPause = onPlayPause,
+                    onNext = onNext,
+                )
+            }
         }
     }
 }
