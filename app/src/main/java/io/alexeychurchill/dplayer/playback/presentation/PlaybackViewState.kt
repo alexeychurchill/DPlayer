@@ -4,10 +4,10 @@ import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 
 data class PlaybackFlowViewState(
     val controlsEnabled: Boolean,
-    val playbackState: PlaybackState,
+    val playbackState: PlaybackStatusViewState,
 )
 
-enum class PlaybackState {
+enum class PlaybackStatusViewState {
     Unknown,
     Playing,
     Paused,

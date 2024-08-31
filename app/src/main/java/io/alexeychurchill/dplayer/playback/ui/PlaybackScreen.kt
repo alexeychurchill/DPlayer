@@ -70,7 +70,7 @@ import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
 import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackAction
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowViewState
-import io.alexeychurchill.dplayer.playback.presentation.PlaybackState
+import io.alexeychurchill.dplayer.playback.presentation.PlaybackStatusViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlayingTrackInfoViewState
 
 private val PlaybackFlowButtonSize = 80.dp
@@ -179,7 +179,7 @@ fun PlaybackScreen(
                     },
                 state = PlaybackFlowViewState(
                     controlsEnabled = true,
-                    playbackState = PlaybackState.Paused,
+                    playbackState = PlaybackStatusViewState.Paused,
                 ),
             )
         }
@@ -389,7 +389,7 @@ private fun PlaybackFlowControls(
             onClick = { onAction(PlaybackAction.TogglePlayback) },
         ) {
             val iconVector = when (state.playbackState) {
-                PlaybackState.Playing -> Icons.TwoTone.Pause
+                PlaybackStatusViewState.Playing -> Icons.TwoTone.Pause
                 else -> Icons.TwoTone.PlayArrow
             }
             Icon(
