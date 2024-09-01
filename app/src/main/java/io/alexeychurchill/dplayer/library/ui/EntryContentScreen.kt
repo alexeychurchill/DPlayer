@@ -29,11 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.alexeychurchill.dplayer.R
-import io.alexeychurchill.dplayer.library.presentation.viewmodel.EntryContentViewModel
-import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction.GoBack
-import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryAction
 import io.alexeychurchill.dplayer.library.presentation.model.EntryContentSectionsViewState
 import io.alexeychurchill.dplayer.library.presentation.model.EntryContentViewState
+import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction.GoBack
+import io.alexeychurchill.dplayer.library.presentation.model.OnLibraryAction
+import io.alexeychurchill.dplayer.library.presentation.viewmodel.EntryContentViewModel
 import io.alexeychurchill.dplayer.library.ui.list.DirectoryEntryItem
 import io.alexeychurchill.dplayer.library.ui.list.FileEntryItem
 import io.alexeychurchill.dplayer.library.ui.widgets.LibraryLoadingPlaceholder
@@ -171,6 +171,7 @@ private fun SectionsList(
         ) { entryItem ->
             FileEntryItem(
                 state = entryItem,
+                onTap = { onLibraryAction(entryItem.openAction) },
             )
         }
     }

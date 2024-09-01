@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
+import io.alexeychurchill.dplayer.engine.Media3PlaybackEngine
 import io.alexeychurchill.dplayer.library.data.filesystem.SafDirectoryPermissionsDispatcher
 import io.alexeychurchill.dplayer.library.ui.LibraryScreen
 import io.alexeychurchill.dplayer.playback.ui.WithPlaybackScreen
@@ -22,11 +23,17 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var safDirectoryPermissionsDispatcher: SafDirectoryPermissionsDispatcher
 
+    @Inject
+    lateinit var playbackEngine: Media3PlaybackEngine
+
     override fun onCreate(savedInstanceState: Bundle?) {
         DynamicColors.applyToActivityIfAvailable(this)
         super.onCreate(savedInstanceState)
         setupEdgeToEdge()
-        lifecycle.addObserver(safDirectoryPermissionsDispatcher)
+        lifecycle.apply {
+            addObserver(safDirectoryPermissionsDispatcher)
+            addObserver(playbackEngine)
+        }
         setContent {
             DPlayerTheme {
                 WithPlaybackScreen(
