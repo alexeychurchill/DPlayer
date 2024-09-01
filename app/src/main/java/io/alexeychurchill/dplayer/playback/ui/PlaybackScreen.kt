@@ -35,6 +35,7 @@ import androidx.compose.material.icons.twotone.FastForward
 import androidx.compose.material.icons.twotone.FastRewind
 import androidx.compose.material.icons.twotone.Pause
 import androidx.compose.material.icons.twotone.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension.Companion.fillToConstraints
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
@@ -70,8 +73,9 @@ import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
 import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackAction
-import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowViewState
+import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowControlsViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackStatusViewState
+import io.alexeychurchill.dplayer.playback.presentation.PlaybackViewModel
 import io.alexeychurchill.dplayer.playback.presentation.PlayingTrackInfoViewState
 
 private val PlaybackFlowButtonSize = 80.dp
@@ -80,6 +84,7 @@ private val PlaybackFlowButtonIconSize = 40.dp
 @Composable
 fun PlaybackScreen(
     modifier: Modifier = Modifier,
+    viewModel: PlaybackViewModel = hiltViewModel(),
     progress: Float = 0.0f,
     onOpen: () -> Unit = {},
     onClose: () -> Unit = {},
@@ -170,6 +175,7 @@ fun PlaybackScreen(
             )
 
             // Playback flow controls
+            val playbackState by viewModel.playbackState.collectAsState()
             PlaybackFlowControls(
                 modifier = Modifier
                     .constrainAs(flowControlsRef) {
@@ -178,10 +184,8 @@ fun PlaybackScreen(
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     },
-                state = PlaybackFlowViewState(
-                    controlsEnabled = true,
-                    playbackState = PlaybackStatusViewState.Paused,
-                ),
+                state = playbackState,
+                onAction = viewModel::handlePlaybackAction,
             )
         }
     }
@@ -358,7 +362,7 @@ private fun PlaybackTimeControls(
 
 @Composable
 private fun PlaybackFlowControls(
-    state: PlaybackFlowViewState,
+    state: PlaybackFlowControlsViewState,
     modifier: Modifier = Modifier,
     onAction: (PlaybackAction) -> Unit = {},
 ) {
@@ -375,9 +379,10 @@ private fun PlaybackFlowControls(
             modifier = Modifier
                 .size(PlaybackFlowButtonSize)
                 .seekButtonsGesture(
-                    onClick = { /* TODO */ },
-                    onSeekPress = { /* TODO */ },
-                    onSeekRelease = { /* TODO */ },
+                    key1 = onAction,
+                    onClick = { onAction(PlaybackAction.FastRewind) },
+                    onSeekPress = { onAction(PlaybackAction.FastRewindStart) },
+                    onSeekRelease = { onAction(PlaybackAction.FastRewindStop) },
                 ),
         ) {
             Icon(
@@ -390,30 +395,20 @@ private fun PlaybackFlowControls(
             )
         }
 
-        FilledIconButton(
-            modifier = Modifier
-                .size(PlaybackFlowButtonSize),
+        PlaybackButton(
+            modifier = Modifier.size(PlaybackFlowButtonSize),
+            status = state.playbackStatus,
             onClick = { onAction(PlaybackAction.TogglePlayback) },
-        ) {
-            val iconVector = when (state.playbackState) {
-                PlaybackStatusViewState.Playing -> Icons.TwoTone.Pause
-                else -> Icons.TwoTone.PlayArrow
-            }
-            Icon(
-                modifier = Modifier
-                    .size(PlaybackFlowButtonIconSize),
-                imageVector = iconVector,
-                contentDescription = null,
-            )
-        }
+        )
 
         Box(
             modifier = Modifier
                 .size(PlaybackFlowButtonSize)
                 .seekButtonsGesture(
-                    onClick = { /* TODO */ },
-                    onSeekPress = { /* TODO */ },
-                    onSeekRelease = { /* TODO */ },
+                    key1 = onAction,
+                    onClick = { onAction(PlaybackAction.FastForward) },
+                    onSeekPress = { onAction(PlaybackAction.FastForwardStart) },
+                    onSeekRelease = { onAction(PlaybackAction.FastForwardStop) },
                 ),
         ) {
             Icon(
@@ -423,6 +418,43 @@ private fun PlaybackFlowControls(
                 imageVector = Icons.TwoTone.FastForward,
                 contentDescription = null,
                 tint = LocalContentColor.current,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PlaybackButton(
+    status: PlaybackStatusViewState,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    if (status == PlaybackStatusViewState.Loading) {
+        Box(
+            modifier = modifier,
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(PlaybackFlowButtonIconSize),
+            )
+        }
+    } else {
+        FilledIconButton(
+            modifier = modifier,
+            enabled = status != PlaybackStatusViewState.Disabled,
+            onClick = onClick,
+        ) {
+            val iconVector = when (status) {
+                PlaybackStatusViewState.Playing -> Icons.TwoTone.Pause
+                else -> Icons.TwoTone.PlayArrow
+            }
+
+            Icon(
+                modifier = Modifier
+                    .size(PlaybackFlowButtonIconSize),
+                imageVector = iconVector,
+                contentDescription = null,
             )
         }
     }

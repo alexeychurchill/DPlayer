@@ -2,7 +2,6 @@ package io.alexeychurchill.dplayer.playback.presentation
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.alexeychurchill.dplayer.playback.presentation.PlaybackStatusViewState.Unknown
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
@@ -20,33 +19,11 @@ class PlaybackViewModel @Inject constructor() : ViewModel() {
 
     val trackProgress: StateFlow<Float> = MutableStateFlow(0.0f)
 
-    val playbackStatus: StateFlow<PlaybackStatusViewState> = MutableStateFlow(Unknown)
+    val playbackState: StateFlow<PlaybackFlowControlsViewState> = MutableStateFlow(
+        PlaybackFlowControlsViewState()
+    )
 
-    fun onTogglePlayback() {
-        /** TODO Implement **/
-    }
-
-    fun onRewindStart() {
-        /** TODO Implement **/
-    }
-
-    fun onRewindEnd() {
-        /** TODO Implement **/
-    }
-
-    fun onRewind() {
-        /** TODO Implement **/
-    }
-
-    fun onForwardStart() {
-        /** TODO Implement **/
-    }
-
-    fun onForwardEnd() {
-        /** TODO Implement **/
-    }
-
-    fun onForward() {
-        /** TODO Implement **/
+    fun handlePlaybackAction(action: PlaybackAction) {
+        /* TODO */
     }
 }

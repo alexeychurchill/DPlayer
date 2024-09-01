@@ -2,13 +2,15 @@ package io.alexeychurchill.dplayer.playback.presentation
 
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 
-data class PlaybackFlowViewState(
-    val controlsEnabled: Boolean,
-    val playbackState: PlaybackStatusViewState,
+data class PlaybackFlowControlsViewState(
+    val playbackStatus: PlaybackStatusViewState = PlaybackStatusViewState.Disabled,
+    val isRewindEnabled: Boolean = false,
+    val isFastForwardEnabled: Boolean = false,
 )
 
 enum class PlaybackStatusViewState {
-    Unknown,
+    Disabled,
+    Loading,
     Playing,
     Paused,
 }
@@ -34,9 +36,9 @@ sealed interface PlaybackAction {
 
     data object TogglePlayback : PlaybackAction
 
-    data object Rewind : PlaybackAction
+    data object FastRewind : PlaybackAction
 
-    data object Next : PlaybackAction
+    data object FastForward : PlaybackAction
 
     data object FastRewindStart : PlaybackAction
 
