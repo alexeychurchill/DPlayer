@@ -15,6 +15,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,7 @@ import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
@@ -370,16 +371,22 @@ private fun PlaybackFlowControls(
         verticalAlignment = Alignment.CenterVertically,
     ) {
 
-        IconButton(
+        Box(
             modifier = Modifier
-                .size(PlaybackFlowButtonSize),
-            onClick = { onAction(PlaybackAction.Rewind) },
+                .size(PlaybackFlowButtonSize)
+                .seekButtonsGesture(
+                    onClick = { /* TODO */ },
+                    onSeekPress = { /* TODO */ },
+                    onSeekRelease = { /* TODO */ },
+                ),
         ) {
             Icon(
                 modifier = Modifier
+                    .align(Alignment.Center)
                     .size(PlaybackFlowButtonIconSize),
                 imageVector = Icons.TwoTone.FastRewind,
                 contentDescription = null,
+                tint = LocalContentColor.current,
             )
         }
 
@@ -400,16 +407,22 @@ private fun PlaybackFlowControls(
             )
         }
 
-        IconButton(
+        Box(
             modifier = Modifier
-                .size(PlaybackFlowButtonSize),
-            onClick = { onAction(PlaybackAction.Next) },
+                .size(PlaybackFlowButtonSize)
+                .seekButtonsGesture(
+                    onClick = { /* TODO */ },
+                    onSeekPress = { /* TODO */ },
+                    onSeekRelease = { /* TODO */ },
+                ),
         ) {
             Icon(
                 modifier = Modifier
+                    .align(Alignment.Center)
                     .size(PlaybackFlowButtonIconSize),
                 imageVector = Icons.TwoTone.FastForward,
                 contentDescription = null,
+                tint = LocalContentColor.current,
             )
         }
     }
