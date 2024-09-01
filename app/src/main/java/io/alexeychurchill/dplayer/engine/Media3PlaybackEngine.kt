@@ -17,7 +17,8 @@ import javax.inject.Singleton
 @Singleton
 class Media3PlaybackEngine @Inject constructor(
     @ApplicationContext private val context: Context,
-) : DefaultLifecycleObserver, PlaybackEngine {
+    private val playerListener: PlaybackEngineStateListener,
+) : DefaultLifecycleObserver, PlaybackEngine, PlaybackEngineState by playerListener {
 
     private lateinit var player: Player
 
@@ -28,10 +29,11 @@ class Media3PlaybackEngine @Inject constructor(
         player = ExoPlayer.Builder(context)
             .build()
         player.playWhenReady = true
-        player.stop()
+        playerListener.attachPlayer(player)
     }
 
     override fun onStop(owner: LifecycleOwner) {
+        playerListener.detachPlayer()
         player.release()
         super.onStop(owner)
     }
