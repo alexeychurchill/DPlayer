@@ -18,8 +18,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.Duration
-import java.util.Locale
 import javax.inject.Inject
 
 private const val NoMetadataValue = "-"
@@ -29,6 +27,7 @@ private const val NoTimeValue = "--:--"
 @HiltViewModel
 class PlaybackViewModel @Inject constructor(
     private val playbackEngine: PlaybackEngine,
+    private val playbackTimeMapper: PlaybackTimeMapper,
 ) : ViewModel() {
 
     private val seekInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -57,12 +56,7 @@ class PlaybackViewModel @Inject constructor(
         .trackDuration
         .map { durationMs ->
             if (durationMs == null) return@map NoTimeValue
-            val (hours, minutes, seconds) = duration(durationMs)
-            if (hours == 0L) {
-                formatMinSec(minutes, seconds)
-            } else {
-                formatHrMinSec(hours, minutes, seconds)
-            }
+            playbackTimeMapper.mapToString(durationMs)
         }
         .stateIn(
             scope = viewModelScope,
@@ -74,13 +68,7 @@ class PlaybackViewModel @Inject constructor(
         .trackDuration
         .combine(createTrackElapsedFlow()) { durationMs, elapsedMs ->
             if (durationMs == null || elapsedMs == null) return@combine NoTimeValue
-            val (durationHours, _, _) = duration(durationMs)
-            val (hours, minutes, seconds) = duration(elapsedMs)
-            if (durationHours == 0L) {
-                formatMinSec(minutes, seconds)
-            } else {
-                formatHrMinSec(hours, minutes, seconds)
-            }
+            playbackTimeMapper.mapToStringLeadingHours(timeMs = elapsedMs, totalMs = durationMs)
         }
         .stateIn(
             scope = viewModelScope,
@@ -141,20 +129,4 @@ class PlaybackViewModel @Inject constructor(
                 playbackEngine.trackElapsed
             }
         }
-
-    private fun duration(timeMs: Long): Triple<Long, Long, Long> {
-        val duration = Duration.ofMillis(timeMs)
-        val seconds = duration.seconds % 60
-        val minutes = duration.toMinutes() % 60
-        val hours = duration.toHours() % 24
-        return Triple(hours, minutes, seconds)
-    }
-
-    private fun formatMinSec(minutes: Long, seconds: Long): String {
-        return String.format(Locale.ROOT, "%02d:%02d", minutes, seconds)
-    }
-
-    private fun formatHrMinSec(hours: Long, minutes: Long, seconds: Long): String {
-        return String.format(Locale.ROOT, "%03d:%02d:%02d", hours, minutes, seconds)
-    }
 }
