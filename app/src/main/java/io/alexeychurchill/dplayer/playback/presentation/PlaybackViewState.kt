@@ -2,11 +2,6 @@ package io.alexeychurchill.dplayer.playback.presentation
 
 import io.alexeychurchill.dplayer.media.presentation.CoverArtPath
 
-data class PlayingTrackInfoViewState(
-    val title: String? = null,
-    val artist: String? = null,
-)
-
 sealed interface CollapsedPlaybackViewState {
 
     data object Empty : CollapsedPlaybackViewState

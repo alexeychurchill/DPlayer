@@ -11,4 +11,6 @@ interface PlaybackEngineController {
     fun pause()
 
     fun togglePlayback()
+
+    fun seek(positionMs: Long)
 }

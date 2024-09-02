@@ -74,7 +74,6 @@ import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
 import io.alexeychurchill.dplayer.engine.PlaybackStatus
 import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackViewModel
-import io.alexeychurchill.dplayer.playback.presentation.PlayingTrackInfoViewState
 
 private val PlaybackFlowButtonSize = 80.dp
 private val PlaybackFlowButtonIconSize = 40.dp
@@ -167,9 +166,7 @@ fun PlaybackScreen(
                         start.linkTo(parent.start, margin = 16.dp)
                         end.linkTo(parent.end, margin = 16.dp)
                     },
-                elapsedTimeText = "000:00:00",
-                totalTimeText = "000:00:00",
-                elapsedPercent = 0.5f,
+                viewModel = viewModel,
             )
 
             // Playback flow controls
@@ -301,11 +298,8 @@ private fun TrackInfo(
 
 @Composable
 private fun PlaybackTimeControls(
-    elapsedTimeText: String,
-    totalTimeText: String,
-    elapsedPercent: Float,
+    viewModel: PlaybackViewModel,
     modifier: Modifier = Modifier,
-    onElapsedChange: (percent: Float) -> Unit = {},
 ) {
     var isChangeInProgress by remember { mutableStateOf(false) }
     val sliderTimeSpacing by animateDpAsState(
@@ -320,16 +314,19 @@ private fun PlaybackTimeControls(
         ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val progress by viewModel.trackProgress.collectAsState()
         Slider(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = elapsedPercent,
+            value = progress ?: 0.0f,
+            enabled = progress != null,
             onValueChange = { value ->
                 isChangeInProgress = true
-                onElapsedChange(value)
+                viewModel.seek(value)
             },
             onValueChangeFinished = {
                 isChangeInProgress = false
+                viewModel.stopSeeking()
             },
         )
 
@@ -344,11 +341,13 @@ private fun PlaybackTimeControls(
                 fontWeight = FontWeight.SemiBold,
             )
 
+            val elapsedTimeText by viewModel.elapsedTimeString.collectAsState()
             Text(
                 text = elapsedTimeText,
                 style = timeTextStyle,
             )
 
+            val totalTimeText by viewModel.totalTimeString.collectAsState()
             Text(
                 text = totalTimeText,
                 style = timeTextStyle,

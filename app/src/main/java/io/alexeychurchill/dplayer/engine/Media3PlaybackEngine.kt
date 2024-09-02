@@ -5,7 +5,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.Player.STATE_BUFFERING
 import androidx.media3.common.Player.STATE_ENDED
+import androidx.media3.common.Player.STATE_IDLE
 import androidx.media3.common.Player.STATE_READY
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -68,5 +70,12 @@ class Media3PlaybackEngine @Inject constructor(
             return
         }
         player.playWhenReady = !player.playWhenReady
+    }
+
+    override fun seek(positionMs: Long) {
+        if (player.playbackState == STATE_IDLE || player.playbackState == STATE_BUFFERING) {
+            return
+        }
+        player.seekTo(positionMs)
     }
 }

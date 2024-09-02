@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
-private const val ElapsedUpdatePeriodMs = 250L
+private const val ElapsedUpdatePeriodMs = 100L
 
 class PlaybackEngineStateListener @Inject constructor(
     private val metadataMapper: MediaMetadataMapper,
@@ -119,7 +119,7 @@ class PlaybackEngineStateListener @Inject constructor(
 
     private fun updateTrackDuration() {
         val player = player ?: return
-        val duration = player.contentDuration.takeIf { it == C.TIME_UNSET } ?: return
+        val duration = player.contentDuration.takeIf { it != C.TIME_UNSET } ?: return
         _trackDuration.tryEmit(duration)
     }
 
