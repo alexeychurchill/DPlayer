@@ -1,4 +1,10 @@
-# DPlayer
+<h1 align="center">
+  <br>
+  <img src="https://raw.githubusercontent.com/alexeychurchill/DPlayer/dev/icon_github.png" alt="DPlayer" width="200">
+  <br>
+  DPlayer
+  <br>
+</h1>
 
 > Music player for Android platform with directory-based media library
 
