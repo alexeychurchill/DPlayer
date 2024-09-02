@@ -94,6 +94,10 @@ class PlaybackEngineStateListener @Inject constructor(
 
     private fun updateMetadataState() {
         val player = player ?: return
+        if (player.playbackState == Player.STATE_IDLE) {
+            _fileMetadata.tryEmit(null)
+            return
+        }
         val fileMetadata = metadataMapper.mapToFileMetadata(player.mediaMetadata)
         _fileMetadata.tryEmit(fileMetadata)
     }

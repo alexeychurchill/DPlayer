@@ -142,6 +142,8 @@ fun PlaybackScreen(
                     },
             )
 
+            val trackTitle by viewModel.trackTitle.collectAsState()
+            val artistName by viewModel.artistName.collectAsState()
             TrackInfo(
                 modifier = Modifier
                     .constrainAs(trackInfoRef) {
@@ -151,10 +153,8 @@ fun PlaybackScreen(
                         start.linkTo(parent.start, margin = 16.dp)
                         end.linkTo(parent.end, margin = 16.dp)
                     },
-                state = PlayingTrackInfoViewState(
-                    title = "Track Title",
-                    artist = "Artist Name",
-                ),
+                trackTitle = trackTitle,
+                artistName = artistName,
             )
 
             // Playback time controls
@@ -251,7 +251,8 @@ private fun CoverArtSlider(
 
 @Composable
 private fun TrackInfo(
-    state: PlayingTrackInfoViewState,
+    trackTitle: String?,
+    artistName: String?,
     modifier: Modifier = Modifier,
 ) {
     val unknownText = stringResource(R.string.playback_screen_track_info_unknown)
@@ -265,7 +266,7 @@ private fun TrackInfo(
     ) {
         AnimatedContent(
             label = "track title",
-            targetState = state.title,
+            targetState = trackTitle,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
         ) { currentTitle ->
             Text(
@@ -281,7 +282,7 @@ private fun TrackInfo(
 
         AnimatedContent(
             label = "track artist",
-            targetState = state.artist,
+            targetState = artistName,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
         ) { currentArtist ->
             Text(
