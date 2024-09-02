@@ -72,7 +72,7 @@ class PlaybackViewModel @Inject constructor(
 
     val elapsedTimeString: StateFlow<String> = playbackEngine
         .trackDuration
-        .combine(playbackEngine.trackElapsed) { durationMs, elapsedMs ->
+        .combine(createTrackElapsedFlow()) { durationMs, elapsedMs ->
             if (durationMs == null || elapsedMs == null) return@combine NoTimeValue
             val (durationHours, _, _) = duration(durationMs)
             val (hours, minutes, seconds) = duration(elapsedMs)
@@ -127,6 +127,19 @@ class PlaybackViewModel @Inject constructor(
         .combine(playbackEngine.trackElapsed) { duration, elapsed ->
             if (duration == null || elapsed == null) return@combine null
             elapsed.toFloat() / duration
+        }
+
+    private fun createTrackElapsedFlow(): Flow<Long?> = seekInProgress
+        .flatMapLatest { isSeekInProgress ->
+            if (isSeekInProgress) {
+                playbackEngine
+                    .trackDuration
+                    .combine(seekingValue) { durationMs, seekProgress ->
+                        durationMs?.let { it * seekProgress }?.toLong()
+                    }
+            } else {
+                playbackEngine.trackElapsed
+            }
         }
 
     private fun duration(timeMs: Long): Triple<Long, Long, Long> {
