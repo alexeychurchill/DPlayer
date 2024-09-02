@@ -10,6 +10,7 @@ sealed interface CollapsedPlaybackViewState {
         val title: String? = null,
         val coverArtPath: CoverArtPath? = null,
         val isPlaybackEnabled: Boolean = false,
+        val isPlaying: Boolean = false,
         val isNextEnabled: Boolean = false,
     ) : CollapsedPlaybackViewState
 }

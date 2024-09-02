@@ -1,6 +1,7 @@
 package io.alexeychurchill.dplayer.media.media3
 
 import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
@@ -28,11 +29,15 @@ class PlaybackEngineStateListener @Inject constructor(
 
     private var player: Player? = null
 
+    private val _trackUri = MutableStateFlow<String?>(null)
+
     private val _playbackStatus = MutableStateFlow(PlaybackStatus.Idle)
 
-    private val _fileMetadata = MutableStateFlow<FileMetadata?>(value = null)
+    private val _fileMetadata = MutableStateFlow<FileMetadata?>(null)
 
-    private val _trackDuration = MutableStateFlow<Long?>(value = null)
+    private val _trackDuration = MutableStateFlow<Long?>(null)
+
+    override val trackUri: StateFlow<String?> = _trackUri.asStateFlow()
 
     override val playbackStatus: StateFlow<PlaybackStatus> = _playbackStatus.asStateFlow()
 
@@ -63,6 +68,11 @@ class PlaybackEngineStateListener @Inject constructor(
 
     /* Callback implementation */
 
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        super.onMediaItemTransition(mediaItem, reason)
+        updateTrackUri()
+    }
+
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
         updatePlaybackState()
@@ -86,9 +96,16 @@ class PlaybackEngineStateListener @Inject constructor(
     /* Data fetching routines */
 
     private fun initUpdate() {
+        updateTrackUri()
         updateMetadataState()
         updatePlaybackState()
         updateTrackDuration()
+    }
+
+    private fun updateTrackUri() {
+        val player = player ?: return
+        val uri = player.currentMediaItem?.localConfiguration?.uri?.toString()
+        _trackUri.tryEmit(uri)
     }
 
     private fun updateMetadataState() {

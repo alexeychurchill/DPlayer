@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface PlaybackEngineState {
 
+    val trackUri: StateFlow<String?>
+
     val playbackStatus: StateFlow<PlaybackStatus>
 
     val fileMetadata: StateFlow<FileMetadata?>

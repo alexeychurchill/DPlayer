@@ -72,7 +72,7 @@ import com.bumptech.glide.integration.compose.RequestState
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
 import io.alexeychurchill.dplayer.media.domain.PlaybackStatus
-import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
+import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewModel
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackViewModel
 
 private val PlaybackFlowButtonSize = 80.dp
@@ -82,6 +82,7 @@ private val PlaybackFlowButtonIconSize = 40.dp
 fun PlaybackScreen(
     modifier: Modifier = Modifier,
     viewModel: PlaybackViewModel = hiltViewModel(),
+    collapsedViewModel: CollapsedPlaybackViewModel = hiltViewModel(),
     progress: Float = 0.0f,
     onOpen: () -> Unit = {},
     onClose: () -> Unit = {},
@@ -115,6 +116,7 @@ fun PlaybackScreen(
                 chainStyle = ChainStyle.Packed,
             )
 
+            val collapsedState by collapsedViewModel.state.collectAsState()
             PlaybackToolbar(
                 modifier = Modifier
                     .constrainAs(toolbarRef) {
@@ -125,10 +127,12 @@ fun PlaybackScreen(
                         end.linkTo(parent.end)
                         verticalBias = 0.0f
                     },
-                state = CollapsedPlaybackViewState.Empty,
+                state = collapsedState,
                 progress = 1.0f - progress,
                 onOpen = onOpen,
                 onClose = onClose,
+                onPlayPause = collapsedViewModel::togglePlayPause,
+                onNext = collapsedViewModel::nextTrack,
             )
 
             CoverArtSlider(
@@ -394,7 +398,7 @@ private fun PlaybackFlowControls(
         PlaybackButton(
             modifier = Modifier.size(PlaybackFlowButtonSize),
             status = playbackStatus,
-            onClick = viewModel::togglePlayPause,
+            onClick = viewModel::playPause,
         )
 
         Box(

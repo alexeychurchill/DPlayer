@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.FastForward
 import androidx.compose.material.icons.twotone.KeyboardArrowDown
+import androidx.compose.material.icons.twotone.Pause
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -189,10 +190,16 @@ private fun CollapsedPlayback(
 
         FilledTonalIconButton(
             modifier = Modifier.layoutId(Id.PlayPauseButton),
+            enabled = state.isPlaybackEnabled,
             onClick = onPlayPause,
         ) {
+            val iconVector = if (state.isPlaying) {
+                Icons.TwoTone.Pause
+            } else {
+                Icons.TwoTone.PlayArrow
+            }
             Icon(
-                imageVector = Icons.TwoTone.PlayArrow,
+                imageVector = iconVector,
                 contentDescription = null,
             )
         }

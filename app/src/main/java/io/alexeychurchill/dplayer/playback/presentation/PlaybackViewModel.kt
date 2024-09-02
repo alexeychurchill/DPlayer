@@ -92,7 +92,7 @@ class PlaybackViewModel @Inject constructor(
 
     val playbackState: StateFlow<PlaybackStatus> = playbackEngine.playbackStatus
 
-    fun togglePlayPause() {
+    fun playPause() {
         playbackEngine.togglePlayback()
     }
 
