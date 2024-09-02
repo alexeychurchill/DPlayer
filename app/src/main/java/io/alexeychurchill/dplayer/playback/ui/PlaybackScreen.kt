@@ -71,10 +71,8 @@ import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
+import io.alexeychurchill.dplayer.engine.PlaybackStatus
 import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
-import io.alexeychurchill.dplayer.playback.presentation.PlaybackAction
-import io.alexeychurchill.dplayer.playback.presentation.PlaybackFlowControlsViewState
-import io.alexeychurchill.dplayer.playback.presentation.PlaybackStatusViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackViewModel
 import io.alexeychurchill.dplayer.playback.presentation.PlayingTrackInfoViewState
 
@@ -175,7 +173,6 @@ fun PlaybackScreen(
             )
 
             // Playback flow controls
-            val playbackState by viewModel.playbackState.collectAsState()
             PlaybackFlowControls(
                 modifier = Modifier
                     .constrainAs(flowControlsRef) {
@@ -184,8 +181,7 @@ fun PlaybackScreen(
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     },
-                state = playbackState,
-                onAction = viewModel::handlePlaybackAction,
+                viewModel = viewModel,
             )
         }
     }
@@ -362,9 +358,8 @@ private fun PlaybackTimeControls(
 
 @Composable
 private fun PlaybackFlowControls(
-    state: PlaybackFlowControlsViewState,
+    viewModel: PlaybackViewModel,
     modifier: Modifier = Modifier,
-    onAction: (PlaybackAction) -> Unit = {},
 ) {
     Row(
         modifier = modifier,
@@ -379,10 +374,10 @@ private fun PlaybackFlowControls(
             modifier = Modifier
                 .size(PlaybackFlowButtonSize)
                 .seekButtonsGesture(
-                    key1 = onAction,
-                    onClick = { onAction(PlaybackAction.FastRewind) },
-                    onSeekPress = { onAction(PlaybackAction.FastRewindStart) },
-                    onSeekRelease = { onAction(PlaybackAction.FastRewindStop) },
+                    key1 = viewModel,
+                    onClick = { /* TODO */ },
+                    onSeekPress = { /* TODO */ },
+                    onSeekRelease = { /* TODO */ },
                 ),
         ) {
             Icon(
@@ -395,20 +390,21 @@ private fun PlaybackFlowControls(
             )
         }
 
+        val playbackStatus by viewModel.playbackState.collectAsState()
         PlaybackButton(
             modifier = Modifier.size(PlaybackFlowButtonSize),
-            status = state.playbackStatus,
-            onClick = { onAction(PlaybackAction.TogglePlayback) },
+            status = playbackStatus,
+            onClick = viewModel::togglePlayPause,
         )
 
         Box(
             modifier = Modifier
                 .size(PlaybackFlowButtonSize)
                 .seekButtonsGesture(
-                    key1 = onAction,
-                    onClick = { onAction(PlaybackAction.FastForward) },
-                    onSeekPress = { onAction(PlaybackAction.FastForwardStart) },
-                    onSeekRelease = { onAction(PlaybackAction.FastForwardStop) },
+                    key1 = viewModel,
+                    onClick = { /* TODO */ },
+                    onSeekPress = { /* TODO */ },
+                    onSeekRelease = { /* TODO */ },
                 ),
         ) {
             Icon(
@@ -425,11 +421,11 @@ private fun PlaybackFlowControls(
 
 @Composable
 private fun PlaybackButton(
-    status: PlaybackStatusViewState,
+    status: PlaybackStatus,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    if (status == PlaybackStatusViewState.Loading) {
+    if (status == PlaybackStatus.Loading) {
         Box(
             modifier = modifier,
         ) {
@@ -442,11 +438,11 @@ private fun PlaybackButton(
     } else {
         FilledIconButton(
             modifier = modifier,
-            enabled = status != PlaybackStatusViewState.Disabled,
+            enabled = status != PlaybackStatus.Idle,
             onClick = onClick,
         ) {
             val iconVector = when (status) {
-                PlaybackStatusViewState.Playing -> Icons.TwoTone.Pause
+                PlaybackStatus.Playing -> Icons.TwoTone.Pause
                 else -> Icons.TwoTone.PlayArrow
             }
 

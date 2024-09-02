@@ -5,6 +5,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.Player.STATE_ENDED
+import androidx.media3.common.Player.STATE_READY
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.alexeychurchill.dplayer.core.domain.MediaId
@@ -47,5 +49,24 @@ class Media3PlaybackEngine @Inject constructor(
             .build()
         player.setMediaItem(mediaItem)
         player.prepare()
+    }
+
+    override fun play() = with(player) {
+        if (playbackState == STATE_READY && !playWhenReady || playbackState == STATE_ENDED) {
+            playWhenReady = true
+        }
+    }
+
+    override fun pause() = with(player) {
+        if (playbackState == STATE_READY && playWhenReady) {
+            playWhenReady = false
+        }
+    }
+
+    override fun togglePlayback() {
+        if (player.playbackState != STATE_READY) {
+            return
+        }
+        player.playWhenReady = !player.playWhenReady
     }
 }
