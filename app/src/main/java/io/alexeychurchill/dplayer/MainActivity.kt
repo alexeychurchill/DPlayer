@@ -10,7 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
-import io.alexeychurchill.dplayer.engine.Media3PlaybackEngine
+import io.alexeychurchill.dplayer.media.media3.Media3PlaybackEngine
 import io.alexeychurchill.dplayer.library.data.filesystem.SafDirectoryPermissionsDispatcher
 import io.alexeychurchill.dplayer.library.ui.LibraryScreen
 import io.alexeychurchill.dplayer.playback.ui.WithPlaybackScreen

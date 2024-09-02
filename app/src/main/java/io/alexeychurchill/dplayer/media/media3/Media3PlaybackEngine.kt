@@ -1,17 +1,15 @@
-package io.alexeychurchill.dplayer.engine
+package io.alexeychurchill.dplayer.media.media3
 
 import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.Player.STATE_BUFFERING
-import androidx.media3.common.Player.STATE_ENDED
-import androidx.media3.common.Player.STATE_IDLE
-import androidx.media3.common.Player.STATE_READY
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.alexeychurchill.dplayer.core.domain.MediaId
+import io.alexeychurchill.dplayer.media.domain.PlaybackEngine
+import io.alexeychurchill.dplayer.media.domain.PlaybackEngineState
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -54,26 +52,26 @@ class Media3PlaybackEngine @Inject constructor(
     }
 
     override fun play() = with(player) {
-        if (playbackState == STATE_READY && !playWhenReady || playbackState == STATE_ENDED) {
+        if (playbackState == Player.STATE_READY && !playWhenReady || playbackState == Player.STATE_ENDED) {
             playWhenReady = true
         }
     }
 
     override fun pause() = with(player) {
-        if (playbackState == STATE_READY && playWhenReady) {
+        if (playbackState == Player.STATE_READY && playWhenReady) {
             playWhenReady = false
         }
     }
 
     override fun togglePlayback() {
-        if (player.playbackState != STATE_READY) {
+        if (player.playbackState != Player.STATE_READY) {
             return
         }
         player.playWhenReady = !player.playWhenReady
     }
 
     override fun seek(positionMs: Long) {
-        if (player.playbackState == STATE_IDLE || player.playbackState == STATE_BUFFERING) {
+        if (player.playbackState == Player.STATE_IDLE || player.playbackState == Player.STATE_BUFFERING) {
             return
         }
         player.seekTo(positionMs)

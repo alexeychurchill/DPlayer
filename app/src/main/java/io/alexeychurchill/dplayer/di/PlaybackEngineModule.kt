@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.alexeychurchill.dplayer.engine.Media3PlaybackEngine
-import io.alexeychurchill.dplayer.engine.PlaybackEngine
+import io.alexeychurchill.dplayer.media.media3.Media3PlaybackEngine
+import io.alexeychurchill.dplayer.media.domain.PlaybackEngine
 
 @InstallIn(SingletonComponent::class) // TODO: Consider making this ViewModelComponent
 @Module

@@ -1,4 +1,4 @@
-package io.alexeychurchill.dplayer.engine
+package io.alexeychurchill.dplayer.media.domain
 
 enum class PlaybackStatus {
     Idle,

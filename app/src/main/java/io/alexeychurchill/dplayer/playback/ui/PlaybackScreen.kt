@@ -71,7 +71,7 @@ import com.bumptech.glide.integration.compose.GlideSubcomposition
 import com.bumptech.glide.integration.compose.RequestState
 import io.alexeychurchill.dplayer.R
 import io.alexeychurchill.dplayer.core.ui.widgets.CoverArtPlaceholder
-import io.alexeychurchill.dplayer.engine.PlaybackStatus
+import io.alexeychurchill.dplayer.media.domain.PlaybackStatus
 import io.alexeychurchill.dplayer.playback.presentation.CollapsedPlaybackViewState
 import io.alexeychurchill.dplayer.playback.presentation.PlaybackViewModel
 

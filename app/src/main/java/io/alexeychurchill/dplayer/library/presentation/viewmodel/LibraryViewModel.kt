@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.alexeychurchill.dplayer.core.domain.MediaId
-import io.alexeychurchill.dplayer.engine.PlaybackEngine
+import io.alexeychurchill.dplayer.media.domain.PlaybackEngine
 import io.alexeychurchill.dplayer.library.domain.AddDirectoryUseCase
 import io.alexeychurchill.dplayer.library.presentation.mapper.OpenDirectoryPayloadCodec
 import io.alexeychurchill.dplayer.library.presentation.model.LibraryAction

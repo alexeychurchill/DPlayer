@@ -1,6 +1,5 @@
-package io.alexeychurchill.dplayer.engine
+package io.alexeychurchill.dplayer.media.domain
 
-import io.alexeychurchill.dplayer.media.domain.FileMetadata
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 

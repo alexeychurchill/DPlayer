@@ -1,3 +1,3 @@
-package io.alexeychurchill.dplayer.engine
+package io.alexeychurchill.dplayer.media.domain
 
 interface PlaybackEngine : PlaybackEngineController, PlaybackEngineState

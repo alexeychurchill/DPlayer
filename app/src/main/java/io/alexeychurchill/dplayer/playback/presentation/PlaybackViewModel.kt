@@ -5,8 +5,8 @@ package io.alexeychurchill.dplayer.playback.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.alexeychurchill.dplayer.engine.PlaybackEngine
-import io.alexeychurchill.dplayer.engine.PlaybackStatus
+import io.alexeychurchill.dplayer.media.domain.PlaybackEngine
+import io.alexeychurchill.dplayer.media.domain.PlaybackStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
