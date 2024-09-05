@@ -57,4 +57,8 @@ class LibraryViewModel @Inject constructor(
             }
         }
     }
+
+    fun openPlaybackIfRequested(shouldOpenPlayback: Boolean) {
+        TODO("Not yet implemented")
+    }
 }

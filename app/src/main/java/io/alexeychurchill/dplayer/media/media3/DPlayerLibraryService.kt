@@ -5,9 +5,16 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import dagger.hilt.android.AndroidEntryPoint
+import io.alexeychurchill.dplayer.MainActivity
+import io.alexeychurchill.dplayer.core.Intents
 
 @AndroidEntryPoint
 class DPlayerLibraryService : MediaLibraryService() {
+
+    companion object {
+        private const val RequestCodeOpenPlayback = 20001
+    }
+
     private var session: MediaLibrarySession? = null
     private val sessionCallback = object : MediaLibrarySession.Callback {
         /* TODO: Implement library browser */
@@ -19,7 +26,13 @@ class DPlayerLibraryService : MediaLibraryService() {
         val player = ExoPlayer.Builder(this)
             .build()
 
+        val pendingOpenPlayback = Intents.pendingOpenPlayback<MainActivity>(
+            context = this,
+            requestCode = RequestCodeOpenPlayback,
+        )
+
         session = MediaLibrarySession.Builder(this, player, sessionCallback)
+            .setSessionActivity(pendingOpenPlayback)
             .build()
     }
 

@@ -10,9 +10,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
-import io.alexeychurchill.dplayer.media.media3.MediaControllerPlaybackEngine
+import io.alexeychurchill.dplayer.core.Actions
 import io.alexeychurchill.dplayer.library.data.filesystem.SafDirectoryPermissionsDispatcher
 import io.alexeychurchill.dplayer.library.ui.LibraryScreen
+import io.alexeychurchill.dplayer.media.media3.MediaControllerPlaybackEngine
 import io.alexeychurchill.dplayer.playback.ui.WithPlaybackScreen
 import io.alexeychurchill.dplayer.ui.theme.DPlayerTheme
 import javax.inject.Inject
@@ -34,9 +35,11 @@ class MainActivity : ComponentActivity() {
             addObserver(safDirectoryPermissionsDispatcher)
             addObserver(playbackEngine)
         }
+        val shouldOpenPlayback = intent.action == Actions.OpenPlayback
         setContent {
             DPlayerTheme {
                 WithPlaybackScreen(
+                    shouldOpenPlayback = shouldOpenPlayback,
                     content = {
                         LibraryScreen()
                     },
