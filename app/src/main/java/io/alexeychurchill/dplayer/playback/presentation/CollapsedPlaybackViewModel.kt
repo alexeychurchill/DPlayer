@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val NoTitleValue = "-"
@@ -64,7 +65,9 @@ class CollapsedPlaybackViewModel @Inject constructor(
     }
 
     fun togglePlayPause() {
-        playbackEngine.togglePlayback()
+        viewModelScope.launch {
+            playbackEngine.togglePlayback()
+        }
     }
 
     fun nextTrack() {
