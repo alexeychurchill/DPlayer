@@ -24,6 +24,9 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -119,8 +122,10 @@ dependencies {
     implementation("androidx.documentfile:documentfile:1.0.1")
 
     // Media3
-    val media3Version = "1.4.0"
+    val media3Version = "1.4.1"
+    implementation("androidx.media3:media3-common:$media3Version")
     implementation("androidx.media3:media3-exoplayer:$media3Version")
+    implementation("androidx.media3:media3-session:$media3Version")
 
     // Unit Testing
     val junitVersion = "5.10.3"

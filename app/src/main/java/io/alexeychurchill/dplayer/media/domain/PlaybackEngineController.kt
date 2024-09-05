@@ -6,11 +6,11 @@ interface PlaybackEngineController {
 
     suspend fun use(mediaId: MediaId)
 
-    fun play()
+    suspend fun play()
 
-    fun pause()
+    suspend fun pause()
 
-    fun togglePlayback()
+    suspend fun togglePlayback()
 
-    fun seek(positionMs: Long)
+    suspend fun seek(positionMs: Long)
 }
